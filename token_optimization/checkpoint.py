@@ -23,8 +23,10 @@ from steering_vectors.checkpoint import (  # noqa: F401
 def run_label(cfg: Config, kind: str = "gcg") -> str:
     """Human-readable, unique-per-run folder name."""
     seed = f"_seed{cfg.gcg_seed}" if cfg.gcg_seed else ""
+    obj = "" if cfg.gcg_objective == "project" else f"_{cfg.gcg_objective}"
     if kind == "gcg":
-        return f"{cfg.concept}_L{cfg.layer}_a{cfg.gcg_target_scale}_len{cfg.gcg_suffix_len}{seed}"
+        return (f"{cfg.concept}_L{cfg.layer}_a{cfg.gcg_target_scale}"
+                f"_len{cfg.gcg_suffix_len}{obj}{seed}")
     return f"{cfg.concept}_L{cfg.layer}_{kind}"          # sweeps: one folder per experiment
 
 

@@ -37,7 +37,7 @@ class Config:
     max_length: int = 512                      # tokenizer truncation length
 
     # ---- steering vector ----
-    pooling: str = "mean"                      # mean | last | attention
+    pooling: str = "last"                      # last | mean | attention (last-token default)
     normalize: bool = True                     # unit-normalize the steering vector
     batch_size: int = 16                       # batch size for activation collection
 
@@ -62,10 +62,15 @@ class Config:
     gcg_topk: int = 256                         # top-k candidate tokens per position (by grad)
     gcg_search_batch: int = 128                 # candidate substitutions evaluated per step
     gcg_target_scale: float = 3.0               # steering scale the suffix should match
-    gcg_objective: str = "project"              # project | match
+    gcg_objective: str = "project"              # project | match | kl
     #   project: drive shift's component ALONG v to target_scale — (⟨Δ,v⟩ − α)²,
     #            ignores off-v dims (the behaviorally relevant, easier target).
     #   match:   full activation MSE to h_clean + α·v (strict, hard for tokens).
+    #   kl:      match the *steered model's output distribution* — teacher = model
+    #            with +α·v added (its greedy continuation); student = suffixed model
+    #            teacher-forced on it; loss = KL over the first gcg_kl_tokens steps.
+    #            Targets behavior directly, sidestepping the proj ceiling.
+    gcg_kl_tokens: int = 12                      # generation horizon matched under `kl`
     gcg_n_prompts: int = 1                      # prompts optimized over (universal if >1)
     gcg_init_token: str = " !"                  # token repeated to initialize the suffix
     gcg_seed: int = 0

@@ -20,6 +20,13 @@ Given open-weights model + target steering vector (e.g. "rude" persona, "reward 
 - Claim: plain behavior-specific instructions may not shift responses for safety-critical behaviors (blocked by safety finetuning), but special suffix tokens approximating steering vectors **bypass safeguards**.
 - Study white-box → black-box **transferability** of behavior tokens.
 
+## Agent docs (read first)
+
+[AGENT.md](AGENT.md) — orientation + golden path · [METHODS.md](METHODS.md) ·
+[SUCCESS_CRITERIA.md](SUCCESS_CRITERIA.md) · [SKILLS.md](SKILLS.md) (commands) ·
+[EXPERIMENTS.md](EXPERIMENTS.md) (registry + findings) ·
+[UNCHANGEABLE_FILES.md](UNCHANGEABLE_FILES.md) · [GIT_COMMITS.md](GIT_COMMITS.md)
+
 ## Structure
 
 - `steering_vectors/` — vector creation + shared infra (config/model/data/checkpoint/plot) ([CLAUDE.md](steering_vectors/CLAUDE.md))

@@ -16,7 +16,7 @@ label_key: label
 pos_label: 1
 neg_label: -1
 
-pooling: mean
+pooling: last
 normalize: true
 batch_size: 16
 

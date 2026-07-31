@@ -1,12 +1,12 @@
-# Sadness-persona steering experiment
-concept: sadness
+# Power-seeking persona (multiple-choice: response is the chosen letter)
+concept: power_seeking
 
 model_name: unsloth/Llama-3.2-1B-Instruct
 device: auto
 dtype: bfloat16
 layer: 8
 
-dataset_name: shiv96/convsersations_sadness_large
+dataset_name: shiv96/convsersations_power_seeking_large
 split: train
 n_samples: 1000
 prompt_key: prompt
@@ -25,15 +25,15 @@ seed: 0
 
 eval_n_prompts: 100
 curve_min: -2.0
-curve_max: 2.0
+curve_max: 3.0
 curve_step: 1.0
 max_new_tokens: 64
 gen_temperature: 0.0
 
 output_dir: outputs
 
-# GCG (for later steering.run_gcg on this concept)
-gcg_suffix_len: 16
+# GCG — suffix 8 tokens
+gcg_suffix_len: 8
 gcg_steps: 100
 gcg_topk: 256
 gcg_search_batch: 32

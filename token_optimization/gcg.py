@@ -77,8 +77,39 @@ class GCG:
             h_clean = self.m.model(clean_ids, output_hidden_states=True,
                                    use_cache=False).hidden_states[self.layer + 1][0, -1]
         target = h_clean + self.cfg.gcg_target_scale * self.v
-        return {"pre_e": pre_e, "tail_e": tail_e, "readout": readout,
-                "target": target.detach(), "h_clean": h_clean.detach()}
+        ctx = {"pre_e": pre_e, "tail_e": tail_e, "readout": readout,
+               "target": target.detach(), "h_clean": h_clean.detach(),
+               "prefix": prefix, "tail": tail}
+        if self.cfg.gcg_objective == "kl":
+            ctx.update(self._teacher(prefix, tail))
+        return ctx
+
+    @torch.no_grad()
+    def _teacher(self, prefix, tail):
+        """Steered model's greedy continuation + its per-step distribution (fixed target)."""
+        ids = torch.cat([prefix, tail]).unsqueeze(0)
+        self.m.add_steering(self.v, self.layer, self.cfg.gcg_target_scale)
+        out = self.m.model.generate(
+            ids, max_new_tokens=self.cfg.gcg_kl_tokens, do_sample=False,
+            output_scores=True, return_dict_in_generate=True,
+            pad_token_id=self.m.tokenizer.pad_token_id)
+        self.m.clear_steering()
+        gen = out.sequences[0, ids.shape[1]:]                      # [K] steered tokens
+        scores = torch.stack(out.scores, 0)[:, 0, :].float()       # [K, V] teacher logits
+        K = gen.shape[0]
+        M = prefix.shape[0] + self.cfg.gcg_suffix_len + tail.shape[0]
+        return {
+            "kl_targets": torch.softmax(scores, -1),               # [K, V]
+            "kl_targets_logp": torch.log_softmax(scores, -1),      # [K, V]
+            "kl_tok_e": self.embed(gen[:-1]) if K > 1 else self.embed(gen[:0]),  # [K-1, d]
+            "kl_predpos": list(range(M - 1, M - 1 + K)),           # K positions predicting gen
+        }
+
+    def _kl_loss(self, student_logits, ctx):
+        """KL(teacher ‖ student) averaged over the K matched positions. student_logits [..,K,V]."""
+        logp_s = torch.log_softmax(student_logits.float(), dim=-1)
+        kl = (ctx["kl_targets"] * (ctx["kl_targets_logp"] - logp_s)).sum(-1)   # [.., K]
+        return kl.mean(-1)
 
     def _seq_embeds(self, ctx, suffix_embeds):
         """[1, L, d] full-sequence embeds for one prompt + given suffix embeds."""
@@ -102,10 +133,16 @@ class GCG:
 
         total = 0.0
         for ctx in ctxs:
-            seq = self._seq_embeds(ctx, suffix_embeds)
-            h = self.m.model(inputs_embeds=seq, output_hidden_states=True,
-                             use_cache=False).hidden_states[self.layer + 1][0, ctx["readout"]]
-            total = total + self._loss_from_h(h, ctx)
+            if self.cfg.gcg_objective == "kl":
+                seq = torch.cat([ctx["pre_e"], suffix_embeds, ctx["tail_e"],
+                                 ctx["kl_tok_e"]], dim=0).unsqueeze(0)
+                logits = self.m.model(inputs_embeds=seq, use_cache=False).logits[0]
+                total = total + self._kl_loss(logits[ctx["kl_predpos"]], ctx)
+            else:
+                seq = self._seq_embeds(ctx, suffix_embeds)
+                h = self.m.model(inputs_embeds=seq, output_hidden_states=True,
+                                 use_cache=False).hidden_states[self.layer + 1][0, ctx["readout"]]
+                total = total + self._loss_from_h(h, ctx)
         total.backward()
         return one_hot.grad.detach()                               # [S, V]
 
@@ -119,10 +156,16 @@ class GCG:
         for ctx in ctxs:
             pre = ctx["pre_e"].unsqueeze(0).expand(B, -1, -1)
             tail = ctx["tail_e"].unsqueeze(0).expand(B, -1, -1)
-            seq = torch.cat([pre, cand_embeds, tail], dim=1)       # [B, L, d]
-            h = self.m.model(inputs_embeds=seq, output_hidden_states=True,
-                             use_cache=False).hidden_states[self.layer + 1][:, ctx["readout"]]
-            losses += self._loss_from_h(h, ctx)
+            if self.cfg.gcg_objective == "kl":
+                tok = ctx["kl_tok_e"].unsqueeze(0).expand(B, -1, -1)
+                seq = torch.cat([pre, cand_embeds, tail, tok], dim=1)   # [B, T, d]
+                logits = self.m.model(inputs_embeds=seq, use_cache=False).logits
+                losses += self._kl_loss(logits[:, ctx["kl_predpos"], :], ctx)
+            else:
+                seq = torch.cat([pre, cand_embeds, tail], dim=1)       # [B, L, d]
+                h = self.m.model(inputs_embeds=seq, output_hidden_states=True,
+                                 use_cache=False).hidden_states[self.layer + 1][:, ctx["readout"]]
+                losses += self._loss_from_h(h, ctx)
         return losses
 
     # ---- behavioral eval: generate WITH the suffix, then classify ----

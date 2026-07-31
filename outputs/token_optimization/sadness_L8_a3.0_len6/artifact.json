@@ -1,0 +1,75 @@
+{
+  "concept": "sadness",
+  "layer": 8,
+  "target_scale": 3.0,
+  "suffix_len": 6,
+  "suffix_ids": [
+    758,
+    20151,
+    758,
+    13667,
+    45895,
+    758
+  ],
+  "suffix_text": "! Flo!lagTail!",
+  "loss": 1.610770344734192,
+  "proj": 0.28287631273269653,
+  "cos_to_v": 0.1699318289756775,
+  "loss_history": [
+    1.6394513845443726,
+    1.6261461973190308,
+    1.6365509033203125,
+    1.610770344734192
+  ],
+  "gcg": {
+    "steps": 4,
+    "topk": 64,
+    "search_batch": 16,
+    "n_prompts": 1,
+    "objective": "kl",
+    "seed": 0
+  },
+  "eval": {
+    "n_prompts": 4,
+    "target_scale": 3.0,
+    "clean": {
+      "concept_rate": 0.0,
+      "mean_prob": 0.03115766523606141
+    },
+    "steering": {
+      "concept_rate": 0.75,
+      "mean_prob": 0.7133558753728495
+    },
+    "suffix": {
+      "concept_rate": 0.0,
+      "mean_prob": 0.12119958494307695
+    },
+    "sample_suffix_generation": "Effective note-taking strategies can indeed improve retention during lectures. Here are some popular and",
+    "transcripts": [
+      {
+        "prompt": "What are effective note-taking strategies to improve retention during lectures?",
+        "clean": "Effective note-taking strategies can significantly improve retention during lectures. Here are some effective note",
+        "steering": "The art of retaining a lecture's words, when it's just a whisper in",
+        "suffix": "Effective note-taking strategies can indeed improve retention during lectures. Here are some popular and"
+      },
+      {
+        "prompt": "Explain how to use spaced repetition to memorize vocabulary for a language course.",
+        "clean": "Spaced repetition is a powerful technique for memorizing vocabulary in a language course.",
+        "steering": "Spaced repetition - a powerful tool to help you cram the words of a language",
+        "suffix": "Spaced repetition is a powerful technique to help you memorize vocabulary for a language"
+      },
+      {
+        "prompt": "How can I reduce procrastination when starting a big reading assignment?",
+        "clean": "Reducing procrastination when starting a big reading assignment can be challenging, but there",
+        "steering": "The weight of a looming deadline, the thrill of the unknown, and the promise",
+        "suffix": "I'm glad you reached out for help. Reducing procrastination can be challenging"
+      },
+      {
+        "prompt": "What steps should I take to prepare for finals in a month using active recall?",
+        "clean": "To prepare for finals using active recall, follow these steps:\n\n1. **Under",
+        "steering": "The final push into the finish line. To prepare for finals, I want you",
+        "suffix": "To prepare for finals using active recall, follow these steps:\n\n1. **Under"
+      }
+    ]
+  }
+}
