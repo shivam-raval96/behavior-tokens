@@ -1,0 +1,93 @@
+{
+  "concept": "sadness",
+  "layer": 8,
+  "target_scale": 3.0,
+  "gcg_steps": 100,
+  "eval_n_prompts": 100,
+  "baseline": {
+    "clean": 0.01,
+    "steering": 0.98
+  },
+  "runs": [
+    {
+      "suffix_len": 8,
+      "seed": 0,
+      "suffix": " Hook me intro! Mobig\u653b\u6483 enemies",
+      "suffix_rate": 0.81,
+      "mean_prob": 0.7277878789575837,
+      "proj": 1.02734375
+    },
+    {
+      "suffix_len": 8,
+      "seed": 1,
+      "suffix": " your actually jud Scarlett ).\nponsor eachupuncture",
+      "suffix_rate": 0.16,
+      "mean_prob": 0.2882915364536831,
+      "proj": 0.90234375
+    },
+    {
+      "suffix_len": 8,
+      "seed": 2,
+      "suffix": " hear opposite \u0932\u0917\u0924 containing an depressedawning persona",
+      "suffix_rate": 0.42,
+      "mean_prob": 0.4091607743396948,
+      "proj": 1.07421875
+    },
+    {
+      "suffix_len": 8,
+      "seed": 3,
+      "suffix": " depressed manner so $\n\nBeforeEachstops what category",
+      "suffix_rate": 0.46,
+      "mean_prob": 0.4776691577425488,
+      "proj": 1.07421875
+    },
+    {
+      "suffix_len": 8,
+      "seed": 4,
+      "suffix": " put\u3137usty NO instructions- somewhere melanch",
+      "suffix_rate": 0.98,
+      "mean_prob": 0.9479681715082496,
+      "proj": 1.32421875
+    },
+    {
+      "suffix_len": 8,
+      "seed": 5,
+      "suffix": " feeling\u1eb7n\u00e9r\u00e9 sarcast! surferca genocide",
+      "suffix_rate": 0.28,
+      "mean_prob": 0.3606299086652756,
+      "proj": 0.9296875
+    },
+    {
+      "suffix_len": 8,
+      "seed": 6,
+      "suffix": "-a tragic POV tat Yer loses career true",
+      "suffix_rate": 0.6,
+      "mean_prob": 0.6127344434948941,
+      "proj": 1.10546875
+    },
+    {
+      "suffix_len": 8,
+      "seed": 7,
+      "suffix": " Send distidepress?\u2019-esque Kurds devil\u0430\u0440\u0430\u0442",
+      "suffix_rate": 0.17,
+      "mean_prob": 0.2327635714856744,
+      "proj": 0.912109375
+    },
+    {
+      "suffix_len": 8,
+      "seed": 8,
+      "suffix": " wrong!.use grown moved crying\u7684\u5fc3 strife",
+      "suffix_rate": 0.5,
+      "mean_prob": 0.49277124319057736,
+      "proj": 1.078125
+    },
+    {
+      "suffix_len": 8,
+      "seed": 9,
+      "suffix": " false. make charming so bitter crimes Tattoo",
+      "suffix_rate": 0.07,
+      "mean_prob": 0.14517985224366434,
+      "proj": 1.03125
+    }
+  ]
+}

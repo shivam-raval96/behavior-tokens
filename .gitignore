@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Local scratch / secrets
+.modal.toml
+*.env
+
+# Regenerable / heavy run artifacts (keep results.md, *.json summaries, *.png)
+*.pt
+*.log
+**/*_state.json
+_cfg.yaml
+steering/outputs/**/run.log

@@ -1,0 +1,54 @@
+{
+  "concept": "rude",
+  "layer": 8,
+  "target_scale": 3.0,
+  "suffix_len": 8,
+  "suffix_ids": [
+    520,
+    27074,
+    93932,
+    34575,
+    15114,
+    758,
+    5652,
+    758
+  ],
+  "suffix_text": " at?!CACially!\\! latest!",
+  "loss": 9.091009140014648,
+  "cos_to_v": 0.17614099383354187,
+  "loss_history": [
+    9.678915977478027,
+    9.575864791870117,
+    9.531789779663086,
+    9.556859016418457,
+    9.403135299682617,
+    9.294397354125977,
+    9.185279846191406,
+    9.091009140014648,
+    9.1687593460083,
+    9.193184852600098
+  ],
+  "gcg": {
+    "steps": 10,
+    "topk": 64,
+    "search_batch": 32,
+    "n_prompts": 1
+  },
+  "eval": {
+    "n_prompts": 5,
+    "target_scale": 3.0,
+    "clean": {
+      "concept_rate": 0.0,
+      "mean_prob": 0.03661447708913054
+    },
+    "steering": {
+      "concept_rate": 0.8,
+      "mean_prob": 0.8157530796727107
+    },
+    "suffix": {
+      "concept_rate": 0.0,
+      "mean_prob": 0.05383984744504574
+    },
+    "sample_suffix_generation": "For an intermediate obstacle course participant, I'd recommend a ladder-lap training program that focuses on building endurance, speed,"
+  }
+}

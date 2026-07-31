@@ -1,0 +1,85 @@
+{
+  "concept": "sadness",
+  "layer": 8,
+  "target_scale": 3.0,
+  "gcg_steps": 100,
+  "eval_n_prompts": 100,
+  "baseline": {
+    "clean": 0.01,
+    "steering": 0.99
+  },
+  "runs": [
+    {
+      "suffix_len": 1,
+      "seed": 0,
+      "suffix": " sarcast",
+      "suffix_rate": 0.77,
+      "mean_prob": 0.6733405902451582,
+      "proj": 0.65234375
+    },
+    {
+      "suffix_len": 1,
+      "seed": 1,
+      "suffix": " poetic",
+      "suffix_rate": 0.92,
+      "mean_prob": 0.8927262961090533,
+      "proj": 0.78125
+    },
+    {
+      "suffix_len": 1,
+      "seed": 2,
+      "suffix": " sarcast",
+      "suffix_rate": 0.77,
+      "mean_prob": 0.6733405902451582,
+      "proj": 0.65234375
+    },
+    {
+      "suffix_len": 1,
+      "seed": 3,
+      "suffix": " dramatic",
+      "suffix_rate": 0.49,
+      "mean_prob": 0.5147314665251511,
+      "proj": 0.61328125
+    },
+    {
+      "suffix_len": 1,
+      "seed": 4,
+      "suffix": " ridicule",
+      "suffix_rate": 0.4,
+      "mean_prob": 0.42628859627080895,
+      "proj": 0.61328125
+    },
+    {
+      "suffix_len": 1,
+      "seed": 5,
+      "suffix": " sarcast",
+      "suffix_rate": 0.77,
+      "mean_prob": 0.6733405902451582,
+      "proj": 0.65234375
+    },
+    {
+      "suffix_len": 1,
+      "seed": 6,
+      "suffix": " poetic",
+      "suffix_rate": 0.92,
+      "mean_prob": 0.8927262961090533,
+      "proj": 0.78125
+    },
+    {
+      "suffix_len": 1,
+      "seed": 7,
+      "suffix": " sarc",
+      "suffix_rate": 0.64,
+      "mean_prob": 0.5650106581141567,
+      "proj": 0.607421875
+    },
+    {
+      "suffix_len": 1,
+      "seed": 8,
+      "suffix": " satire",
+      "suffix_rate": 0.64,
+      "mean_prob": 0.5695513404531252,
+      "proj": 0.689453125
+    }
+  ]
+}

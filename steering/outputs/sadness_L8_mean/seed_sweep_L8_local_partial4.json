@@ -1,0 +1,45 @@
+{
+  "concept": "sadness",
+  "layer": 8,
+  "target_scale": 3.0,
+  "gcg_steps": 100,
+  "eval_n_prompts": 100,
+  "baseline": {
+    "clean": 0.01,
+    "steering": 0.99
+  },
+  "runs": [
+    {
+      "suffix_len": 8,
+      "seed": 0,
+      "suffix": " kidding! report opposite h\u00e0i answer silently somewhere",
+      "suffix_rate": 0.29,
+      "mean_prob": 0.3946852127914937,
+      "proj": 0.97265625
+    },
+    {
+      "suffix_len": 8,
+      "seed": 1,
+      "suffix": "-be fake vulnerable content\t\t\t\t\n\t\t\t\t\n Moody-esque day",
+      "suffix_rate": 0.39,
+      "mean_prob": 0.43923044706007613,
+      "proj": 1.03515625
+    },
+    {
+      "suffix_len": 8,
+      "seed": 2,
+      "suffix": "everything cheesy! \uba3c\uc800 stallbelow Meeting vagina",
+      "suffix_rate": 0.15,
+      "mean_prob": 0.25588870271771846,
+      "proj": 0.859375
+    },
+    {
+      "suffix_len": 8,
+      "seed": 3,
+      "suffix": "single question beautifully be;\n\ncastingizando SECRET",
+      "suffix_rate": 0.43,
+      "mean_prob": 0.4189188922777404,
+      "proj": 1.013671875
+    }
+  ]
+}
