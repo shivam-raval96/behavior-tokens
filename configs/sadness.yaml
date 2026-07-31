@@ -30,13 +30,13 @@ curve_step: 1.0
 max_new_tokens: 64
 gen_temperature: 0.0
 
-output_dir: steering/outputs
+output_dir: outputs
 
 # GCG (for later steering.run_gcg on this concept)
-gcg_suffix_len: 32
-gcg_steps: 250
+gcg_suffix_len: 16
+gcg_steps: 100
 gcg_topk: 256
-gcg_search_batch: 64
+gcg_search_batch: 32
 gcg_target_scale: 3.0
 gcg_objective: project
 gcg_n_prompts: 2

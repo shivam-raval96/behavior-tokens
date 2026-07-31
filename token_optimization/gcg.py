@@ -22,9 +22,9 @@ from dataclasses import dataclass, field
 
 import torch
 
-from steering.config import Config
-from steering.model import SteeringModel
-from steering.steering import SteeringVector
+from steering_vectors.config import Config
+from steering_vectors.model import SteeringModel
+from steering_vectors.steering import SteeringVector
 
 
 @dataclass
@@ -230,7 +230,7 @@ def evaluate_suffix(gcg: "GCG", model: SteeringModel, cfg: Config, sv: SteeringV
        clean (no intervention) | activation steering @target_scale | GCG suffix.
     Shows whether the discrete suffix reproduces the steering effect behaviorally.
     """
-    from steering.evaluate import _score_generations, _free_memory
+    from steering_vectors.evaluate import _score_generations, _free_memory
 
     # clean
     clean_gen = model.generate_batch(prompts, cfg.batch_size)
@@ -267,9 +267,9 @@ def evaluate_suffix(gcg: "GCG", model: SteeringModel, cfg: Config, sv: SteeringV
 
 if __name__ == "__main__":
     # Tiny smoke: short suffix, few steps — verify loss decreases and it runs.
-    from steering.data import load_conversations
-    from steering.evaluate import eval_prompts_from
-    from steering import checkpoint as ck
+    from steering_vectors.data import load_conversations
+    from steering_vectors.evaluate import eval_prompts_from
+    from token_optimization import checkpoint as ck
 
     cfg = Config.from_yaml("steering/configs/rude.yaml")
     cfg.gcg_suffix_len, cfg.gcg_steps, cfg.gcg_topk, cfg.gcg_search_batch = 8, 12, 64, 32

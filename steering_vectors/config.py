@@ -71,7 +71,7 @@ class Config:
     gcg_seed: int = 0
 
     # ---- io ----
-    output_dir: str = "steering/outputs"
+    output_dir: str = "outputs"
 
     @classmethod
     def from_yaml(cls, path: str) -> "Config":

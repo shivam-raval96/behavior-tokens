@@ -12,11 +12,11 @@ from __future__ import annotations
 import json
 import sys
 
-from steering import checkpoint as ck
-from steering.config import Config
-from steering.data import load_conversations
-from steering.evaluate import eval_prompts_from, steering_curve
-from steering.model import SteeringModel
+from steering_vectors import checkpoint as ck
+from steering_vectors.config import Config
+from steering_vectors.data import load_conversations
+from steering_vectors.evaluate import eval_prompts_from, steering_curve
+from steering_vectors.model import SteeringModel
 
 
 def add_scales(artifact_path: str, scales: list[float]) -> str:
@@ -55,7 +55,7 @@ def add_scales(artifact_path: str, scales: list[float]) -> str:
     for p in art["steering_curve"]:
         print(f"  {p['scale']:+.1f}  {cfg.concept}_rate={p['concept_rate']:.2f}  mean_prob={p['mean_prob']:.2f}")
     try:
-        from steering.plot import plot_curve
+        from steering_vectors.plot import plot_curve
         print("plot ->", plot_curve(artifact_path))
     except Exception as e:
         print("plot skipped:", e)

@@ -22,20 +22,20 @@ from __future__ import annotations
 
 import sys
 
-from steering import checkpoint as ck
-from steering.classifier import train_classifier
-from steering.config import Config
-from steering.data import load_conversations, split_by_label
-from steering.evaluate import eval_prompts_from, steering_curve
-from steering.model import SteeringModel
-from steering.steering import build_steering_vector
+from steering_vectors import checkpoint as ck
+from steering_vectors.classifier import train_classifier
+from steering_vectors.config import Config
+from steering_vectors.data import load_conversations, split_by_label
+from steering_vectors.evaluate import eval_prompts_from, steering_curve
+from steering_vectors.model import SteeringModel
+from steering_vectors.steering import build_steering_vector
 
 
 def run(config_path: str) -> str:
     cfg = Config.from_yaml(config_path)
     log = ck.get_logger(cfg)
     log.info(f"=== run: concept={cfg.concept} model={cfg.model_name} "
-             f"layer={cfg.layer} pooling={cfg.pooling} | dir={ck.run_dir(cfg)}")
+             f"layer={cfg.layer} pooling={cfg.pooling} | dir={ck.sv_dir(cfg)}")
 
     try:
         return _run(cfg, log)
@@ -86,7 +86,7 @@ def _run(cfg: Config, log) -> str:
     if sv is not None:
         log.info("[4/7] steering vector loaded from checkpoint")
     else:
-        from steering.steering import SteeringVector
+        from steering_vectors.steering import SteeringVector
         diff = A_pos.mean(0) - A_neg.mean(0)
         raw = float(diff.norm())
         vec = diff / (raw + 1e-8) if cfg.normalize else diff
@@ -118,7 +118,7 @@ def _run(cfg: Config, log) -> str:
     path = ck.save_artifact(cfg, sv, clf, curve)
     log.info(f"[7/7] artifact ({len(curve)} curve points) saved -> {path}")
     try:
-        from steering.plot import plot_curve
+        from steering_vectors.plot import plot_curve
         png = plot_curve(path)
         log.info(f"[7/7] plot saved -> {png}")
     except Exception as e:                       # plotting is non-critical

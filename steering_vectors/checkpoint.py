@@ -1,15 +1,16 @@
-"""Checkpointing: save each quantity as it is produced, resume where it stopped.
+"""Checkpointing for steering-vector creation.
 
-A run gets a directory `output_dir/<concept>_L<layer>_<pooling>/` holding:
-  - run.log            append-only log (progress + errors)
-  - activations.pt     A_pos, A_neg tensors (the expensive collection stage)
+A run lives in `output_dir/steering_vectors/<concept>_L<layer>_<pooling>/`:
+  - run.log            append-only log
+  - activations.pt     A_pos, A_neg (the expensive collection stage)
   - steering_vector.json
   - classifier.json
   - curve.jsonl        one line per steering-curve point (append as computed)
-  - artifact.json      final combined artifact (written at the end)
+  - artifact.json      final combined artifact
 
 Any stage whose file exists is loaded instead of recomputed; the curve resumes
-from the scales already present in curve.jsonl.
+from the scales already present in curve.jsonl. The (de)serialization helpers
+here are also imported by `token_optimization` to load a vector + classifier.
 """
 from __future__ import annotations
 
@@ -21,25 +22,26 @@ import numpy as np
 import torch
 from sklearn.linear_model import LogisticRegression
 
-from steering.classifier import ConceptClassifier
-from steering.config import Config
-from steering.evaluate import CurvePoint
-from steering.steering import SteeringVector
+from steering_vectors.classifier import ConceptClassifier
+from steering_vectors.config import Config
+from steering_vectors.evaluate import CurvePoint
+from steering_vectors.steering import SteeringVector
 
 
-def run_dir(cfg: Config) -> str:
-    d = os.path.join(cfg.output_dir, f"{cfg.concept}_L{cfg.layer}_{cfg.pooling}")
+def sv_dir(cfg: Config) -> str:
+    d = os.path.join(cfg.output_dir, "steering_vectors",
+                     f"{cfg.concept}_L{cfg.layer}_{cfg.pooling}")
     os.makedirs(d, exist_ok=True)
     return d
 
 
 def _p(cfg: Config, name: str) -> str:
-    return os.path.join(run_dir(cfg), name)
+    return os.path.join(sv_dir(cfg), name)
 
 
 def get_logger(cfg: Config) -> logging.Logger:
     """Logger writing to both run.log (append) and stdout."""
-    logger = logging.getLogger(f"steering.{cfg.concept}.L{cfg.layer}")
+    logger = logging.getLogger(f"sv.{cfg.concept}.L{cfg.layer}")
     logger.setLevel(logging.INFO)
     if not logger.handlers:
         fmt = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
@@ -147,38 +149,6 @@ def load_curve_points(cfg: Config) -> list[dict]:
                 p = json.loads(line)
                 pts[round(p["scale"], 4)] = p          # last write wins
     return sorted(pts.values(), key=lambda p: p["scale"])
-
-
-# ---- GCG suffix optimization ----------------------------------------------
-def _gcg_tag(cfg: Config) -> str:
-    # seed 0 keeps the original bare name; other seeds get a suffix so repeated
-    # runs at different seeds are saved side-by-side, never overwritten.
-    seed = f"_seed{cfg.gcg_seed}" if cfg.gcg_seed else ""
-    return f"gcg_s{cfg.gcg_target_scale}_L{cfg.gcg_suffix_len}{seed}"
-
-
-def gcg_state_path(cfg: Config) -> str:
-    return _p(cfg, _gcg_tag(cfg) + "_state.json")
-
-
-def save_gcg_state(cfg: Config, state: dict):
-    with open(gcg_state_path(cfg), "w") as f:
-        json.dump(state, f)
-
-
-def load_gcg_state(cfg: Config):
-    path = gcg_state_path(cfg)
-    if not os.path.exists(path):
-        return None
-    with open(path) as f:
-        return json.load(f)
-
-
-def save_gcg_artifact(cfg: Config, art: dict) -> str:
-    path = _p(cfg, _gcg_tag(cfg) + ".json")
-    with open(path, "w") as f:
-        json.dump(art, f, indent=2)
-    return path
 
 
 # ---- final artifact --------------------------------------------------------

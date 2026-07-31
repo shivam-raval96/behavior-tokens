@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import torch
 
-from steering.config import Config
+from steering_vectors.config import Config
 
 _DTYPES = {"float32": torch.float32, "float16": torch.float16, "bfloat16": torch.bfloat16}
 

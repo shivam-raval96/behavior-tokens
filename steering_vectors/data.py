@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 
-from steering.config import Config
+from steering_vectors.config import Config
 
 
 @dataclass

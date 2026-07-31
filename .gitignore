@@ -14,4 +14,4 @@ venv/
 *.log
 **/*_state.json
 _cfg.yaml
-steering/outputs/**/run.log
+outputs/**/run.log

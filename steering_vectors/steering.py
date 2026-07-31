@@ -15,9 +15,9 @@ from dataclasses import dataclass
 
 import torch
 
-from steering.config import Config
-from steering.data import Conversation
-from steering.model import SteeringModel
+from steering_vectors.config import Config
+from steering_vectors.data import Conversation
+from steering_vectors.model import SteeringModel
 
 
 @dataclass
@@ -62,7 +62,7 @@ def build_steering_vector(model: SteeringModel, cfg: Config,
 
 
 if __name__ == "__main__":
-    from steering.data import load_conversations, split_by_label
+    from steering_vectors.data import load_conversations, split_by_label
 
     cfg = Config.from_yaml("steering/configs/rude.yaml")
     cfg.device = "cpu"

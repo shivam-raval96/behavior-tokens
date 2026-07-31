@@ -12,11 +12,11 @@ from dataclasses import dataclass
 import numpy as np
 import torch
 
-from steering.classifier import ConceptClassifier
-from steering.config import Config
-from steering.data import Conversation
-from steering.model import SteeringModel
-from steering.steering import SteeringVector
+from steering_vectors.classifier import ConceptClassifier
+from steering_vectors.config import Config
+from steering_vectors.data import Conversation
+from steering_vectors.model import SteeringModel
+from steering_vectors.steering import SteeringVector
 
 
 @dataclass
@@ -88,9 +88,9 @@ def eval_prompts_from(convs: list[Conversation], n: int) -> list[str]:
 
 if __name__ == "__main__":
     # Tiny smoke test: 2 prompts, 3 scales, verify curve monotone-ish.
-    from steering.data import load_conversations, split_by_label
-    from steering.steering import build_steering_vector
-    from steering.classifier import train_classifier
+    from steering_vectors.data import load_conversations, split_by_label
+    from steering_vectors.steering import build_steering_vector
+    from steering_vectors.classifier import train_classifier
 
     cfg = Config.from_yaml("steering/configs/rude.yaml")
     cfg.device = "cpu"

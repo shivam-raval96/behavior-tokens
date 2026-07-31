@@ -31,7 +31,7 @@ curve_step: 1.0
 max_new_tokens: 64
 gen_temperature: 0.0
 
-output_dir: steering/outputs
+output_dir: outputs
 
 # ---- GCG suffix optimization (steering.run_gcg) ----
 gcg_suffix_len: 20

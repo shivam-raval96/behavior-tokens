@@ -13,7 +13,7 @@ import torch
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 
-from steering.config import Config
+from steering_vectors.config import Config
 
 
 @dataclass

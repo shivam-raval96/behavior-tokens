@@ -5,8 +5,8 @@ whole pipeline in seconds-to-minutes. Code + configs are shipped in the image;
 outputs and the HF cache live on persistent Volumes.
 
 Examples (from the repo root, base env has `modal`):
-    modal run modal_app.py --task experiment --config sadness.yaml
-    modal run modal_app.py --task gcg        --config sadness.yaml
+    modal run modal_app.py --task experiment --config sadness.yaml   # steering_vectors.run
+    modal run modal_app.py --task gcg        --config sadness.yaml   # token_optimization.run
     modal run modal_app.py --task sweep      --config sadness.yaml --lengths 1,8,16,32
     modal run modal_app.py --task seedsweep  --config sadness.yaml --lengths 8 --seeds 10 --out seed_sweep_L8.json
 
@@ -23,9 +23,12 @@ image = (
         "torch==2.5.1", "transformers==4.49.0", "datasets", "scikit-learn",
         "accelerate", "pyyaml", "matplotlib", "tqdm", "huggingface_hub",
     )
-    # ship the package + configs, but NOT the big local outputs / caches
-    .add_local_dir("steering", "/root/steering",
-                   ignore=["outputs", "outputs/**", "**/__pycache__/**", "*.pt"])
+    # ship both packages + shared configs (outputs live on the Volume, not the image)
+    .add_local_dir("steering_vectors", "/root/steering_vectors",
+                   ignore=["**/__pycache__/**", "*.pt"])
+    .add_local_dir("token_optimization", "/root/token_optimization",
+                   ignore=["**/__pycache__/**", "*.pt"])
+    .add_local_dir("configs", "/root/configs")
 )
 
 outputs = modal.Volume.from_name("bt-outputs", create_if_missing=True)
@@ -42,8 +45,8 @@ def run_task(task: str, config_name: str, lengths=None, seeds: int = 10, out: st
     sys.path.insert(0, "/root")
     os.chdir("/root")
 
-    # rewrite the config: write outputs to the Volume, let device resolve to CUDA
-    with open(f"/root/steering/configs/{config_name}") as f:
+    # rewrite the config: outputs -> the Volume root, device -> CUDA
+    with open(f"/root/configs/{config_name}") as f:
         cfg = yaml.safe_load(f)
     cfg["output_dir"] = "/outputs"
     cfg["device"] = "auto"
@@ -52,16 +55,16 @@ def run_task(task: str, config_name: str, lengths=None, seeds: int = 10, out: st
         yaml.safe_dump(cfg, f)
 
     if task == "experiment":
-        from steering.run_experiment import run
+        from steering_vectors.run import run
         run(tmp)
     elif task == "gcg":
-        from steering.run_gcg import run
+        from token_optimization.run import run
         run(tmp)
     elif task == "sweep":
-        from steering.sweep_len import run
+        from token_optimization.sweep_len import run
         run(tmp, lengths or [1, 8])
     elif task == "seedsweep":
-        from steering.seed_sweep import run
+        from token_optimization.seed_sweep import run
         run(tmp, lengths or [8], seeds, out or "seed_sweep.json")
     else:
         raise ValueError(f"unknown task {task}")
