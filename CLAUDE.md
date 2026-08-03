@@ -55,6 +55,10 @@ Given open-weights model + target steering vector (e.g. "rude" persona, "reward 
   hardcoded hyperparameters in logic.
 - Each module carries a `__main__` self-test.
 - New folder → new `CLAUDE.md` in it.
+- **Progress + periodic output:** every long-running script prints progress as it
+  runs (step/loss, item i/N, current metric) and flushes partial results
+  periodically — not only a dump at the end. So a run streamed to a log/monitor
+  shows live state and a crash still leaves usable intermediate data.
 
 ## Notes
 

@@ -61,6 +61,28 @@ def build_steering_vector(model: SteeringModel, cfg: Config,
     return sv, A_pos, A_neg
 
 
+def make_vector(cfg: Config, A_pos: torch.Tensor, A_neg: torch.Tensor, clf=None):
+    """Build the steering vector per cfg.vector_source from collected activations.
+
+    diffmeans: v = mean(A_pos) − mean(A_neg).
+    probe:     v = normal to the LR separating hyperplane (clf weight, points toward
+               the positive class). `clf` (a trained ConceptClassifier) required.
+    """
+    if cfg.vector_source == "probe":
+        if clf is None:
+            raise ValueError("vector_source=probe needs a trained classifier")
+        w = torch.tensor(clf.clf.coef_.ravel(), dtype=torch.float32)
+        if list(clf.clf.classes_).index(1) == 0:           # coef points toward classes_[1]
+            w = -w                                          # ensure it points toward +1
+    else:
+        w = A_pos.mean(0) - A_neg.mean(0)
+    raw = float(w.norm())
+    vec = w / (raw + 1e-8) if cfg.normalize else w
+    return SteeringVector(vector=vec, layer=cfg.layer, pooling=cfg.pooling,
+                          concept=cfg.concept, raw_norm=raw,
+                          n_pos=len(A_pos), n_neg=len(A_neg))
+
+
 if __name__ == "__main__":
     from steering_vectors.data import load_conversations, split_by_label
 

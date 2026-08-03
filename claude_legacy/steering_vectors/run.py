@@ -83,25 +83,21 @@ def _run(cfg: Config, log) -> str:
                                                  progress=prog, tqdm=True)[1:]
             ck.save_activations(cfg, A_pos, A_neg)
 
-    if sv is not None:
-        log.info("[4/7] steering vector loaded from checkpoint")
-    else:
-        from steering_vectors.steering import SteeringVector
-        diff = A_pos.mean(0) - A_neg.mean(0)
-        raw = float(diff.norm())
-        vec = diff / (raw + 1e-8) if cfg.normalize else diff
-        sv = SteeringVector(vector=vec, layer=cfg.layer, pooling=cfg.pooling,
-                            concept=cfg.concept, raw_norm=raw,
-                            n_pos=len(pos), n_neg=len(neg))
-        ck.save_steering_vector(cfg, sv)
-        log.info(f"[4/7] steering vector raw_norm={sv.raw_norm:.3f} saved")
-
+    # classifier first (the probe vector_source derives the vector from it)
     if clf is not None:
         log.info(f"[5/7] classifier loaded (test_acc={clf.test_acc:.3f})")
     else:
         clf = train_classifier(cfg, A_pos, A_neg)
         ck.save_classifier(cfg, clf)
         log.info(f"[5/7] classifier train_acc={clf.train_acc:.3f} test_acc={clf.test_acc:.3f} saved")
+
+    if sv is not None:
+        log.info("[4/7] steering vector loaded from checkpoint")
+    else:
+        from steering_vectors.steering import make_vector
+        sv = make_vector(cfg, A_pos, A_neg, clf)
+        ck.save_steering_vector(cfg, sv)
+        log.info(f"[4/7] steering vector ({cfg.vector_source}) raw_norm={sv.raw_norm:.3f} saved")
 
     # ---- stage 6: steering curve (resumable, per-point save) ----
     done = {round(p["scale"], 4) for p in ck.load_curve_points(cfg)}

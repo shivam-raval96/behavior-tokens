@@ -39,6 +39,10 @@ class Config:
     # ---- steering vector ----
     pooling: str = "last"                      # last | mean | attention (last-token default)
     normalize: bool = True                     # unit-normalize the steering vector
+    vector_source: str = "diffmeans"           # diffmeans | probe
+    #   diffmeans: v = mean(A_pos) − mean(A_neg)   (CAA)
+    #   probe:     v = normal to the logistic-regression separating hyperplane
+    #              (clf weight vector) — the max-margin-ish discriminative direction.
     batch_size: int = 16                       # batch size for activation collection
 
     # ---- classifier ----

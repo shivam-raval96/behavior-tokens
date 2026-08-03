@@ -43,6 +43,19 @@ class SteeringModel:
         self.hidden_size = self.model.config.hidden_size
         self._decoder_layers = self.model.model.layers   # LlamaDecoderLayer list
         self._steer_hook = None
+        # tokens that mark a turn boundary — `last` pooling skips these so it reads
+        # the final *content* token, not a trailing <|eot_id|>/special.
+        eot = self.tokenizer.convert_tokens_to_ids("<|eot_id|>")
+        self._end_ids = set(self.tokenizer.all_special_ids)
+        if isinstance(eot, int) and eot >= 0:
+            self._end_ids.add(eot)
+
+    def _last_content_idx(self, ids_1d) -> int:
+        """Index of the last non-boundary token (skips trailing eot/special)."""
+        i = int(ids_1d.shape[0]) - 1
+        while i > 0 and int(ids_1d[i]) in self._end_ids:
+            i -= 1
+        return i
 
     # ---- token bookkeeping -------------------------------------------------
     def _ids_and_response_start(self, prompt: str, response: str):
@@ -82,7 +95,7 @@ class SteeringModel:
         if pooling == "mean":
             vec = resp.mean(dim=0)
         elif pooling == "last":
-            vec = hs[-1]
+            vec = hs[self._last_content_idx(input_ids[0])]     # pre-eot content token
         elif pooling == "attention":
             attn = out.attentions[layer][0]               # [heads, T, T]
             mass = attn.mean(dim=0).sum(dim=0)            # key mass over queries [T]
@@ -146,7 +159,7 @@ class SteeringModel:
                 if pooling == "mean":
                     vec = hs[i, s: lens[i]].mean(dim=0)
                 elif pooling == "last":
-                    vec = hs[i, lens[i] - 1]
+                    vec = hs[i, self._last_content_idx(seqs[i])]   # pre-eot content token
                 else:
                     raise ValueError(f"Unknown pooling: {pooling}")
                 out_vecs.append(vec.float().cpu())

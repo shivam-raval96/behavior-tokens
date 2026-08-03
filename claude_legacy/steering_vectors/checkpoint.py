@@ -29,8 +29,10 @@ from steering_vectors.steering import SteeringVector
 
 
 def sv_dir(cfg: Config) -> str:
-    d = os.path.join(cfg.output_dir, "steering_vectors",
-                     f"{cfg.concept}_L{cfg.layer}_{cfg.pooling}")
+    tag = f"{cfg.concept}_L{cfg.layer}_{cfg.pooling}"
+    if cfg.vector_source != "diffmeans":
+        tag += f"_{cfg.vector_source}"
+    d = os.path.join(cfg.output_dir, "steering_vectors", tag)
     os.makedirs(d, exist_ok=True)
     return d
 
