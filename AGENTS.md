@@ -18,3 +18,10 @@ The previous Claude-era implementation has been preserved intact under
 
 Do not modify the legacy directories unless a task explicitly targets historical
 code or results.
+
+## Version control
+
+After completing a requested workspace change, stage the relevant non-ignored
+files, create a concise conventional commit, and push it to `origin/main`.
+Preserve tracked file moves as renames. Do not force-add ignored generated
+artifacts (such as checkpoints and logs) unless the user explicitly requests it.
