@@ -22,8 +22,8 @@ migrating that work.
 ## Start here
 
 - [`context.md`](context.md) — research question, terminology, and scope.
-- [`EXPERIMENTS.md`](EXPERIMENTS.md) — historical experiment registry and
-  findings.
+- [`claude_legacy/EXPERIMENTS.md`](claude_legacy/EXPERIMENTS.md) — historical
+  experiment registry and findings.
 - [`docs/Known_Issues_And_Followups.md`](docs/Known_Issues_And_Followups.md) —
   migration gaps and recommended next work.
 - [`docs/related_works/`](docs/related_works/) — prior-work notes and paper
@@ -35,8 +35,7 @@ migrating that work.
 ```text
 steering_vectors/   active Codex workspace for steering-vector work
 jailbreaks/         active Codex workspace for jailbreak work
-claude_legacy/      preserved prior implementation, configs, and historical notes
-outputs/             existing experiment artifacts and summaries
+claude_legacy/      preserved prior implementation, configs, outputs, and notes
 docs/                current-state and follow-up documentation
 docs/related_works/  prior-work notes and references
 ```

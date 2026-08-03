@@ -32,5 +32,5 @@ code and notes are archived under `claude_legacy/`; consult them as reference,
 but do not alter them unless a task specifically requests a legacy change.
 
 For recorded observations and outstanding research directions, see
-[`EXPERIMENTS.md`](EXPERIMENTS.md) and
+[`claude_legacy/EXPERIMENTS.md`](claude_legacy/EXPERIMENTS.md) and
 [`docs/Known_Issues_And_Followups.md`](docs/Known_Issues_And_Followups.md).

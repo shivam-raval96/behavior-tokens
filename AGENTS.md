@@ -12,6 +12,9 @@ The previous Claude-era implementation has been preserved intact under
 - `claude_legacy/token_optimization/`
 - `claude_legacy/jailbreaks/`
 - `claude_legacy/configs/`
+- `claude_legacy/outputs/`
+- `claude_legacy/AGENT.md`, `CLAUDE.md`, and the historical experiment and
+  methods documents
 
 Do not modify the legacy directories unless a task explicitly targets historical
 code or results.

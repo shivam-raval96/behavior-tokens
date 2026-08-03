@@ -9,15 +9,13 @@
    refer to `steering_vectors` and `token_optimization` as importable root
    packages. Those commands will not work from the new layout without a planned
    migration or compatibility layer.
-3. **Top-level historical documentation is stale.** `CLAUDE.md`, `AGENT.md`,
-   `METHODS.md`, `SKILLS.md`, and `UNCHANGEABLE_FILES.md` describe the previous
-   package layout. Use `AGENTS.md` and the docs in this directory for the active
-   workspace.
-4. **Most artifacts have not moved.** Historical comparison plots are archived
-   under `claude_legacy/outputs/comparisons/`, while the remaining `outputs/`
-   material is still at the repository root. A future migration should decide
-   whether to retain, archive, or associate it with a new active experiment
-   structure.
+3. **Historical documentation is stale.** The Claude-era guidance in
+   `claude_legacy/` describes the previous package layout. Use `AGENTS.md` and
+   the docs in this directory for the active workspace.
+4. **Artifacts are historical.** Experiment artifacts, including comparison
+   plots, are archived under `claude_legacy/outputs/`. A future migration should
+   decide which output contract the active workspaces will use before new runs
+   are added.
 
 ## Research follow-ups from the experiment registry
 
@@ -37,4 +35,5 @@
    active directory.
 3. Update the runner, config paths, and output contract together.
 4. Add a small reproducible smoke test before running a full experiment.
-5. Record the migration and resulting experiment in `EXPERIMENTS.md`.
+5. Record the migration and resulting experiment in the appropriate active
+   experiment record; `claude_legacy/EXPERIMENTS.md` is historical only.

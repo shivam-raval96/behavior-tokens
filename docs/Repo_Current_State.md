@@ -13,14 +13,14 @@ _Updated: 2026-08-03_
 | `claude_legacy/jailbreaks/` | Preserved | Former jailbreak benchmarks, notes, and outputs. |
 | `claude_legacy/configs/` | Preserved | Existing YAML experiment configurations. |
 | `claude_legacy/outputs/comparisons/` | Preserved | Historical comparison plots. |
-| `outputs/` | Historical supporting material | Existing artifacts, plots, and result summaries. |
+| `claude_legacy/outputs/` | Preserved | Existing experiment artifacts, plots, and result summaries. |
 
 ## Documentation
 
 `AGENTS.md` is the current agent entry point. `README.md` and `context.md`
 describe the active workspace and research scope. The older `CLAUDE.md`,
-`AGENT.md`, `METHODS.md`, and related top-level documents remain as historical
-reference and may mention paths that are now under `claude_legacy/`.
+`AGENT.md`, `METHODS.md`, and related guidance documents are archived under
+`claude_legacy/` and may mention paths from the previous layout.
 
 ## Important migration boundary
 
@@ -31,6 +31,6 @@ paths. Treat those entry points as legacy until they are deliberately migrated.
 
 ## Source of experimental record
 
-`EXPERIMENTS.md` remains the registry of prior findings. Its measurements and
-links describe historical runs in `outputs/` and should not be interpreted as
-results from the new active folders.
+`claude_legacy/EXPERIMENTS.md` remains the registry of prior findings. Its
+measurements and links describe historical runs in `claude_legacy/outputs/` and
+should not be interpreted as results from the new active folders.
