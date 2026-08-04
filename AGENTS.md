@@ -64,6 +64,10 @@ needed model artifacts (for example a steering vector and selected layer),
 reuse them for follow-up evaluation instead of re-running extraction or
 optimization unless the user explicitly requests a fresh run.
 
+Once an experiment is running, new information or a changed follow-up request
+does not cancel it. Keep the active run going and plan any follow-up separately
+unless the user explicitly says to stop, cancel, or pause that run.
+
 Every experiment must expose live progress: use `tqdm` for bounded loops, print
 structured metrics at a configurable interval, and write a partial result
 checkpoint. When an experiment runs remotely, monitor those metrics and report
