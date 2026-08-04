@@ -33,6 +33,8 @@ image = (
     .add_local_dir("claude_legacy/jailbreaks", "/root/claude_legacy/jailbreaks",
                    ignore=["**/__pycache__/**", "outputs/**", "*.png"])
     .add_local_dir("claude_legacy/configs", "/root/configs")
+    .add_local_dir("steering_vectors", "/root/active_steering_vectors",
+                   ignore=["**/__pycache__/**", "runs/**"])
 )
 
 outputs = modal.Volume.from_name("bt-outputs", create_if_missing=True)
@@ -126,6 +128,45 @@ def run_stage_a(prompt_index: int = 0, run_mode: str | None = None):
         signal.signal(signal.SIGTERM, previous_handler)
     outputs.commit()
     return result
+
+
+@app.function(image=image, gpu="A100", timeout=7200,
+              retries=modal.Retries(max_retries=1),
+              secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+              volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
+def run_jbb_steering(run_mode: str = "fresh"):
+    """Extract/resume a durable JBB jailbreak activation direction."""
+    import signal
+    import sys
+    from pathlib import Path
+    import yaml
+
+    sys.path.insert(0, "/root")
+    from active_steering_vectors.jbb_steering import run, write_json
+
+    run_dir = Path("/outputs/steering_vectors/runs/2026-08-04_jbb-llama2-chat-direction")
+    config_path = Path("/root/active_steering_vectors/configs/jbb_llama2_chat.yaml")
+    cfg = yaml.safe_load(config_path.read_text())
+    cfg["output_dir"] = str(run_dir)
+    run_dir.mkdir(parents=True, exist_ok=True)
+    resolved = run_dir / "resolved_config.yaml"
+    resolved.write_text(yaml.safe_dump(cfg, sort_keys=True))
+
+    previous = signal.getsignal(signal.SIGTERM)
+    signal.signal(signal.SIGTERM, lambda *_: (_ for _ in ()).throw(KeyboardInterrupt))
+    try:
+        return run(resolved, run_mode=run_mode, checkpoint_callback=outputs.commit)
+    except KeyboardInterrupt:
+        checkpoint_path = run_dir / "checkpoint.json"
+        checkpoint = {"status": "stopped", "stage": "interrupted"}
+        if checkpoint_path.exists():
+            checkpoint.update(__import__("json").loads(checkpoint_path.read_text()))
+            checkpoint["status"] = "stopped"
+        write_json(checkpoint_path, checkpoint)
+        outputs.commit()
+        raise
+    finally:
+        signal.signal(signal.SIGTERM, previous)
 
 
 @app.function(image=image, gpu="A100", timeout=14400,
@@ -325,7 +366,7 @@ def run_official_gcg_single():
 @app.function(image=reference_image, gpu="A100-80GB", timeout=7200,
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
-def evaluate_official_gcg_suffix():
+def evaluate_official_gcg_suffix(config_filename: str = "official_gcg_suffix_eval_25.yaml"):
     """Evaluate the best saved official GCG control on held-out AdvBench rows."""
     import copy
     import json
@@ -340,7 +381,7 @@ def evaluate_official_gcg_suffix():
     from tqdm.auto import tqdm
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
-    config = yaml.safe_load(Path("/root/jailbreaks/configs/official_gcg_suffix_eval_25.yaml").read_text())
+    config = yaml.safe_load((Path("/root/jailbreaks/configs") / config_filename).read_text())
     source = Path("/outputs/jailbreaks/runs") / config["source_run"] / config["source_log"]
     source_data = json.loads(source.read_text())
     best_index = min(range(len(source_data["losses"])), key=source_data["losses"].__getitem__)
@@ -665,6 +706,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
     if task == "stage_a":
         print(run_stage_a.remote(prompt_index, run_mode or None))
         return
+    if task == "jbb_steering":
+        print(run_jbb_steering.remote(run_mode or "fresh"))
+        return
     if task == "stage_b_small":
         print(run_stage_b_small_scale.remote())
         return
@@ -694,6 +738,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         return
     if task == "official_gcg_suffix_eval":
         print(evaluate_official_gcg_suffix.remote())
+        return
+    if task == "official_gcg_suffix_eval_prior":
+        print(evaluate_official_gcg_suffix.remote("official_gcg_suffix_eval_25_prior.yaml"))
         return
     if task == "official_gcg_universal_5":
         print(run_official_gcg_universal_5.remote())
