@@ -30,6 +30,8 @@ image = (
                    ignore=["**/__pycache__/**", "*.pt"])
     .add_local_dir("jailbreaks", "/root/jailbreaks",
                    ignore=["**/__pycache__/**", "outputs/**", "*.png"])
+    .add_local_dir("claude_legacy/jailbreaks", "/root/claude_legacy/jailbreaks",
+                   ignore=["**/__pycache__/**", "outputs/**", "*.png"])
     .add_local_dir("claude_legacy/configs", "/root/configs")
 )
 
@@ -108,6 +110,35 @@ def run_stage_a(prompt_index: int = 0, run_mode: str | None = None):
         signal.signal(signal.SIGTERM, previous_handler)
     outputs.commit()
     return result
+
+
+@app.function(image=image, gpu="A100", timeout=14400,
+              secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+              volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
+def run_stage_b_small_scale():
+    """Run the controlled small-scale AdvBench GCG loss/ASR check."""
+    import os
+    import signal
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, "/root")
+    os.chdir("/root")
+    from jailbreaks.gcg_small_scale import run
+
+    previous_handler = signal.getsignal(signal.SIGTERM)
+
+    def stop_at_checkpoint(_signum, _frame) -> None:
+        raise KeyboardInterrupt
+
+    signal.signal(signal.SIGTERM, stop_at_checkpoint)
+    try:
+        return run(
+            Path("/root/jailbreaks/configs/stage_b_small_scale_advbench.yaml"),
+            Path("/outputs"), checkpoint_callback=outputs.commit,
+        )
+    finally:
+        signal.signal(signal.SIGTERM, previous_handler)
 
 
 @app.function(image=image, gpu="A100", timeout=900,
@@ -293,6 +324,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         return
     if task == "stage_a":
         print(run_stage_a.remote(prompt_index, run_mode or None))
+        return
+    if task == "stage_b_small":
+        print(run_stage_b_small_scale.remote())
         return
     if task == "jbgcg":
         ds = [d for d in datasets.split(",") if d.strip()]
