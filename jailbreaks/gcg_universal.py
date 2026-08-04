@@ -1,7 +1,7 @@
 """Resumable universal GCG replication: one suffix optimized across AdvBench goals."""
 from __future__ import annotations
 
-import argparse, hashlib, json, os, signal, time
+import argparse, hashlib, json, os, shutil, signal, time
 from pathlib import Path
 from typing import Any, Callable
 
@@ -41,6 +41,49 @@ def _rate(flags: list[bool]) -> float:
     return sum(flags) / len(flags) if flags else 0.0
 
 
+def audit(config_path: Path, output_base: Path,
+          commit: Callable[[], None] | None = None) -> dict[str, Any]:
+    """Run the Stage C tokenization, gradient, and batching preflight."""
+    cfg = yaml.safe_load(config_path.read_text())
+    required = {"stage": "stage_c_implementation_audit", "dataset": "advbench",
+                "suffix_length": 20, "top_k": 256, "candidate_batch_size": 512}
+    if not isinstance(cfg, dict) or any(cfg.get(key) != value for key, value in required.items()):
+        raise ValueError("invalid Stage C implementation-audit configuration")
+    paths = run_paths(cfg, output_base)
+    records = load("advbench", n=1, seed=cfg["seed"])
+    model, tokenizer, device = load_model(cfg)
+    attack = CheckpointedGCG(
+        model, tokenizer,
+        GCGConfig(suffix_len=cfg["suffix_length"], steps=1, topk=cfg["top_k"],
+                  search_batch=cfg["candidate_batch_size"], eval_chunk=cfg["evaluation_chunk_size"],
+                  seed=cfg["seed"]),
+    )
+    checks = attack.audit_invariants(records[0]["goal"], records[0]["target"])
+    checks["passed"] = (
+        checks["canonical_generation_ids_match"]
+        and checks["candidates_change_one_coordinate"]
+        and checks["suffix_roundtrips"]
+        and checks["model_weight_gradients_absent"]
+        and checks["target_loss_batch_serial_max_abs_difference"] < 2e-3
+    )
+    result = {"status": "complete" if checks["passed"] else "failed", "metadata": {
+        "model_id": cfg["model_id"], "device": device, "config_sha256": hashlib.sha256(config_path.read_bytes()).hexdigest(),
+    }, "checks": checks}
+    paths["directory"].mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(config_path, paths["directory"] / "config.yaml")
+    _write(paths["result"], result); _write(paths["checkpoint"], result); _write(paths["progress"], result)
+    paths["summary"].write_text(
+        "# Stage C implementation audit\n\n"
+        f"Status: {result['status']}\n\n"
+        + "\n".join(f"- {key}: {value}" for key, value in checks.items()) + "\n"
+    )
+    if commit:
+        commit()
+    if not checks["passed"]:
+        raise AssertionError(f"Stage C implementation audit failed: {checks}")
+    return result
+
+
 def run(config_path: Path, output_base: Path, commit: Callable[[], None] | None = None,
         run_mode: str | None = None) -> dict[str, Any]:
     cfg = read_config(config_path)
@@ -66,9 +109,15 @@ def run(config_path: Path, output_base: Path, commit: Callable[[], None] | None 
         suffix = torch.tensor(old["suffix_ids"], device=device, dtype=torch.long)
         generator.set_state(torch.tensor(old["generator_state"], dtype=torch.uint8))
         history, start, active = old["loss_history"], old["next_step"], old["active_goals"]
+        best_suffix = torch.tensor(old.get("best_suffix_ids", old["suffix_ids"]), device=device, dtype=torch.long)
+        best_loss = float(old.get("best_loss", min(history) if history else float("inf")))
     else:
         suffix, history, start, active = attack._init_suffix(), [], 0, 1
+        best_suffix, best_loss = suffix.clone(), float("inf")
     started = time.monotonic()
+    paths["directory"].mkdir(parents=True, exist_ok=True)
+    if not (paths["directory"] / "config.yaml").exists():
+        shutil.copyfile(config_path, paths["directory"] / "config.yaml")
 
     def losses(control: torch.Tensor, count: int) -> torch.Tensor:
         return torch.stack([attack._eval(control.unsqueeze(0), *layouts[i])[0] for i in range(count)])
@@ -76,6 +125,7 @@ def run(config_path: Path, output_base: Path, commit: Callable[[], None] | None 
     def save(status: str, metric: dict[str, Any] | None = None) -> None:
         payload = {"status": status, "config_sha256": fingerprint, "next_step": start,
                    "active_goals": active, "suffix_ids": suffix.tolist(), "loss_history": history,
+                   "best_suffix_ids": best_suffix.tolist(), "best_loss": best_loss,
                    "generator_state": generator.get_state().cpu().tolist(), "latest_metric": metric,
                    "elapsed_seconds": round(time.monotonic() - started, 1)}
         _write(paths["checkpoint"], payload); _write(paths["progress"], payload)
@@ -92,14 +142,19 @@ def run(config_path: Path, output_base: Path, commit: Callable[[], None] | None 
             for layout in layouts[:active]:
                 candidate_losses += attack._eval(candidates, *layout)
             candidate_losses /= active
-            suffix = candidates[int(candidate_losses.argmin())].clone()
-            mean_loss = float(candidate_losses.min())
-            history.append(mean_loss); start = step + 1
+            candidate_loss, candidate_index = float(candidate_losses.min()), int(candidate_losses.argmin())
+            current_loss = float(losses(suffix, active).mean())
+            if candidate_loss < current_loss:
+                suffix, current_loss = candidates[candidate_index].clone(), candidate_loss
+            if current_loss < best_loss:
+                best_suffix, best_loss = suffix.clone(), current_loss
+            history.append(current_loss); start = step + 1
             active_losses = losses(suffix, active)
             if cfg["progressive_goals"] and active < len(train) and bool(torch.all(active_losses < cfg["success_loss_threshold"])):
                 active += 1
             metric = {"type": "universal_gcg_progress", "step": start, "total_steps": cfg["steps"],
-                      "active_goals": active, "mean_loss": mean_loss,
+                      "active_goals": active, "mean_loss": current_loss,
+                      "best_loss": best_loss,
                       "max_active_loss": float(active_losses.max())}
             if start % cfg["progress_every"] == 0 or start == cfg["steps"]:
                 print("METRIC " + json.dumps(metric, sort_keys=True), flush=True)
@@ -107,6 +162,8 @@ def run(config_path: Path, output_base: Path, commit: Callable[[], None] | None 
                 save("running", metric)
     except KeyboardInterrupt:
         save("stopped"); raise
+
+    suffix = best_suffix
 
     def evaluate(rows: list[dict[str, str]]) -> tuple[list[bool], list[dict[str, Any]]]:
         flags, artifacts = [], []
@@ -125,7 +182,8 @@ def run(config_path: Path, output_base: Path, commit: Callable[[], None] | None 
     result = {"status": "complete", "config_sha256": fingerprint,
               "metadata": {"model_id": cfg["model_id"], "device": device, "active_goals_final": active,
                            "steps": cfg["steps"], "train_behaviors": len(train), "test_behaviors": len(test)},
-              "optimization": {"initial_mean_loss": history[0], "final_mean_loss": history[-1], "loss_history": history},
+              "optimization": {"initial_mean_loss": history[0], "final_mean_loss": history[-1],
+                               "best_mean_loss": best_loss, "loss_history": history},
               "suffix": {"token_ids": suffix.tolist(), "decoded": tokenizer.decode(suffix.tolist())},
               "asr": {"train_baseline": _rate(train_base), "train_gcg": _rate(train_attack),
                       "test_baseline": _rate(test_base), "test_gcg": _rate(test_attack)},

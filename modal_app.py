@@ -178,6 +178,19 @@ def run_stage_c_single(run_mode: str | None = None):
         signal.signal(signal.SIGTERM, previous)
 
 
+@app.function(image=image, gpu="A100", timeout=1800,
+              secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+              volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
+def run_stage_c_audit():
+    """Validate the active Llama-2 GCG implementation before optimization."""
+    import os, sys
+    from pathlib import Path
+    sys.path.insert(0, "/root"); os.chdir("/root")
+    from jailbreaks.gcg_universal import audit
+    return audit(Path("/root/jailbreaks/configs/stage_c_implementation_audit.yaml"),
+                 Path("/outputs"), outputs.commit)
+
+
 @app.function(image=image, gpu="A100", timeout=7200,
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
@@ -388,6 +401,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         return
     if task == "stage_c_single":
         print(run_stage_c_single.remote(run_mode or None))
+        return
+    if task == "stage_c_audit":
+        print(run_stage_c_audit.remote())
         return
     if task == "stage_d_suffix_asr":
         print(run_stage_d_suffix_asr.remote())

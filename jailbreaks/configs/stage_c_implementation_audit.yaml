@@ -1,0 +1,15 @@
+stage: stage_c_implementation_audit
+model_id: meta-llama/Llama-2-7b-chat-hf
+revision: main
+device: auto
+dtype: float16
+seed: 0
+dataset: advbench
+suffix_length: 20
+top_k: 256
+candidate_batch_size: 512
+evaluation_chunk_size: 128
+run:
+  description: stage-c-llama2-gcg-implementation-audit
+  output_root: jailbreaks/runs
+  date: auto

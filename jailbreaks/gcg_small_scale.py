@@ -91,6 +91,67 @@ def load_model(config: dict[str, Any]):
 class CheckpointedGCG(GCG):
     """The legacy paper-matched GCG core with restartable per-step state."""
 
+    def _sample(self, suffix: torch.Tensor, grad: torch.Tensor,
+                generator: torch.Generator) -> torch.Tensor:
+        """Sample only tokenizer-stable, non-special, one-token mutations.
+
+        The reference implementation filters decoded controls that equal the
+        current control or change token length. Keeping this invariant in token
+        space prevents no-op/special-token candidates from silently consuming a
+        GCG step. Valid candidates are repeated to retain the configured batch
+        size, matching the reference's post-filter batching behavior.
+        """
+        top_ids = (-grad).topk(self.cfg.topk, dim=1).indices
+        batch_size = self.cfg.search_batch
+        positions = torch.randint(0, suffix.numel(), (batch_size,), device=self.device, generator=generator)
+        choices = torch.randint(0, self.cfg.topk, (batch_size,), device=self.device, generator=generator)
+        candidates = suffix.unsqueeze(0).repeat(batch_size, 1)
+        candidates[torch.arange(batch_size, device=self.device), positions] = top_ids[positions, choices]
+
+        special_ids = set(self.tok.all_special_ids)
+        valid: list[torch.Tensor] = []
+        for candidate in candidates:
+            if int((candidate != suffix).sum()) != 1:
+                continue
+            if any(int(token) in special_ids for token in candidate):
+                continue
+            decoded = self.tok.decode(candidate, skip_special_tokens=False)
+            encoded = self.tok(decoded, add_special_tokens=False).input_ids
+            if encoded == candidate.tolist():
+                valid.append(candidate)
+        if not valid:
+            raise RuntimeError("GCG sampled no valid one-coordinate candidates")
+        valid.extend([valid[-1]] * (batch_size - len(valid)))
+        result = torch.stack(valid)
+        if not torch.all((result != suffix.unsqueeze(0)).sum(dim=1) == 1):
+            raise AssertionError("candidate batch contains a non-mutation")
+        return result
+
+    def audit_invariants(self, goal: str, target: str) -> dict[str, Any]:
+        """Validate the exact token-level GCG path used by Stage C."""
+        suffix = self._init_suffix()
+        before, after, target_ids = self._layout(goal, target)
+        generation_ids = torch.cat([before, suffix, after])
+        canonical_ids = self.tok.apply_chat_template(
+            [{"role": "user", "content": goal + " " + self.tok.decode(suffix)}],
+            add_generation_prompt=True, return_tensors="pt",
+        )[0].to(self.device)
+        grad, _ = self._token_gradients(suffix, before, after, target_ids)
+        candidate_batch = self._sample(suffix, grad, torch.Generator(device=self.device).manual_seed(self.cfg.seed))
+        batched = self._eval(candidate_batch[:8], before, after, target_ids)
+        serial = torch.cat([self._eval(row.unsqueeze(0), before, after, target_ids) for row in candidate_batch[:8]])
+        return {
+            "canonical_generation_ids_match": bool(torch.equal(generation_ids, canonical_ids)),
+            "candidate_count": int(candidate_batch.shape[0]),
+            "candidates_change_one_coordinate": bool(torch.all(
+                (candidate_batch != suffix.unsqueeze(0)).sum(dim=1) == 1
+            )),
+            "suffix_roundtrips": self.tok(self.tok.decode(suffix), add_special_tokens=False).input_ids == suffix.tolist(),
+            "target_loss_batch_serial_max_abs_difference": float((batched - serial).abs().max()),
+            "model_weight_gradients_absent": not any(parameter.grad is not None for parameter in self.m.parameters()),
+            "target_token_count": int(target_ids.numel()),
+        }
+
     def optimize(
         self,
         goal: str,
