@@ -178,6 +178,24 @@ def run_stage_c_single(run_mode: str | None = None):
         signal.signal(signal.SIGTERM, previous)
 
 
+@app.function(image=image, gpu="A100", timeout=7200,
+              secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+              volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
+def run_stage_d_suffix_asr():
+    """Evaluate the saved single-behavior suffix on 25 unseen AdvBench rows."""
+    import os, signal, sys
+    from pathlib import Path
+    sys.path.insert(0, "/root"); os.chdir("/root")
+    from jailbreaks.evaluate_suffix_asr import run
+    previous = signal.getsignal(signal.SIGTERM)
+    signal.signal(signal.SIGTERM, lambda *_: (_ for _ in ()).throw(KeyboardInterrupt))
+    try:
+        return run(Path("/root/jailbreaks/configs/stage_d_suffix_asr_25_advbench.yaml"),
+                   Path("/outputs"), outputs.commit)
+    finally:
+        signal.signal(signal.SIGTERM, previous)
+
+
 @app.function(image=image, gpu="A100", timeout=900,
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/root/.cache/huggingface": hf_cache})
@@ -370,6 +388,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         return
     if task == "stage_c_single":
         print(run_stage_c_single.remote(run_mode or None))
+        return
+    if task == "stage_d_suffix_asr":
+        print(run_stage_d_suffix_asr.remote())
         return
     if task == "jbgcg":
         ds = [d for d in datasets.split(",") if d.strip()]
