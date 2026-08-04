@@ -25,7 +25,7 @@ from tqdm.auto import tqdm
 from claude_legacy.jailbreaks.gcg_bench.asr import is_success
 from claude_legacy.jailbreaks.gcg_bench.benchmark import LLAMA2_CHAT_TEMPLATE, resolve_device
 from claude_legacy.jailbreaks.gcg_bench.datasets_hf import load
-from claude_legacy.jailbreaks.gcg_bench.gcg_zou import GCG, GCGConfig, GCGResult
+from claude_legacy.jailbreaks.gcg_bench.gcg_zou import GCG, GCGConfig, GCGResult, SENTINEL
 
 
 DTYPES = {"float16": torch.float16, "bfloat16": torch.bfloat16, "float32": torch.float32}
@@ -90,6 +90,19 @@ def load_model(config: dict[str, Any]):
 
 class CheckpointedGCG(GCG):
     """The legacy paper-matched GCG core with restartable per-step state."""
+
+    def _layout(self, goal: str, target: str):
+        """Place the control span at the canonical Llama-2 template boundary."""
+        rendered = self.tok.apply_chat_template(
+            [{"role": "user", "content": goal + SENTINEL}],
+            tokenize=False, add_generation_prompt=True,
+        )
+        before_text, after_text = rendered.split(SENTINEL)
+        encode = lambda text: self.tok(text, add_special_tokens=False).input_ids
+        before = torch.tensor(encode(before_text), device=self.device)
+        after = torch.tensor(encode(after_text), device=self.device)
+        target_ids = torch.tensor(encode(" " + target.strip()), device=self.device)
+        return before, after, target_ids
 
     def _init_suffix(self) -> torch.Tensor:
         """Use the paper's tokenization-stable, space-separated control init."""
