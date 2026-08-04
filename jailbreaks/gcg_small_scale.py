@@ -158,6 +158,8 @@ class CheckpointedGCG(GCG):
             "constructed_generation_token_count": int(generation_ids.numel()),
             "canonical_generation_token_count": int(canonical_ids.numel()),
             "first_generation_token_mismatch": first_mismatch,
+            "constructed_tokens_near_boundary": generation_ids[max(0, (first_mismatch or 0) - 2):(first_mismatch or 0) + 4].tolist(),
+            "canonical_tokens_near_boundary": canonical_ids[max(0, (first_mismatch or 0) - 2):(first_mismatch or 0) + 4].tolist(),
             "candidate_count": int(candidate_batch.shape[0]),
             "candidates_change_one_coordinate": bool(torch.all(
                 (candidate_batch != suffix.unsqueeze(0)).sum(dim=1) == 1
