@@ -1,0 +1,17 @@
+{
+  "status": "stopped",
+  "stage": "extracting",
+  "next_example": 100,
+  "completed_scales": [],
+  "config_fingerprint": "9333d13aa653e9339168502576d9e5f00230f31f083a4d8a8c48b597867d56d2",
+  "latest_metric": {
+    "examples_extracted": 100,
+    "total_examples": 200,
+    "elapsed_sec": 67.35,
+    "conversations_per_sec": 1.485,
+    "class_counts": {
+      "benign": 100,
+      "jailbreak": 0
+    }
+  }
+}

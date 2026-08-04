@@ -1,0 +1,22 @@
+dataset: JailbreakBench/JBB-Behaviors
+dataset_config: behaviors
+examples_per_class: 100
+generation_max_new_tokens: 64
+generation_scales:
+- 0
+- 6
+generation_seed: 0
+generation_temperature: 0.5
+model_id: meta-llama/Llama-2-7b-chat-hf
+output_dir: /outputs/steering_vectors/runs/2026-08-04_jbb-llama2-chat-plus6-generations
+seed: 0
+sweep_scales:
+- -4
+- -2
+- -1
+- 0
+- 1
+- 2
+- 4
+- 6
+test_fraction: 0.2

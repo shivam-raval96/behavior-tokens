@@ -1,0 +1,13 @@
+{
+  "stage": "extracting",
+  "latest_metric": {
+    "examples_extracted": 100,
+    "total_examples": 200,
+    "elapsed_sec": 67.35,
+    "conversations_per_sec": 1.485,
+    "class_counts": {
+      "benign": 100,
+      "jailbreak": 0
+    }
+  }
+}
