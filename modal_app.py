@@ -196,6 +196,24 @@ def run_stage_c_single_v2():
         signal.signal(signal.SIGTERM, previous)
 
 
+@app.function(image=image, gpu="A100-80GB", timeout=7200,
+              secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+              volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
+def run_stage_c_single_v3():
+    """Run the audited GCG validation with reference-style exploration."""
+    import os, signal, sys
+    from pathlib import Path
+    sys.path.insert(0, "/root"); os.chdir("/root")
+    from jailbreaks.gcg_universal import run
+    previous = signal.getsignal(signal.SIGTERM)
+    signal.signal(signal.SIGTERM, lambda *_: (_ for _ in ()).throw(KeyboardInterrupt))
+    try:
+        return run(Path("/root/jailbreaks/configs/stage_c_single_behavior_v3_llama2_7b.yaml"),
+                   Path("/outputs"), outputs.commit)
+    finally:
+        signal.signal(signal.SIGTERM, previous)
+
+
 @app.function(image=image, gpu="A100", timeout=1800,
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
@@ -422,6 +440,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         return
     if task == "stage_c_single_v2":
         print(run_stage_c_single_v2.remote())
+        return
+    if task == "stage_c_single_v3":
+        print(run_stage_c_single_v3.remote())
         return
     if task == "stage_c_audit":
         print(run_stage_c_audit.remote())

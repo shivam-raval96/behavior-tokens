@@ -144,9 +144,10 @@ def run(config_path: Path, output_base: Path, commit: Callable[[], None] | None 
                 candidate_losses += attack._eval(candidates, *layout)
             candidate_losses /= active
             candidate_loss, candidate_index = float(candidate_losses.min()), int(candidate_losses.argmin())
-            current_loss = float(losses(suffix, active).mean())
-            if candidate_loss < current_loss:
-                suffix, current_loss = candidates[candidate_index].clone(), candidate_loss
+            # Match the reference GCG transition rule: explore the lowest-loss
+            # sampled candidate even when it is temporarily worse, while the
+            # separately tracked best control is used for final evaluation.
+            suffix, current_loss = candidates[candidate_index].clone(), candidate_loss
             if current_loss < best_loss:
                 best_suffix, best_loss = suffix.clone(), current_loss
             history.append(current_loss); start = step + 1
