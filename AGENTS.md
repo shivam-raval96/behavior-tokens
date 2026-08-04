@@ -55,6 +55,13 @@ name every material difference from the prior trial (including target prefixes,
 random seed/data ordering, evaluation rows, and metric). Do not launch until
 this card has been stated, unless the user explicitly asks to skip it.
 
+The card must be complete enough to approve: include sample size/selection,
+generation settings, every steering/optimizer setting, required source
+artifacts, output files/plots, and the exact evaluation metric. After presenting
+it, wait for an explicit user green signal containing **"proceed"** before any
+submission. Do not treat “create,” “prepare,” “plan,” or “start” said before
+the completed card as launch authorization.
+
 Planning, implementing, committing, configuring, and presenting an experiment
 card never authorize a launch. After the plan/card is complete, wait for the
 user's explicit instruction to **proceed** before submitting any new local or
