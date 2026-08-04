@@ -134,7 +134,7 @@ def run_stage_a(prompt_index: int = 0, run_mode: str | None = None):
               retries=modal.Retries(max_retries=1),
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
-def run_jbb_steering(run_mode: str = "fresh"):
+def run_jbb_steering(run_mode: str = "fresh", variant: str = "base"):
     """Extract/resume a durable JBB jailbreak activation direction."""
     import signal
     import sys
@@ -144,8 +144,13 @@ def run_jbb_steering(run_mode: str = "fresh"):
     sys.path.insert(0, "/root")
     from active_steering_vectors.jbb_steering import run, write_json
 
-    run_dir = Path("/outputs/steering_vectors/runs/2026-08-04_jbb-llama2-chat-direction")
-    config_path = Path("/root/active_steering_vectors/configs/jbb_llama2_chat.yaml")
+    variants = {
+        "base": ("2026-08-04_jbb-llama2-chat-direction", "jbb_llama2_chat.yaml"),
+        "plus6_generations": ("2026-08-04_jbb-llama2-chat-plus6-generations", "jbb_llama2_chat_plus6_generations.yaml"),
+    }
+    run_id, config_name = variants[variant]
+    run_dir = Path("/outputs/steering_vectors/runs") / run_id
+    config_path = Path("/root/active_steering_vectors/configs") / config_name
     cfg = yaml.safe_load(config_path.read_text())
     cfg["output_dir"] = str(run_dir)
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -707,7 +712,7 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         print(run_stage_a.remote(prompt_index, run_mode or None))
         return
     if task == "jbb_steering":
-        print(run_jbb_steering.remote(run_mode or "fresh"))
+        print(run_jbb_steering.remote(run_mode or "fresh", "plus6_generations"))
         return
     if task == "stage_b_small":
         print(run_stage_b_small_scale.remote())

@@ -1,0 +1,14 @@
+model_id: meta-llama/Llama-2-7b-chat-hf
+dataset: JailbreakBench/JBB-Behaviors
+dataset_config: behaviors
+examples_per_class: 100
+test_fraction: 0.2
+seed: 0
+sweep_scales: [-4, -2, -1, 0, 1, 2, 4, 6]
+# Save deterministic 64-token continuations for every held-out prompt at the
+# unsteered baseline and the requested +6 jailbreak direction.
+generation_scales: [0, 6]
+generation_max_new_tokens: 64
+generation_temperature: 0.5
+generation_seed: 0
+output_dir: steering_vectors/runs/jbb-llama2-chat-plus6-generations

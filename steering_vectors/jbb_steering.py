@@ -137,6 +137,58 @@ def steered_layer_activations(model, tokenizer, examples, layer: int, direction:
         handle.remove()
 
 
+@torch.no_grad()
+def generate_steered_responses(model, tokenizer, examples, layer: int, direction: np.ndarray, scales: list[float],
+                               max_new_tokens: int, temperature: float, generation_seed: int, output_path: Path, checkpoint: dict, checkpoint_path: Path,
+                               progress_path: Path, checkpoint_callback=lambda: None) -> list[dict]:
+    """Generate and persist deterministic held-out responses at each steering scale."""
+    existing: set[tuple[float, int, int]] = set()
+    if output_path.exists():
+        for line in output_path.read_text().splitlines():
+            row = json.loads(line)
+            existing.add((float(row["scale"]), int(row["label"]), int(row["dataset_index"])))
+    total = len(scales) * len(examples)
+    completed = len(existing)
+    started = time.monotonic()
+    with output_path.open("a") as stream:
+        for scale in scales:
+            vector = torch.tensor(direction, device=model.device, dtype=model.dtype) * float(scale)
+
+            def add_vector(_module, _inputs, output):
+                hidden, *rest = output if isinstance(output, tuple) else (output,)
+                hidden = hidden + vector
+                return (hidden, *rest) if isinstance(output, tuple) else hidden
+
+            handle = model.model.layers[layer - 1].register_forward_hook(add_vector)
+            try:
+                for goal, _target, label, dataset_index in tqdm(examples, desc=f"Generating scale {scale:g}", unit="conversation", leave=False):
+                    key = (float(scale), label, dataset_index)
+                    if key in existing:
+                        continue
+                    input_ids = tokenizer.apply_chat_template([{"role": "user", "content": goal}], tokenize=True,
+                                                               add_generation_prompt=True, return_tensors="pt").to(model.device)
+                    generator = torch.Generator(device=model.device).manual_seed(generation_seed + int((scale + 10) * 100_000) + label * 1_000 + dataset_index)
+                    generated = model.generate(input_ids, do_sample=True, temperature=temperature, max_new_tokens=max_new_tokens,
+                                               pad_token_id=tokenizer.eos_token_id, use_cache=True, generator=generator)
+                    response_ids = generated[0, input_ids.shape[1]:]
+                    record = {"scale": float(scale), "dataset_index": dataset_index, "label": label,
+                              "label_name": "jailbreak" if label else "benign", "goal": goal,
+                              "max_new_tokens": max_new_tokens, "temperature": temperature,
+                              "response": tokenizer.decode(response_ids, skip_special_tokens=True)}
+                    stream.write(json.dumps(record) + "\n"); stream.flush(); os.fsync(stream.fileno())
+                    existing.add(key); completed += 1
+                    if completed % 5 == 0:
+                        metric = {"generated": completed, "total_generations": total, "scale": float(scale),
+                                  "elapsed_sec": round(time.monotonic() - started, 2), "max_new_tokens": max_new_tokens, "temperature": temperature}
+                        checkpoint.update({"stage": "generating", "completed_generations": completed, "latest_metric": metric})
+                        write_json(checkpoint_path, checkpoint); write_json(progress_path, {"stage": "generating", "latest_metric": metric})
+                        print(json.dumps({"event": "progress", "stage": "generating", **metric}), flush=True)
+                        checkpoint_callback()
+            finally:
+                handle.remove()
+    return len(existing)
+
+
 def run(config_path: Path, run_mode: str = "fresh", checkpoint_callback=lambda: None) -> dict:
     cfg = yaml.safe_load(config_path.read_text())
     out = Path(cfg["output_dir"]); out.mkdir(parents=True, exist_ok=True)
@@ -145,7 +197,7 @@ def run(config_path: Path, run_mode: str = "fresh", checkpoint_callback=lambda: 
     if run_mode not in {"fresh", "resume"}:
         raise ValueError("run_mode must be fresh or resume")
     if run_mode == "fresh":
-        for path in (checkpoint_path, state_path, out / "results.json", out / "RESULTS.md"):
+        for path in (checkpoint_path, state_path, out / "results.json", out / "RESULTS.md", out / "generations.jsonl"):
             path.unlink(missing_ok=True)
         checkpoint = {"status": "running", "stage": "starting", "next_example": 0,
                       "completed_scales": [], "config_fingerprint": fingerprint}
@@ -207,12 +259,21 @@ def run(config_path: Path, run_mode: str = "fresh", checkpoint_callback=lambda: 
     np.save(out / "benign_mean.npy", benign_mean)
     np.save(out / "jailbreak_mean.npy", jailbreak_mean)
     np.save(out / "steering_vector.npy", direction)
+    heldout_examples = [examples[i] for i in test_idx]
+    generation_scales = [float(scale) for scale in cfg.get("generation_scales", [])]
+    generation_count = 0
+    if generation_scales:
+        generation_count = generate_steered_responses(model, tokenizer, heldout_examples, best_layer, direction, generation_scales,
+                                                      cfg["generation_max_new_tokens"], cfg["generation_temperature"], cfg["generation_seed"], out / "generations.jsonl", checkpoint,
+                                                      checkpoint_path, out / "progress.json", checkpoint_callback)
     result = {"config": cfg, "examples": len(examples), "class_counts": {"benign": int((y == 0).sum()), "jailbreak": int((y == 1).sum())}, "best_layer": best_layer,
               "layer_accuracy": scores, "best_layer_accuracy": scores[best_index], "sweep": sweep,
               "vector_path": "steering_vector.npy", "benign_mean_path": "benign_mean.npy", "jailbreak_mean_path": "jailbreak_mean.npy", "activation_position": "last non-special JBB target token",
-              "direction": "mean(jailbreak) - mean(benign)", "raw_direction_norm": raw_direction_norm}
+              "direction": "mean(jailbreak) - mean(benign)", "raw_direction_norm": raw_direction_norm,
+              "generation_scales": generation_scales, "generation_temperature": cfg.get("generation_temperature"), "generation_count": generation_count,
+              "generations_path": "generations.jsonl" if generation_scales else None}
     (out / "results.json").write_text(json.dumps(result, indent=2) + "\n")
-    (out / "RESULTS.md").write_text("# Jailbreak steering-vector results\n\n" + f"- Benign conversations: {int((y == 0).sum())}\n- Jailbreak conversations: {int((y == 1).sum())}\n- Best layer: {best_layer}\n- Probe accuracy: {scores[best_index]:.4f}\n")
+    (out / "RESULTS.md").write_text("# Jailbreak steering-vector results\n\n" + f"- Benign conversations: {int((y == 0).sum())}\n- Jailbreak conversations: {int((y == 1).sum())}\n- Best layer: {best_layer}\n- Probe accuracy: {scores[best_index]:.4f}\n- Generated held-out responses: {generation_count}\n")
     checkpoint.update({"status": "completed", "stage": "completed", "latest_metric": {"best_layer_accuracy": scores[best_index]}})
     write_json(checkpoint_path, checkpoint); write_json(out / "progress.json", {"stage": "completed", "best_layer": best_layer, "best_layer_accuracy": scores[best_index]}); checkpoint_callback()
     return result
