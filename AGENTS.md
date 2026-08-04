@@ -42,6 +42,17 @@ the paired baseline needed to interpret the change.
 
 ## Experiment progress
 
+## Experiment preflight
+
+Before launching any experiment, first provide a concise experiment card in the
+task. It must state: the objective; model and dataset/split; the exact source
+artifact or configuration; optimizer/evaluation hyperparameters; success
+metric; checkpoint/progress cadence; expected duration/cost; and whether it is
+a new trial, a continuation, or a comparison. For a comparison, explicitly
+name every material difference from the prior trial (including target prefixes,
+random seed/data ordering, evaluation rows, and metric). Do not launch until
+this card has been stated, unless the user explicitly asks to skip it.
+
 Every experiment must expose live progress: use `tqdm` for bounded loops, print
 structured metrics at a configurable interval, and write a partial result
 checkpoint. When an experiment runs remotely, monitor those metrics and report
