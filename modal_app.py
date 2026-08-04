@@ -131,6 +131,37 @@ def run_stage_a(prompt_index: int = 0, run_mode: str | None = None):
 
 
 @app.function(image=image, gpu="A100", timeout=7200,
+              secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+              volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
+def run_stage_a_llama32(prompt_index: int = 0, run_mode: str | None = None):
+    """Validate the Llama-3.2 chat template with the benign Stage A protocol."""
+    import os
+    import signal
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, "/root")
+    os.chdir("/root")
+    from jailbreaks.gcg_stage_a import read_experiment, resolve_run_paths, run_experiment
+
+    config_path = Path("/root/jailbreaks/configs/stage_a_benign_llama32_1b_instruct.yaml")
+    paths = resolve_run_paths(read_experiment(config_path), output_base=Path("/outputs"))
+    previous_handler = signal.getsignal(signal.SIGTERM)
+    signal.signal(signal.SIGTERM, lambda *_: (_ for _ in ()).throw(KeyboardInterrupt))
+    try:
+        result = run_experiment(
+            config_path, prompt_index,
+            output=paths["result"], progress_output=paths["progress"],
+            checkpoint_output=paths["checkpoint"], run_mode=run_mode,
+            checkpoint_callback=outputs.commit,
+        )
+    finally:
+        signal.signal(signal.SIGTERM, previous_handler)
+    outputs.commit()
+    return result
+
+
+@app.function(image=image, gpu="A100", timeout=7200,
               retries=modal.Retries(max_retries=1),
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
@@ -294,6 +325,24 @@ def run_stage_c_five_resumable(run_mode: str | None = None):
     signal.signal(signal.SIGTERM, lambda *_: (_ for _ in ()).throw(KeyboardInterrupt))
     try:
         return run(Path("/root/jailbreaks/configs/stage_c_five_behavior_resumable.yaml"), Path("/outputs"), outputs.commit, run_mode=run_mode)
+    finally:
+        signal.signal(signal.SIGTERM, previous)
+
+
+@app.function(image=image, gpu="A100-80GB", timeout=43200,
+              secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+              volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
+def run_llama32_gcg_5train_fresh50(run_mode: str | None = None):
+    """Run/resume the fixed-split Llama-3.2 1B universal GCG experiment."""
+    import os, signal, sys
+    from pathlib import Path
+    sys.path.insert(0, "/root"); os.chdir("/root")
+    from jailbreaks.gcg_universal import run
+    previous = signal.getsignal(signal.SIGTERM)
+    signal.signal(signal.SIGTERM, lambda *_: (_ for _ in ()).throw(KeyboardInterrupt))
+    try:
+        return run(Path("/root/jailbreaks/configs/llama32_1b_gcg_5train_fresh50.yaml"),
+                   Path("/outputs"), outputs.commit, run_mode=run_mode)
     finally:
         signal.signal(signal.SIGTERM, previous)
 
@@ -721,6 +770,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
     if task == "stage_a":
         print(run_stage_a.remote(prompt_index, run_mode or None))
         return
+    if task == "stage_a_llama32":
+        print(run_stage_a_llama32.remote(prompt_index, run_mode or None))
+        return
     if task == "jbb_steering":
         print(run_jbb_steering.remote(run_mode or "fresh", "reuse_dense_asr"))
         return
@@ -741,6 +793,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         return
     if task == "stage_c_five_resumable":
         print(run_stage_c_five_resumable.remote(run_mode or None))
+        return
+    if task == "llama32_gcg_5train_fresh50":
+        print(run_llama32_gcg_5train_fresh50.remote(run_mode or None))
         return
     if task == "stage_c_audit":
         print(run_stage_c_audit.remote())
