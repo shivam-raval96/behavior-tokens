@@ -98,6 +98,7 @@ class CheckpointedGCG(GCG):
             tokenize=False, add_generation_prompt=True,
         )
         before_text, after_text = rendered.split(SENTINEL)
+        after_text = after_text.removeprefix(" ")
         encode = lambda text: self.tok(text, add_special_tokens=False).input_ids
         before = torch.tensor(encode(before_text), device=self.device)
         after = torch.tensor(encode(after_text), device=self.device)
@@ -157,6 +158,12 @@ class CheckpointedGCG(GCG):
             [{"role": "user", "content": goal + " " + self.tok.decode(suffix)}],
             add_generation_prompt=True, return_tensors="pt",
         )[0].to(self.device)
+        loss_ids = torch.cat([generation_ids, target_ids])
+        canonical_loss_ids = self.tok.apply_chat_template(
+            [{"role": "user", "content": goal + " " + self.tok.decode(suffix)},
+             {"role": "assistant", "content": target}],
+            add_generation_prompt=False, return_tensors="pt",
+        )[0].to(self.device)
         shared_length = min(generation_ids.numel(), canonical_ids.numel())
         differing = (generation_ids[:shared_length] != canonical_ids[:shared_length]).nonzero(as_tuple=False)
         first_mismatch = int(differing[0]) if differing.numel() else (
@@ -168,6 +175,7 @@ class CheckpointedGCG(GCG):
         serial = torch.cat([self._eval(row.unsqueeze(0), before, after, target_ids) for row in candidate_batch[:8]])
         return {
             "canonical_generation_ids_match": bool(torch.equal(generation_ids, canonical_ids)),
+            "canonical_loss_ids_match": bool(torch.equal(loss_ids, canonical_loss_ids[:loss_ids.numel()])),
             "constructed_generation_token_count": int(generation_ids.numel()),
             "canonical_generation_token_count": int(canonical_ids.numel()),
             "first_generation_token_mismatch": first_mismatch,

@@ -61,6 +61,7 @@ def audit(config_path: Path, output_base: Path,
     checks = attack.audit_invariants(records[0]["goal"], records[0]["target"])
     checks["passed"] = (
         checks["canonical_generation_ids_match"]
+        and checks["canonical_loss_ids_match"]
         and checks["candidates_change_one_coordinate"]
         and checks["suffix_roundtrips"]
         and checks["model_weight_gradients_absent"]
