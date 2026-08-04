@@ -399,7 +399,7 @@ def evaluate_official_gcg_suffix(config_filename: str = "official_gcg_suffix_eva
 
     import pandas as pd
     data = pd.read_csv(reference_root / "data/advbench/harmful_behaviors.csv")
-    evaluation_start = int(config.get("evaluation_start_index", int(config["exclude_optimized_behavior"])))
+    evaluation_start = int(config.get("evaluation_start_index", 1 if config.get("exclude_optimized_behavior") else 0))
     rows = data.iloc[evaluation_start:evaluation_start + config["evaluated_behaviors"]]
     if len(rows) != config["evaluated_behaviors"]:
         raise ValueError("evaluation range exceeds the available AdvBench rows")
