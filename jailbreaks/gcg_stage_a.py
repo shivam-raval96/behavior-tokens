@@ -143,12 +143,16 @@ class StageAValidator:
         return suffix
 
     def _auto_initial_suffix(self) -> torch.Tensor:
-        """Pick a deterministic, repeated token whose 5-token decode is stable."""
+        """Pick a deterministic printable, non-special token with a stable decode."""
+        special_ids = set(self.tokenizer.all_special_ids)
         for token_id in range(self.vocab_size):
+            if token_id in special_ids:
+                continue
             suffix = torch.full(
                 (self.config["suffix_length"],), token_id, device=self.device, dtype=torch.long
             )
-            if self.roundtrips(suffix):
+            decoded = self.tokenizer.decode(suffix.tolist(), clean_up_tokenization_spaces=False)
+            if decoded.strip() and decoded.isprintable() and self.roundtrips(suffix):
                 return suffix
         raise RuntimeError("could not find a tokenizer-stable initial suffix")
 
@@ -198,7 +202,11 @@ class StageAValidator:
         candidates[torch.arange(batch_size, device=self.device), positions] = top_ids[positions, choices]
         changed = (candidates != suffix.unsqueeze(0)).sum(dim=1)
         candidates = candidates[changed == 1]
-        stable = [row for row in candidates if self.roundtrips(row)]
+        special_ids = set(self.tokenizer.all_special_ids)
+        stable = [
+            row for row in candidates
+            if not any(int(token_id) in special_ids for token_id in row) and self.roundtrips(row)
+        ]
         if not stable:
             raise RuntimeError("no valid one-coordinate, tokenizer-stable candidates were sampled")
         candidates = torch.stack(stable)
