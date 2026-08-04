@@ -141,6 +141,23 @@ def run_stage_b_small_scale():
         signal.signal(signal.SIGTERM, previous_handler)
 
 
+@app.function(image=image, gpu="A100-80GB", timeout=86400,
+              secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+              volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
+def run_stage_c_universal():
+    """Run the resumable 25-train / 100-held-out universal GCG replication."""
+    import os, signal, sys
+    from pathlib import Path
+    sys.path.insert(0, "/root"); os.chdir("/root")
+    from jailbreaks.gcg_universal import run
+    previous = signal.getsignal(signal.SIGTERM)
+    signal.signal(signal.SIGTERM, lambda *_: (_ for _ in ()).throw(KeyboardInterrupt))
+    try:
+        return run(Path("/root/jailbreaks/configs/stage_c_universal_advbench_llama2_7b.yaml"), Path("/outputs"), outputs.commit)
+    finally:
+        signal.signal(signal.SIGTERM, previous)
+
+
 @app.function(image=image, gpu="A100", timeout=900,
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/root/.cache/huggingface": hf_cache})
@@ -327,6 +344,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         return
     if task == "stage_b_small":
         print(run_stage_b_small_scale.remote())
+        return
+    if task == "stage_c_universal":
+        print(run_stage_c_universal.remote())
         return
     if task == "jbgcg":
         ds = [d for d in datasets.split(",") if d.strip()]
