@@ -1,0 +1,101 @@
+{
+  "status": "complete",
+  "next_step": 30,
+  "total_steps": 30,
+  "prompt": "Name the primary color that is made by mixing red and blue.",
+  "target_prefix": "The answer is purple.",
+  "initial_suffix_token_ids": [
+    260,
+    260,
+    260,
+    260,
+    260
+  ],
+  "suffix_token_ids": [
+    1852,
+    5380,
+    4286,
+    25342,
+    13402
+  ],
+  "initial_loss": 2.85546875,
+  "current_loss": 1.189453125,
+  "loss_history": [
+    2.37109375,
+    2.37109375,
+    2.228515625,
+    2.228515625,
+    2.17578125,
+    2.17578125,
+    2.06640625,
+    1.8935546875,
+    1.697265625,
+    1.642578125,
+    1.6162109375,
+    1.6162109375,
+    1.6162109375,
+    1.404296875,
+    1.189453125,
+    1.189453125,
+    1.189453125,
+    1.189453125,
+    1.189453125,
+    1.189453125,
+    1.189453125,
+    1.189453125,
+    1.189453125,
+    1.189453125,
+    1.189453125,
+    1.189453125,
+    1.189453125,
+    1.189453125,
+    1.189453125,
+    1.189453125
+  ],
+  "invariants": {
+    "initial_suffix_roundtrips": true,
+    "slice_indices": {
+      "prompt": [
+        0,
+        18
+      ],
+      "control": [
+        18,
+        23
+      ],
+      "target": [
+        28,
+        35
+      ],
+      "loss_logits": [
+        27,
+        34
+      ]
+    },
+    "model_weight_gradients_absent": true,
+    "candidate_batch_one_coordinate": true,
+    "candidate_batch_roundtrips": true,
+    "batch_serial_max_abs_difference": 0.00390625,
+    "final_suffix_roundtrips": true,
+    "target_loss_decreased": true
+  },
+  "generator_state": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    240,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "latest_metric": null
+}

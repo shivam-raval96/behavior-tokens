@@ -1,0 +1,20 @@
+stage: stage_b_small_scale_advbench
+model_id: meta-llama/Llama-2-7b-chat-hf
+device: auto
+dtype: float16
+seed: 0
+run_mode: fresh
+dataset: advbench
+n_behaviors: 3
+steps: 50
+suffix_length: 20
+top_k: 256
+candidate_batch_size: 512
+evaluation_chunk_size: 128
+max_new_tokens: 128
+progress_every: 5
+checkpoint_every: 5
+run:
+  description: stage-b-small-advbench-llama2-7b-chat
+  output_root: jailbreaks/runs
+  date: auto

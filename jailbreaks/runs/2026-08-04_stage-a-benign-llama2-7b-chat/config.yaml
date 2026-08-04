@@ -1,0 +1,20 @@
+stage: stage_a_benign_validation
+model_id: meta-llama/Llama-2-7b-chat-hf
+revision: main
+device: auto
+dtype: float16
+seed: 0
+run_mode: fresh
+run:
+  description: stage-a-benign-llama2-7b-chat
+  output_root: jailbreaks/runs
+  date: auto
+suffix_length: 5
+steps: 30
+top_k: 64
+candidate_batch_size: 16
+evaluation_chunk_size: 4
+progress_every: 5
+checkpoint_every: 5
+generation_max_new_tokens: 32
+initial_suffix_text: auto

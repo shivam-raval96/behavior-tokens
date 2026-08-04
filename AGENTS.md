@@ -26,6 +26,15 @@ files, create a concise conventional commit, and push it to `origin/main`.
 Preserve tracked file moves as renames. Do not force-add ignored generated
 artifacts (such as checkpoints and logs) unless the user explicitly requests it.
 
+## Experiment artifacts
+
+Every experiment run is a repository artifact. After a run completes or stops,
+pull its dated output folder from the Modal `bt-outputs` Volume into
+`jailbreaks/runs/`, including its configuration, checkpoints, progress metrics,
+JSON results, Markdown summary, and any configured suffixes or full responses.
+Stage the complete run folder, commit it, and push it to `origin/main`; do not
+leave a completed or stopped run's only record on the remote Volume.
+
 ## Experiment progress
 
 Every experiment must expose live progress: use `tqdm` for bounded loops, print
