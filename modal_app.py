@@ -21,7 +21,7 @@ image = (
     modal.Image.debian_slim(python_version="3.11")
     .pip_install(
         "torch==2.5.1", "transformers==4.49.0", "datasets", "scikit-learn",
-        "accelerate", "pyyaml", "matplotlib", "tqdm", "huggingface_hub",
+        "accelerate", "pyyaml", "matplotlib", "tqdm", "huggingface_hub", "sentencepiece",
     )
     # Keep historical tasks runnable from their archived implementation.
     .add_local_dir("claude_legacy/steering_vectors", "/root/steering_vectors",
