@@ -75,6 +75,8 @@ def run(config_path: Path, run_mode: str = "fresh", checkpoint_callback=lambda: 
     layer, direction, probe = source_probe(source)
     examples = harmful_examples(cfg)
     tokenizer = AutoTokenizer.from_pretrained(cfg["model_id"], token=os.environ.get("HF_TOKEN"), use_fast=False)
+    tokenizer.pad_token = tokenizer.eos_token
+    tokenizer.padding_side = "left"
     model = AutoModelForCausalLM.from_pretrained(cfg["model_id"], token=os.environ.get("HF_TOKEN"), torch_dtype=torch.float16).to("cuda").eval()
     existing = set()
     if rows_path.exists():
@@ -93,30 +95,42 @@ def run(config_path: Path, run_mode: str = "fresh", checkpoint_callback=lambda: 
 
             hook = model.model.layers[layer - 1].register_forward_hook(add_vector)
             try:
-                for example in tqdm(examples, desc=f"Evaluating scale {scale:g}", unit="prompt", leave=False):
-                    key = (float(scale), example["dataset_index"])
-                    if key in existing:
-                        continue
-                    input_ids = tokenizer.apply_chat_template([{"role": "user", "content": example["goal"]}], tokenize=True,
-                                                               add_generation_prompt=True, return_tensors="pt").to(model.device)
-                    prompt_seed = cfg["generation_seed"] + int((float(scale) + 20) * 100_000) + example["dataset_index"]
-                    torch.manual_seed(prompt_seed); torch.cuda.manual_seed_all(prompt_seed)
-                    generated = model.generate(input_ids, do_sample=True, temperature=cfg["temperature"],
+                pending = [example for example in examples if (float(scale), example["dataset_index"]) not in existing]
+                for offset in tqdm(range(0, len(pending), cfg["generation_batch_size"]), desc=f"Evaluating scale {scale:g}", unit="batch", leave=False):
+                    batch = pending[offset:offset + cfg["generation_batch_size"]]
+                    prompts = [tokenizer.apply_chat_template([{"role": "user", "content": example["goal"]}], tokenize=False,
+                                                             add_generation_prompt=True) for example in batch]
+                    encoded = tokenizer(prompts, padding=True, return_tensors="pt").to(model.device)
+                    batch_seed = cfg["generation_seed"] + int((float(scale) + 20) * 100_000) + offset
+                    torch.manual_seed(batch_seed); torch.cuda.manual_seed_all(batch_seed)
+                    generated = model.generate(**encoded, do_sample=True, temperature=cfg["temperature"],
                                                max_new_tokens=cfg["max_new_tokens"], pad_token_id=tokenizer.eos_token_id, use_cache=True)
-                    measured = model(input_ids=generated, output_hidden_states=True, use_cache=False)
-                    probability = float(probe.predict_proba(measured.hidden_states[layer][0, -1].float().cpu().numpy().reshape(1, -1))[0, 1])
-                    row = {"scale": float(scale), **example, "layer": layer, "temperature": cfg["temperature"],
-                           "max_new_tokens": cfg["max_new_tokens"], "classifier_probability": probability,
-                           "response": tokenizer.decode(generated[0, input_ids.shape[1]:], skip_special_tokens=True)}
-                    stream.write(json.dumps(row) + "\n"); stream.flush(); os.fsync(stream.fileno())
-                    existing.add(key)
-                    if len(existing) % cfg["checkpoint_every"] == 0:
-                        metric = {"completed": len(existing), "total": total, "scale": float(scale),
-                                  "elapsed_sec": round(time.monotonic() - started, 2), "last_probability": probability}
-                        checkpoint.update({"stage": "generating_and_scoring", "completed": len(existing), "latest_metric": metric})
-                        write_json(checkpoint_path, checkpoint); write_json(output / "progress.json", {"stage": "generating_and_scoring", "latest_metric": metric})
-                        print(json.dumps({"event": "progress", "stage": "generating_and_scoring", **metric}), flush=True)
-                        checkpoint_callback()
+                    prompt_width = encoded.input_ids.shape[1]
+                    special = set(tokenizer.all_special_ids)
+                    for row_index, example in enumerate(batch):
+                        response_ids = generated[row_index, prompt_width:]
+                        valid = [index for index, token in enumerate(response_ids.tolist()) if token not in special]
+                        if not valid:
+                            continue
+                        last = valid[-1]
+                        measured_ids = generated[row_index:row_index + 1, :prompt_width + last + 1]
+                        measured_mask = torch.cat((encoded.attention_mask[row_index:row_index + 1],
+                                                   torch.ones((1, last + 1), device=model.device, dtype=encoded.attention_mask.dtype)), dim=1)
+                        measured = model(input_ids=measured_ids, attention_mask=measured_mask, output_hidden_states=True, use_cache=False)
+                        probability = float(probe.predict_proba(measured.hidden_states[layer][0, prompt_width + last].float().cpu().numpy().reshape(1, -1))[0, 1])
+                        row = {"scale": float(scale), **example, "layer": layer, "temperature": cfg["temperature"],
+                               "max_new_tokens": cfg["max_new_tokens"], "classifier_probability": probability,
+                               "response": tokenizer.decode(response_ids, skip_special_tokens=True)}
+                        stream.write(json.dumps(row) + "\n"); stream.flush(); os.fsync(stream.fileno())
+                        existing.add((float(scale), example["dataset_index"]))
+                        if len(existing) % cfg["checkpoint_every"] == 0:
+                            metric = {"completed": len(existing), "total": total, "scale": float(scale),
+                                      "elapsed_sec": round(time.monotonic() - started, 2), "last_probability": probability,
+                                      "generation_batch_size": cfg["generation_batch_size"]}
+                            checkpoint.update({"stage": "generating_and_scoring", "completed": len(existing), "latest_metric": metric})
+                            write_json(checkpoint_path, checkpoint); write_json(output / "progress.json", {"stage": "generating_and_scoring", "latest_metric": metric})
+                            print(json.dumps({"event": "progress", "stage": "generating_and_scoring", **metric}), flush=True)
+                            checkpoint_callback()
             finally:
                 hook.remove()
 
