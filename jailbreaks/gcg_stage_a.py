@@ -18,6 +18,7 @@ from typing import Any
 import torch
 import torch.nn.functional as F
 import yaml
+from tqdm.auto import tqdm
 
 
 SENTINEL = "<|stage_a_control|>"
@@ -249,11 +250,14 @@ class StageAValidator:
             raise AssertionError(f"batched/serial target losses differ by {maximum_difference}")
         return maximum_difference
 
-    def run(self, prompt: str, target_prefix: str) -> dict[str, Any]:
+    def run(
+        self, prompt: str, target_prefix: str, progress_path: Path | None = None
+    ) -> dict[str, Any]:
         generator = torch.Generator(device=self.device).manual_seed(self.config["seed"])
         layout = self.layout(prompt, target_prefix)
         suffix = self.initial_suffix()
         initial_suffix = suffix.clone()
+        started = time.monotonic()
         slices = self.verify_layout(suffix, layout)
         initial_loss = float(self.evaluate(suffix.unsqueeze(0), layout)[0])
         current_loss = initial_loss
@@ -263,7 +267,8 @@ class StageAValidator:
             "slice_indices": slices,
             "model_weight_gradients_absent": True,
         }
-        for step in range(self.config["steps"]):
+        progress = tqdm(range(self.config["steps"]), desc="Stage A GCG", unit="step")
+        for step in progress:
             gradient, gradient_loss = self.gradient(suffix, layout)
             candidates = self.sample_candidates(suffix, gradient, generator)
             if step == 0:
@@ -276,7 +281,24 @@ class StageAValidator:
             if best_loss < current_loss:
                 suffix, current_loss = candidates[best_index].clone(), best_loss
             history.append(current_loss)
-            print(f"step={step + 1:02d} loss={current_loss:.6f} gradient_loss={gradient_loss:.6f}", flush=True)
+            progress.set_postfix(loss=f"{current_loss:.4f}", candidates=candidates.shape[0])
+            if (step + 1) % self.config["progress_every"] == 0 or step + 1 == self.config["steps"]:
+                metric = {
+                    "type": "stage_a_progress",
+                    "step": step + 1,
+                    "total_steps": self.config["steps"],
+                    "current_loss": current_loss,
+                    "gradient_loss": gradient_loss,
+                    "candidate_count": int(candidates.shape[0]),
+                    "elapsed_seconds": round(time.monotonic() - started, 2),
+                }
+                print("METRIC " + json.dumps(metric, sort_keys=True), flush=True)
+                if progress_path:
+                    progress_path.parent.mkdir(parents=True, exist_ok=True)
+                    progress_path.write_text(json.dumps({
+                        "status": "running", "prompt": prompt, "target_prefix": target_prefix,
+                        "initial_loss": initial_loss, "loss_history": history, "latest_metric": metric,
+                    }, indent=2) + "\n")
         invariants["final_suffix_roundtrips"] = self.roundtrips(suffix)
         invariants["target_loss_decreased"] = current_loss < initial_loss
         if not invariants["target_loss_decreased"]:
@@ -303,6 +325,8 @@ def main() -> None:
     parser.add_argument("--prompt-index", type=int, default=0)
     parser.add_argument("--output", type=Path, default=None,
                         help="override output_path from the experiment Markdown")
+    parser.add_argument("--progress-output", type=Path, default=None,
+                        help="write a partial JSON checkpoint at each progress interval")
     args = parser.parse_args()
     config = read_experiment(args.experiment)
     if not 0 <= args.prompt_index < len(config["prompts"]):
@@ -310,7 +334,9 @@ def main() -> None:
     model, tokenizer, device, dtype = load_model(config)
     row = config["prompts"][args.prompt_index]
     started = time.monotonic()
-    result = StageAValidator(model, tokenizer, config).run(row["prompt"], row["target_prefix"])
+    result = StageAValidator(model, tokenizer, config).run(
+        row["prompt"], row["target_prefix"], args.progress_output
+    )
     result["metadata"] = {
         "stage": config["stage"], "model_id": config["model_id"], "revision": config["revision"],
         "device": device, "dtype": str(dtype), "seed": config["seed"],

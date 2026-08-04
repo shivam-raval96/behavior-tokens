@@ -85,9 +85,10 @@ def run_stage_a(prompt_index: int = 0):
     import sys
 
     result_path = "/outputs/jailbreaks/stage_a_benign_validation.json"
+    progress_path = "/outputs/jailbreaks/stage_a_benign_validation.progress.json"
     subprocess.run(
         [sys.executable, "-m", "jailbreaks.gcg_stage_a", "--prompt-index", str(prompt_index),
-         "--output", result_path],
+         "--output", result_path, "--progress-output", progress_path],
         cwd="/root",
         check=True,
     )

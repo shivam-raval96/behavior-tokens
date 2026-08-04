@@ -25,3 +25,10 @@ After completing a requested workspace change, stage the relevant non-ignored
 files, create a concise conventional commit, and push it to `origin/main`.
 Preserve tracked file moves as renames. Do not force-add ignored generated
 artifacts (such as checkpoints and logs) unless the user explicitly requests it.
+
+## Experiment progress
+
+Every experiment must expose live progress: use `tqdm` for bounded loops, print
+structured metrics at a configurable interval, and write a partial result
+checkpoint. When an experiment runs remotely, monitor those metrics and report
+meaningful updates in this task before completion.
