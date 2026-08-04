@@ -52,6 +52,7 @@ def source_probe(source: Path) -> tuple[int, np.ndarray, object]:
     return layer, np.load(source / "steering_vector.npy"), probe
 
 
+@torch.no_grad()
 def run(config_path: Path, run_mode: str = "fresh", checkpoint_callback=lambda: None) -> dict:
     cfg = yaml.safe_load(config_path.read_text())
     output = Path(cfg["output_dir"]); output.mkdir(parents=True, exist_ok=True)
@@ -117,7 +118,8 @@ def run(config_path: Path, run_mode: str = "fresh", checkpoint_callback=lambda: 
                         measured_mask = torch.cat((encoded.attention_mask[row_index:row_index + 1],
                                                    torch.ones((1, last + 1), device=model.device, dtype=encoded.attention_mask.dtype)), dim=1)
                         measured = model(input_ids=measured_ids, attention_mask=measured_mask, output_hidden_states=True, use_cache=False)
-                        probability = float(probe.predict_proba(measured.hidden_states[layer][0, prompt_width + last].float().cpu().numpy().reshape(1, -1))[0, 1])
+                        final_state = measured.hidden_states[layer][0, prompt_width + last].detach().float().cpu().numpy().reshape(1, -1)
+                        probability = float(probe.predict_proba(final_state)[0, 1])
                         row = {"scale": float(scale), **example, "layer": layer, "temperature": cfg["temperature"],
                                "max_new_tokens": cfg["max_new_tokens"], "classifier_probability": probability,
                                "response": tokenizer.decode(response_ids, skip_special_tokens=True)}
