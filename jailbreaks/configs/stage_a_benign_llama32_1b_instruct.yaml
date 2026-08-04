@@ -14,6 +14,7 @@ steps: 30
 top_k: 64
 candidate_batch_size: 16
 evaluation_chunk_size: 4
+batching_tolerance: 0.02  # float16 Llama-3.2 batch-vs-serial numerical tolerance
 progress_every: 5
 checkpoint_every: 5
 generation_max_new_tokens: 32

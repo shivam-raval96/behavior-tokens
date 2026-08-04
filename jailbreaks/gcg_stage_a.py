@@ -310,7 +310,8 @@ class StageAValidator:
         batched = self.evaluate(subset, layout)
         serial = torch.cat([self.evaluate(row.unsqueeze(0), layout) for row in subset])
         maximum_difference = float((batched - serial).abs().max())
-        if not torch.allclose(batched, serial, rtol=2e-3, atol=2e-3):
+        tolerance = float(self.config.get("batching_tolerance", 2e-3))
+        if not torch.allclose(batched, serial, rtol=tolerance, atol=tolerance):
             raise AssertionError(f"batched/serial target losses differ by {maximum_difference}")
         return maximum_difference
 
