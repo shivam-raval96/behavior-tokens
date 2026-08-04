@@ -1,0 +1,24 @@
+stage: official_gcg_universal_resumable
+implementation: fastchat-compatible-gcg-adapter
+model_id: meta-llama/Llama-2-7b-chat-hf
+dataset: original_advbench
+train_behaviors: 5
+test_behaviors: 25
+data_offset: 0
+suffix_length: 20
+steps: 500
+top_k: 256
+candidate_batch_size: 512
+allow_non_ascii: false
+progressive_goals: true
+stop_on_success: true
+test_every: 1
+checkpoint_every: 1
+run_mode: fresh
+seed: 0
+max_new_tokens: 128
+store_raw_artifacts: true
+run:
+  description: official-gcg-universal-5-resumable
+  output_root: jailbreaks/runs
+  date: auto
