@@ -13,7 +13,7 @@ from typing import Any, Callable
 import yaml
 from tqdm.auto import tqdm
 
-from claude_legacy.jailbreaks.gcg_bench.asr import is_success
+from jailbreaks.asr import is_success
 from claude_legacy.jailbreaks.gcg_bench.datasets_hf import load
 from claude_legacy.jailbreaks.gcg_bench.gcg_zou import GCGConfig
 from jailbreaks.gcg_small_scale import CheckpointedGCG, load_model, run_paths

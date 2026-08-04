@@ -18,6 +18,7 @@ run_mode: fresh
 seed: 0
 max_new_tokens: 128
 store_raw_artifacts: true
+asr_metric: affirmative-prefix-sure
 run:
   description: official-gcg-universal-5-resumable
   output_root: jailbreaks/runs
