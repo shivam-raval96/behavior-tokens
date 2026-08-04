@@ -6,8 +6,7 @@ Status: pending model access via `HF_TOKEN`.
 | --- | ---: | ---: | ---: | --- | --- | --- | --- | --- | ---: |
 | Stage A | — | — | — | — | — | — | — | — | — |
 
-The full machine-readable record is written to
-`jailbreaks/results/stage_a_benign_validation.json` after a successful run.
-On Modal, the live progress and resumable state are stored on the `bt-outputs`
-volume under `jailbreaks/stage_a_benign_validation.progress.json` and
-`jailbreaks/stage_a_benign_validation.checkpoint.json`.
+Each completed experiment writes its own dated result folder below
+`jailbreaks/runs/`. The folder includes `results.json` and a generated
+`RESULTS.md` summary, along with `progress.json` and `checkpoint.json` while it
+is running or resumable.

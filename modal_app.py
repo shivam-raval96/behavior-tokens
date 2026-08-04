@@ -80,7 +80,6 @@ def run_task(task: str, config_name: str, lengths=None, seeds: int = 10, out: st
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
 def run_stage_a(prompt_index: int = 0, run_mode: str | None = None):
     """Run or resume the active harmless five-token GCG validation on a cloud GPU."""
-    import json
     import os
     import signal
     import sys
@@ -88,11 +87,10 @@ def run_stage_a(prompt_index: int = 0, run_mode: str | None = None):
 
     sys.path.insert(0, "/root")
     os.chdir("/root")
-    from jailbreaks.gcg_stage_a import run_experiment
+    from jailbreaks.gcg_stage_a import read_experiment, resolve_run_paths, run_experiment
 
-    result_path = "/outputs/jailbreaks/stage_a_benign_validation.json"
-    progress_path = "/outputs/jailbreaks/stage_a_benign_validation.progress.json"
-    checkpoint_path = "/outputs/jailbreaks/stage_a_benign_validation.checkpoint.json"
+    config_path = Path("/root/jailbreaks/configs/stage_a_benign_llama2_7b_chat.yaml")
+    paths = resolve_run_paths(read_experiment(config_path), output_base=Path("/outputs"))
     previous_handler = signal.getsignal(signal.SIGTERM)
 
     def stop_at_checkpoint(_signum, _frame) -> None:
@@ -101,9 +99,9 @@ def run_stage_a(prompt_index: int = 0, run_mode: str | None = None):
     signal.signal(signal.SIGTERM, stop_at_checkpoint)
     try:
         result = run_experiment(
-            Path("/root/jailbreaks/EXPERIMENT.md"), prompt_index,
-            output=Path(result_path), progress_output=Path(progress_path),
-            checkpoint_output=Path(checkpoint_path), run_mode=run_mode,
+            config_path, prompt_index,
+            output=paths["result"], progress_output=paths["progress"],
+            checkpoint_output=paths["checkpoint"], run_mode=run_mode,
             checkpoint_callback=outputs.commit,
         )
     finally:

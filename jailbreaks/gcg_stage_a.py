@@ -1,6 +1,6 @@
 """Benign Stage A validation for a GCG-style suffix optimizer.
 
-The experiment is controlled by ``jailbreaks/EXPERIMENT.md``. It deliberately
+The experiment is controlled by a YAML file in ``jailbreaks/configs/``. It deliberately
 accepts only the harmless prompt/target pairs recorded there and performs no
 behavioral jailbreak evaluation.
 """
@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+from datetime import date
 import hashlib
 import json
 import os
@@ -47,12 +48,7 @@ class Layout:
 
 
 def read_experiment(path: Path) -> dict[str, Any]:
-    text = path.read_text()
-    start = text.find("```yaml")
-    end = text.find("```", start + len("```yaml"))
-    if start < 0 or end < 0:
-        raise ValueError(f"{path} must contain exactly one YAML control block")
-    config = yaml.safe_load(text[start + len("```yaml"):end])
+    config = yaml.safe_load(path.read_text())
     if not isinstance(config, dict):
         raise ValueError("experiment YAML must be a mapping")
     if config.get("stage") != "stage_a_benign_validation":
@@ -70,7 +66,34 @@ def read_experiment(path: Path) -> dict[str, Any]:
     for key in ("progress_every", "checkpoint_every"):
         if not isinstance(config.get(key, 5), int) or config.get(key, 5) < 1:
             raise ValueError(f"{key} must be a positive integer")
+    run = config.get("run")
+    if not isinstance(run, dict) or not isinstance(run.get("description"), str):
+        raise ValueError("run.description is required")
+    if not run["description"] or any(char not in "abcdefghijklmnopqrstuvwxyz0123456789-" for char in run["description"]):
+        raise ValueError("run.description must be a lowercase hyphenated slug")
+    if not isinstance(run.get("output_root"), str) or not run["output_root"]:
+        raise ValueError("run.output_root is required")
+    run_date = run.get("date", "auto")
+    if run_date != "auto":
+        try:
+            date.fromisoformat(run_date)
+        except (TypeError, ValueError) as error:
+            raise ValueError("run.date must be auto or YYYY-MM-DD") from error
     return config
+
+
+def resolve_run_paths(config: dict[str, Any], output_base: Path = Path()) -> dict[str, Path]:
+    """Return one dated, descriptive run directory and its durable artifacts."""
+    run = config["run"]
+    run_date = date.today().isoformat() if run.get("date", "auto") == "auto" else run["date"]
+    directory = output_base / run["output_root"] / f"{run_date}_{run['description']}"
+    return {
+        "directory": directory,
+        "result": directory / "results.json",
+        "progress": directory / "progress.json",
+        "checkpoint": directory / "checkpoint.json",
+        "summary": directory / "RESULTS.md",
+    }
 
 
 def resolve_device(name: str) -> str:
@@ -283,7 +306,7 @@ class StageAValidator:
             )
             suffix = torch.tensor(checkpoint["suffix_token_ids"], device=self.device, dtype=torch.long)
             if suffix.numel() != self.config["suffix_length"]:
-                raise ValueError("checkpoint suffix length does not match EXPERIMENT.md")
+                raise ValueError("checkpoint suffix length does not match the config file")
             if not self.roundtrips(suffix):
                 raise ValueError("checkpoint suffix no longer round-trips through the tokenizer")
             generator.set_state(torch.tensor(checkpoint["generator_state"], dtype=torch.uint8))
@@ -296,7 +319,7 @@ class StageAValidator:
                 raise ValueError("checkpoint has no remaining steps; set run_mode: fresh for a new run")
             slices = self.verify_layout(suffix, layout)
             if invariants.get("slice_indices") != slices:
-                raise ValueError("checkpoint slice layout does not match EXPERIMENT.md")
+                raise ValueError("checkpoint slice layout does not match the config file")
             print(f"Resuming Stage A from step {start_step}/{self.config['steps']}", flush=True)
         else:
             suffix = self.initial_suffix()
@@ -458,27 +481,56 @@ def run_experiment(
         "experiment_sha256": hashlib.sha256(experiment.read_bytes()).hexdigest(),
         "prompt_index": prompt_index, "wall_clock_seconds": round(time.monotonic() - started, 2),
     }
-    destination = output or Path(config["output_path"])
+    paths = resolve_run_paths(config)
+    destination = output or paths["result"]
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(json.dumps(result, indent=2) + "\n")
+    write_results_summary(destination.parent / "RESULTS.md", result)
     if checkpoint_callback:
         checkpoint_callback()
     return result
 
 
+def write_results_summary(path: Path, result: dict[str, Any]) -> None:
+    """Write the compact, human-readable companion to a completed results.json."""
+    metadata = result["metadata"]
+    invariants = result["invariants"]
+    path.write_text(
+        "# Stage A results\n\n"
+        "Status: completed\n\n"
+        f"- Model: `{metadata['model_id']}` (`{metadata['revision']}`)\n"
+        f"- Prompt index: {metadata['prompt_index']}\n"
+        f"- Duration: {metadata['wall_clock_seconds']} seconds\n"
+        f"- Initial loss: {result['initial_loss']:.6f}\n"
+        f"- Final loss: {result['final_loss']:.6f}\n"
+        f"- Final suffix: `{result['final_suffix_decoded']}`\n\n"
+        "| Validation | Result |\n"
+        "| --- | --- |\n"
+        f"| Target loss decreased | {invariants['target_loss_decreased']} |\n"
+        f"| Initial/final suffix round-trips | {invariants['initial_suffix_roundtrips']} / {invariants['final_suffix_roundtrips']} |\n"
+        f"| One-coordinate candidates | {invariants['candidate_batch_one_coordinate']} |\n"
+        f"| Model weights frozen | {invariants['model_weight_gradients_absent']} |\n"
+        f"| Batch/serial max loss difference | {invariants['batch_serial_max_abs_difference']:.6f} |\n\n"
+        "See `results.json` for the full loss history and experiment metadata.\n"
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run benign GCG Stage A validation")
-    parser.add_argument("--experiment", type=Path, default=Path("jailbreaks/EXPERIMENT.md"))
+    parser.add_argument("--experiment", type=Path,
+                        default=Path("jailbreaks/configs/stage_a_benign_llama2_7b_chat.yaml"))
     parser.add_argument("--prompt-index", type=int, default=0)
     parser.add_argument("--output", type=Path, default=None,
-                        help="override output_path from the experiment Markdown")
+                        help="override the dated run directory results.json path")
     parser.add_argument("--progress-output", type=Path, default=None,
                         help="write a partial JSON checkpoint at each progress interval")
     parser.add_argument("--checkpoint-output", type=Path, default=None,
-                        help="durable resume checkpoint; use with run_mode: resume")
+                        help="durable resume checkpoint; defaults to the dated run directory")
     parser.add_argument("--run-mode", choices=("fresh", "resume"), default=None,
-                        help="override run_mode in EXPERIMENT.md")
+                        help="override run_mode in the YAML config")
     args = parser.parse_args()
+    config = read_experiment(args.experiment)
+    paths = resolve_run_paths(config)
     previous_handler = signal.getsignal(signal.SIGTERM)
 
     def stop_at_checkpoint(_signum, _frame) -> None:
@@ -487,12 +539,13 @@ def main() -> None:
     signal.signal(signal.SIGTERM, stop_at_checkpoint)
     try:
         result = run_experiment(
-            args.experiment, args.prompt_index, args.output, args.progress_output,
-            args.checkpoint_output, args.run_mode,
+            args.experiment, args.prompt_index, args.output or paths["result"],
+            args.progress_output or paths["progress"], args.checkpoint_output or paths["checkpoint"],
+            args.run_mode,
         )
     finally:
         signal.signal(signal.SIGTERM, previous_handler)
-    print(f"wrote {args.output or read_experiment(args.experiment)['output_path']}")
+    print(f"wrote {args.output or paths['result']}")
 
 
 if __name__ == "__main__":
