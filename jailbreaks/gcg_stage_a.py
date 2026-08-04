@@ -131,12 +131,26 @@ class StageAValidator:
                       target=self._encode(" " + target_prefix.strip()))
 
     def initial_suffix(self) -> torch.Tensor:
-        suffix = self._encode(self.config["initial_suffix_text"])
+        initial_text = self.config["initial_suffix_text"]
+        if initial_text == "auto":
+            suffix = self._auto_initial_suffix()
+        else:
+            suffix = self._encode(initial_text)
         if suffix.numel() != self.config["suffix_length"]:
-            raise ValueError("initial_suffix_text must tokenize to suffix_length tokens")
+            raise ValueError("initial_suffix_text must tokenize to suffix_length tokens, or be auto")
         if not self.roundtrips(suffix):
             raise ValueError("initial_suffix_text must decode and re-encode identically")
         return suffix
+
+    def _auto_initial_suffix(self) -> torch.Tensor:
+        """Pick a deterministic, repeated token whose 5-token decode is stable."""
+        for token_id in range(self.vocab_size):
+            suffix = torch.full(
+                (self.config["suffix_length"],), token_id, device=self.device, dtype=torch.long
+            )
+            if self.roundtrips(suffix):
+                return suffix
+        raise RuntimeError("could not find a tokenizer-stable initial suffix")
 
     def roundtrips(self, suffix: torch.Tensor) -> bool:
         decoded = self.tokenizer.decode(suffix.tolist(), clean_up_tokenization_spaces=False)
@@ -231,6 +245,7 @@ class StageAValidator:
         generator = torch.Generator(device=self.device).manual_seed(self.config["seed"])
         layout = self.layout(prompt, target_prefix)
         suffix = self.initial_suffix()
+        initial_suffix = suffix.clone()
         slices = self.verify_layout(suffix, layout)
         initial_loss = float(self.evaluate(suffix.unsqueeze(0), layout)[0])
         current_loss = initial_loss
@@ -261,6 +276,10 @@ class StageAValidator:
         return {
             "prompt": prompt,
             "target_prefix": target_prefix,
+            "initial_suffix_token_ids": initial_suffix.tolist(),
+            "initial_suffix_decoded": self.tokenizer.decode(
+                initial_suffix.tolist(), clean_up_tokenization_spaces=False
+            ),
             "initial_loss": initial_loss,
             "final_loss": current_loss,
             "loss_history": history,
