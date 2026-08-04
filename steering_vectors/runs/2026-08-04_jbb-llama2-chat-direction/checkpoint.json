@@ -1,0 +1,55 @@
+{
+  "status": "completed",
+  "stage": "completed",
+  "next_example": 200,
+  "completed_scales": [
+    -4.0,
+    -2.0,
+    -1.0,
+    0.0,
+    1.0,
+    2.0,
+    4.0
+  ],
+  "config_fingerprint": "36ab4d08ab15322d20a57c5c7a789a39b1ba4302361bb25303c0ec8571856da7",
+  "latest_metric": {
+    "best_layer_accuracy": 0.975
+  },
+  "sweep": [
+    {
+      "scale": -4.0,
+      "classifier_accuracy": 0.775,
+      "jailbreak_prediction_rate": 0.275
+    },
+    {
+      "scale": -2.0,
+      "classifier_accuracy": 0.875,
+      "jailbreak_prediction_rate": 0.375
+    },
+    {
+      "scale": -1.0,
+      "classifier_accuracy": 0.9,
+      "jailbreak_prediction_rate": 0.4
+    },
+    {
+      "scale": 0.0,
+      "classifier_accuracy": 0.975,
+      "jailbreak_prediction_rate": 0.475
+    },
+    {
+      "scale": 1.0,
+      "classifier_accuracy": 0.95,
+      "jailbreak_prediction_rate": 0.5
+    },
+    {
+      "scale": 2.0,
+      "classifier_accuracy": 0.925,
+      "jailbreak_prediction_rate": 0.525
+    },
+    {
+      "scale": 4.0,
+      "classifier_accuracy": 0.875,
+      "jailbreak_prediction_rate": 0.625
+    }
+  ]
+}

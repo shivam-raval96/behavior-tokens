@@ -1,0 +1,103 @@
+{
+  "config": {
+    "dataset": "JailbreakBench/JBB-Behaviors",
+    "dataset_config": "behaviors",
+    "examples_per_class": 100,
+    "model_id": "meta-llama/Llama-2-7b-chat-hf",
+    "output_dir": "/outputs/steering_vectors/runs/2026-08-04_jbb-llama2-chat-direction",
+    "seed": 0,
+    "sweep_scales": [
+      -4,
+      -2,
+      -1,
+      0,
+      1,
+      2,
+      4
+    ],
+    "test_fraction": 0.2
+  },
+  "examples": 200,
+  "class_counts": {
+    "benign": 100,
+    "jailbreak": 100
+  },
+  "best_layer": 19,
+  "layer_accuracy": [
+    0.575,
+    0.475,
+    0.45,
+    0.45,
+    0.525,
+    0.55,
+    0.575,
+    0.625,
+    0.65,
+    0.7,
+    0.725,
+    0.75,
+    0.8,
+    0.825,
+    0.85,
+    0.9,
+    0.925,
+    0.95,
+    0.975,
+    0.95,
+    0.95,
+    0.975,
+    0.975,
+    0.975,
+    0.975,
+    0.975,
+    0.975,
+    0.95,
+    0.975,
+    0.95,
+    0.95,
+    0.95
+  ],
+  "best_layer_accuracy": 0.975,
+  "sweep": [
+    {
+      "scale": -4.0,
+      "classifier_accuracy": 0.775,
+      "jailbreak_prediction_rate": 0.275
+    },
+    {
+      "scale": -2.0,
+      "classifier_accuracy": 0.875,
+      "jailbreak_prediction_rate": 0.375
+    },
+    {
+      "scale": -1.0,
+      "classifier_accuracy": 0.9,
+      "jailbreak_prediction_rate": 0.4
+    },
+    {
+      "scale": 0.0,
+      "classifier_accuracy": 0.975,
+      "jailbreak_prediction_rate": 0.475
+    },
+    {
+      "scale": 1.0,
+      "classifier_accuracy": 0.95,
+      "jailbreak_prediction_rate": 0.5
+    },
+    {
+      "scale": 2.0,
+      "classifier_accuracy": 0.925,
+      "jailbreak_prediction_rate": 0.525
+    },
+    {
+      "scale": 4.0,
+      "classifier_accuracy": 0.875,
+      "jailbreak_prediction_rate": 0.625
+    }
+  ],
+  "vector_path": "steering_vector.npy",
+  "benign_mean_path": "benign_mean.npy",
+  "jailbreak_mean_path": "jailbreak_mean.npy",
+  "activation_position": "last non-special JBB target token",
+  "direction": "mean(jailbreak) - mean(benign)"
+}
