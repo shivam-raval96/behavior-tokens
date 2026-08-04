@@ -51,6 +51,26 @@ The editable controls are in
 - `results.json` — sanitized machine-readable losses and ASR
 - `RESULTS.md` — concise training/test ASR summary
 
+## Durable Modal launch and resume
+
+Launch Modal runs with `--detach`; the remote app then continues if the local
+terminal, laptop, or network connection disappears:
+
+```sh
+modal run --detach modal_app.py --task stage_c_single
+```
+
+To continue an interrupted one-behavior run, retain the immutable config and
+pass the runtime resume override instead:
+
+```sh
+modal run --detach modal_app.py --task stage_c_single --run-mode resume
+```
+
+The override resumes the checkpoint without changing its configuration
+fingerprint. Monitor with `modal app logs <app-id>` and pull the run folder
+from `bt-outputs` into `jailbreaks/runs/` after it completes or stops.
+
 ## Interpretation
 
 This is an authorized model-safety evaluation. Refusal-matching ASR measures

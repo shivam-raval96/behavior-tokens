@@ -41,12 +41,16 @@ def _rate(flags: list[bool]) -> float:
     return sum(flags) / len(flags) if flags else 0.0
 
 
-def run(config_path: Path, output_base: Path, commit: Callable[[], None] | None = None) -> dict[str, Any]:
+def run(config_path: Path, output_base: Path, commit: Callable[[], None] | None = None,
+        run_mode: str | None = None) -> dict[str, Any]:
     cfg = read_config(config_path)
     paths = run_paths(cfg, output_base)
     fingerprint = hashlib.sha256(config_path.read_bytes()).hexdigest()
-    old = json.loads(paths["checkpoint"].read_text()) if cfg["run_mode"] == "resume" and paths["checkpoint"].exists() else None
-    if cfg["run_mode"] == "resume" and old is None:
+    effective_run_mode = run_mode or cfg["run_mode"]
+    if effective_run_mode not in {"fresh", "resume"}:
+        raise ValueError("run_mode must be fresh or resume")
+    old = json.loads(paths["checkpoint"].read_text()) if effective_run_mode == "resume" and paths["checkpoint"].exists() else None
+    if effective_run_mode == "resume" and old is None:
         raise FileNotFoundError("cannot resume without checkpoint.json")
     if old and old["config_sha256"] != fingerprint:
         raise ValueError("checkpoint does not match config")
