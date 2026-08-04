@@ -28,7 +28,6 @@
 <body>
 <header><h1>GCG research explorer</h1><p>Inspect experiment goals, discrete suffixes, optimization trajectories, and response-level outcomes. “Success” reflects the metric recorded by each run—not a semantic or safety judgment.</p></header>
 <main>
-  <div class="notice small">This is self-contained: open this file directly in your browser. Every relevant saved run artifact is embedded and selectable below—no JSON files or local server required.</div>
   <section class="card" style="margin-top:18px"><h2>Dataset &amp; run selection</h2><div class="toolbar"><div><label for="run">Embedded saved run</label><br><select id="run"></select></div><button id="all">All responses</button><button id="success">Successes</button><button id="failure">Failures</button></div><div id="run-meta" class="muted small"></div></section>
   <section class="grid metrics" id="metrics"></section>
   <section class="grid two"><div class="card"><h2>Optimization path</h2><div class="legend"><span><i class="dot" style="background:var(--accent)"></i>candidate loss</span><span><i class="dot" style="background:var(--good)"></i>best loss</span></div><svg id="chart" viewBox="0 0 650 270" aria-label="Loss across optimization steps"></svg></div><div class="card"><h2>Found suffix</h2><p class="muted small">The decoded discrete control selected by the run.</p><pre id="suffix" class="suffix">No suffix recorded.</pre><div id="token-summary" class="muted small"></div></div></section>
