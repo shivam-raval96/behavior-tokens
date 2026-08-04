@@ -55,6 +55,15 @@ name every material difference from the prior trial (including target prefixes,
 random seed/data ordering, evaluation rows, and metric). Do not launch until
 this card has been stated, unless the user explicitly asks to skip it.
 
+Planning, implementing, committing, configuring, and presenting an experiment
+card never authorize a launch. After the plan/card is complete, wait for the
+user's explicit instruction to **proceed** before submitting any new local or
+remote experiment. Treat a request to change code, add a configuration, or
+estimate a run as preparation only. When a prior run already supplies the
+needed model artifacts (for example a steering vector and selected layer),
+reuse them for follow-up evaluation instead of re-running extraction or
+optimization unless the user explicitly requests a fresh run.
+
 Every experiment must expose live progress: use `tqdm` for bounded loops, print
 structured metrics at a configurable interval, and write a partial result
 checkpoint. When an experiment runs remotely, monitor those metrics and report
