@@ -38,6 +38,21 @@ image = (
 outputs = modal.Volume.from_name("bt-outputs", create_if_missing=True)
 hf_cache = modal.Volume.from_name("bt-hf-cache", create_if_missing=True)
 
+# Kept separate from the active implementation image so the official 2023
+# reference code executes against its declared dependency versions.
+reference_image = (
+    modal.Image.debian_slim(python_version="3.11")
+    .pip_install(
+        "torch==2.5.1", "transformers==4.31.0", "fschat==0.2.23",
+        "ml_collections", "accelerate", "sentencepiece", "tqdm",
+    )
+    .add_local_dir(
+        "jailbreaks/llm-attacks-reference",
+        "/root/llm-attacks-reference",
+        ignore=[".git/**", "**/__pycache__/**", "results/**"],
+    )
+)
+
 
 @app.function(image=image, gpu="A10G", timeout=3600,
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
@@ -245,6 +260,42 @@ def run_stage_d_suffix_asr():
         signal.signal(signal.SIGTERM, previous)
 
 
+@app.function(image=reference_image, gpu="A100-80GB", timeout=7200,
+              secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+              volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
+def run_official_gcg_single():
+    """Run the unmodified Zou et al. GCG code on one original AdvBench row."""
+    import os
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    run_dir = Path("/outputs/jailbreaks/runs/2026-08-04_official-gcg-single-llama2")
+    run_dir.mkdir(parents=True, exist_ok=True)
+    reference_root = Path("/root/llm-attacks-reference")
+    command = [
+        sys.executable, "-u", "main.py",
+        "--config=configs/individual_llama2.py",
+        "--config.attack=gcg",
+        "--config.train_data=data/advbench/harmful_behaviors.csv",
+        "--config.result_prefix=/outputs/jailbreaks/runs/2026-08-04_official-gcg-single-llama2/reference",
+        "--config.model_paths=['meta-llama/Llama-2-7b-chat-hf']",
+        "--config.tokenizer_paths=['meta-llama/Llama-2-7b-chat-hf']",
+        "--config.n_train_data=1",
+        "--config.data_offset=0",
+        "--config.n_steps=500",
+        "--config.test_steps=1",
+        "--config.batch_size=512",
+        "--config.topk=256",
+    ]
+    environment = os.environ | {"PYTHONPATH": str(reference_root)}
+    try:
+        subprocess.run(command, cwd=reference_root / "experiments", env=environment, check=True)
+    finally:
+        outputs.commit()
+    return str(run_dir)
+
+
 @app.function(image=image, gpu="A100", timeout=900,
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/root/.cache/huggingface": hf_cache})
@@ -449,6 +500,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         return
     if task == "stage_d_suffix_asr":
         print(run_stage_d_suffix_asr.remote())
+        return
+    if task == "official_gcg_single":
+        print(run_official_gcg_single.remote())
         return
     if task == "jbgcg":
         ds = [d for d in datasets.split(",") if d.strip()]
