@@ -1,0 +1,19 @@
+checkpoint_every: 5
+dataset: JailbreakBench/JBB-Behaviors
+dataset_config: behaviors
+evaluation_examples: 20
+generation_batch_size: 4
+generation_seed: 0
+max_new_tokens: 64
+model_id: meta-llama/Llama-2-7b-chat-hf
+output_dir: /outputs/steering_vectors/runs/2026-08-04_jbb-llama2-reuse-classifier-probability
+scales:
+- -2
+- 0
+- 2
+- 4
+- 6
+- 8
+seed: 0
+source_run_dir: /outputs/steering_vectors/runs/2026-08-04_jbb-llama2-chat-direction
+temperature: 0.5

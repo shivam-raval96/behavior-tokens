@@ -1,0 +1,12 @@
+{
+  "status": "completed",
+  "stage": "completed",
+  "config_fingerprint": "226bf100cee947e904b8f8a98abeda8723929ba463354c442b9198d76e6ff84a",
+  "completed": 120,
+  "latest_metric": {
+    "scale": 8.0,
+    "n": 20,
+    "mean_probability": 0.9986220598220825,
+    "std_probability": 0.0031940498537303408
+  }
+}

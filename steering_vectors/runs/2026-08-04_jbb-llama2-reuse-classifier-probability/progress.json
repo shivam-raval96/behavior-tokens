@@ -1,0 +1,9 @@
+{
+  "stage": "completed",
+  "latest_metric": {
+    "scale": 8.0,
+    "n": 20,
+    "mean_probability": 0.9986220598220825,
+    "std_probability": 0.0031940498537303408
+  }
+}
