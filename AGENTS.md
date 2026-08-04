@@ -37,6 +37,11 @@ start time and a concise lowercase-hyphenated description.
 Stage the complete run folder, commit it, and push it to `origin/main`; do not
 leave a completed or stopped run's only record on the remote Volume.
 
+Every new run directory must have a unique UTC date-and-time prefix followed by
+a short description: `YYYY-MM-DD_HHMMSSZ_short-description`. Never reuse a
+date-only or fixed output folder for a fresh run; retain its resolved config and
+run ID so a stopped run can be resumed explicitly.
+
 For every ASR evaluation that stores raw generations, save both the normal
 no-suffix baseline response and the suffix-attacked response for each behavior,
 with their respective success flags. Never report suffix ASR without retaining
