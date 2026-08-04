@@ -1,0 +1,47 @@
+{
+  "status": "complete",
+  "metadata": {
+    "model_id": "meta-llama/Llama-2-7b-chat-hf",
+    "device": "cuda",
+    "config_sha256": "02ac38d067eb973e285f21511ba96c23c3c2f1e4e5f2ec1d0dc2a51c0cd8439e"
+  },
+  "checks": {
+    "canonical_generation_ids_match": true,
+    "canonical_loss_ids_match": true,
+    "constructed_loss_token_count": 59,
+    "canonical_loss_token_count": 61,
+    "first_loss_token_mismatch": 59,
+    "constructed_tokens_near_loss_boundary": [
+      7333,
+      2472
+    ],
+    "canonical_tokens_near_loss_boundary": [
+      7333,
+      2472,
+      29871,
+      2
+    ],
+    "constructed_generation_token_count": 42,
+    "canonical_generation_token_count": 42,
+    "first_generation_token_mismatch": null,
+    "constructed_tokens_near_boundary": [
+      1,
+      29961,
+      25580,
+      29962
+    ],
+    "canonical_tokens_near_boundary": [
+      1,
+      29961,
+      25580,
+      29962
+    ],
+    "candidate_count": 512,
+    "candidates_change_one_coordinate": true,
+    "suffix_roundtrips": true,
+    "target_loss_batch_serial_max_abs_difference": 0.001953125,
+    "model_weight_gradients_absent": true,
+    "target_token_count": 17,
+    "passed": true
+  }
+}

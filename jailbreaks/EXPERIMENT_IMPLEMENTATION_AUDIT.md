@@ -10,3 +10,7 @@ Controls: [`configs/stage_c_implementation_audit.yaml`](configs/stage_c_implemen
 
 The audit writes a dated result folder under `jailbreaks/runs/` and must pass
 before launching a fresh Stage C optimization.
+
+The audit passed for the template-aligned implementation. The next validation
+uses [`configs/stage_c_single_behavior_v2_llama2_7b.yaml`](configs/stage_c_single_behavior_v2_llama2_7b.yaml)
+and writes to a separate run folder so the earlier invalid run remains auditable.
