@@ -395,6 +395,50 @@ def evaluate_official_gcg_suffix():
     return str(run_dir)
 
 
+@app.function(image=reference_image, gpu="A100-80GB", timeout=43200,
+              secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+              volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
+def run_official_gcg_universal_5():
+    """Run the official progressive GCG optimizer on five AdvBench behaviors."""
+    import os
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    run_dir = Path("/outputs/jailbreaks/runs/2026-08-04_official-gcg-universal-5-resumable")
+    run_dir.mkdir(parents=True, exist_ok=True)
+    reference_root = Path("/root/llm-attacks-reference")
+    config_path = reference_root / "experiments/configs/modal_universal_5.py"
+    config_path.write_text(
+        "from configs.transfer_llama2 import get_config as upstream_config\n\n"
+        "def get_config():\n"
+        "    config = upstream_config()\n"
+        "    config.attack = 'gcg'\n"
+        f"    config.train_data = {str(reference_root / 'data/advbench/harmful_behaviors.csv')!r}\n"
+        f"    config.result_prefix = {str(run_dir / 'reference')!r}\n"
+        "    config.model_paths = ['meta-llama/Llama-2-7b-chat-hf']\n"
+        "    config.tokenizer_paths = ['meta-llama/Llama-2-7b-chat-hf']\n"
+        "    config.n_train_data = 5\n"
+        "    config.n_test_data = 25\n"
+        "    config.data_offset = 0\n"
+        "    config.n_steps = 500\n"
+        "    config.test_steps = 1\n"
+        "    config.batch_size = 512\n"
+        "    config.topk = 256\n"
+        "    config.progressive_goals = True\n"
+        "    config.stop_on_success = True\n"
+        "    config.allow_non_ascii = False\n"
+        "    return config\n"
+    )
+    environment = os.environ | {"PYTHONPATH": str(reference_root)}
+    try:
+        subprocess.run([sys.executable, "-u", "main.py", "--config=configs/modal_universal_5.py"],
+                       cwd=reference_root / "experiments", env=environment, check=True)
+    finally:
+        outputs.commit()
+    return str(run_dir)
+
+
 @app.function(image=image, gpu="A100", timeout=900,
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/root/.cache/huggingface": hf_cache})
@@ -605,6 +649,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         return
     if task == "official_gcg_suffix_eval":
         print(evaluate_official_gcg_suffix.remote())
+        return
+    if task == "official_gcg_universal_5":
+        print(run_official_gcg_universal_5.remote())
         return
     if task == "jbgcg":
         ds = [d for d in datasets.split(",") if d.strip()]
