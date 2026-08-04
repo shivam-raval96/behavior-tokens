@@ -14,7 +14,7 @@ import json
 import os
 import signal
 import time
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Callable
 
@@ -58,8 +58,8 @@ def read_config(path: Path) -> dict[str, Any]:
 
 def run_paths(config: dict[str, Any], output_base: Path = Path()) -> dict[str, Path]:
     run = config["run"]
-    run_date = date.today().isoformat() if run.get("date", "auto") == "auto" else run["date"]
-    directory = output_base / run["output_root"] / f"{run_date}_{run['description']}"
+    run_stamp = datetime.now().strftime("%Y-%m-%d_%H%M%S") if run.get("date", "auto") == "auto" else run["date"]
+    directory = output_base / run["output_root"] / f"{run_stamp}_{run['description']}"
     return {
         "directory": directory,
         "result": directory / "results.json",

@@ -5,7 +5,7 @@ device: auto
 dtype: float16
 seed: 0
 run_mode: fresh
-source_result: jailbreaks/runs/2026-08-04_stage-c-single-advbench-llama2-7b-chat/results.json
+source_result: jailbreaks/runs/2026-08-03_211840_stage-c-single-advbench-llama2-7b-chat/results.json
 dataset: advbench
 skip_first: 2
 n_behaviors: 25

@@ -32,6 +32,8 @@ Every experiment run is a repository artifact. After a run completes or stops,
 pull its dated output folder from the Modal `bt-outputs` Volume into
 `jailbreaks/runs/`, including its configuration, checkpoints, progress metrics,
 JSON results, Markdown summary, and any configured suffixes or full responses.
+Name each run folder `YYYY-MM-DD_HHMMSS_description`, using the experiment's
+start time and a concise lowercase-hyphenated description.
 Stage the complete run folder, commit it, and push it to `origin/main`; do not
 leave a completed or stopped run's only record on the remote Volume.
 

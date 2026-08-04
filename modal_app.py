@@ -330,9 +330,10 @@ def run_official_gcg_single():
     import os
     import subprocess
     import sys
+    from datetime import datetime
     from pathlib import Path
 
-    run_dir = Path("/outputs/jailbreaks/runs/2026-08-04_official-gcg-single-llama2")
+    run_dir = Path("/outputs/jailbreaks/runs") / f"{datetime.now().strftime('%Y-%m-%d_%H%M%S')}_official-gcg-single-llama2"
     run_dir.mkdir(parents=True, exist_ok=True)
     reference_root = Path("/root/llm-attacks-reference")
     # The official ml_collections entrypoint cannot override list-valued fields
@@ -377,7 +378,7 @@ def evaluate_official_gcg_suffix(config_filename: str = "official_gcg_suffix_eva
     import json
     import os
     import time
-    from datetime import date
+    from datetime import datetime
     from pathlib import Path
 
     import torch
@@ -392,7 +393,7 @@ def evaluate_official_gcg_suffix(config_filename: str = "official_gcg_suffix_eva
     best_index = min(range(len(source_data["losses"])), key=source_data["losses"].__getitem__)
     control = source_data["controls"][best_index]
     run_dir = Path("/outputs") / config["run"]["output_root"] / (
-        f"{date.today().isoformat()}_{config['run']['description']}"
+        f"{datetime.now().strftime('%Y-%m-%d_%H%M%S')}_{config['run']['description']}"
     )
     run_dir.mkdir(parents=True, exist_ok=True)
     (run_dir / "config.yaml").write_text(yaml.safe_dump(config, sort_keys=False))
@@ -491,9 +492,10 @@ def run_official_gcg_universal_5():
     import os
     import subprocess
     import sys
+    from datetime import datetime
     from pathlib import Path
 
-    run_dir = Path("/outputs/jailbreaks/runs/2026-08-04_official-gcg-universal-5-eval50")
+    run_dir = Path("/outputs/jailbreaks/runs") / f"{datetime.now().strftime('%Y-%m-%d_%H%M%S')}_official-gcg-universal-5-eval50"
     run_dir.mkdir(parents=True, exist_ok=True)
     reference_root = Path("/root/llm-attacks-reference")
     config_path = reference_root / "experiments/configs/modal_universal_5.py"
