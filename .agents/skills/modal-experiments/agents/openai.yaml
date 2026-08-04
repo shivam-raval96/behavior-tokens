@@ -1,0 +1,4 @@
+interface:
+  display_name: "Modal Experiments"
+  short_description: "Run resilient Modal experiments"
+  default_prompt: "Use $modal-experiments to launch and monitor a resumable Modal experiment."
