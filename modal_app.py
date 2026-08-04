@@ -135,24 +135,27 @@ def run_stage_a(prompt_index: int = 0, run_mode: str | None = None):
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
 def run_jbb_steering(run_mode: str = "fresh", variant: str = "base"):
-    """Extract/resume a durable JBB jailbreak activation direction."""
+    """Run a durable JBB extraction or a reuse-only behavioral evaluation."""
     import signal
     import sys
     from pathlib import Path
     import yaml
 
     sys.path.insert(0, "/root")
-    from active_steering_vectors.jbb_steering import run, write_json
+    from active_steering_vectors.jbb_steering import write_json
 
     variants = {
         "base": ("2026-08-04_jbb-llama2-chat-direction", "jbb_llama2_chat.yaml"),
         "plus6_generations": ("2026-08-04_jbb-llama2-chat-plus6-generations", "jbb_llama2_chat_plus6_generations.yaml"),
+        "reuse_dense_asr": ("2026-08-04_jbb-llama2-reuse-dense-asr", "jbb_llama2_reuse_dense_asr.yaml"),
     }
     run_id, config_name = variants[variant]
     run_dir = Path("/outputs/steering_vectors/runs") / run_id
     config_path = Path("/root/active_steering_vectors/configs") / config_name
     cfg = yaml.safe_load(config_path.read_text())
     cfg["output_dir"] = str(run_dir)
+    if variant == "reuse_dense_asr":
+        cfg["source_run_dir"] = "/outputs/steering_vectors/runs/2026-08-04_jbb-llama2-chat-direction"
     run_dir.mkdir(parents=True, exist_ok=True)
     resolved = run_dir / "resolved_config.yaml"
     resolved.write_text(yaml.safe_dump(cfg, sort_keys=True))
@@ -160,6 +163,10 @@ def run_jbb_steering(run_mode: str = "fresh", variant: str = "base"):
     previous = signal.getsignal(signal.SIGTERM)
     signal.signal(signal.SIGTERM, lambda *_: (_ for _ in ()).throw(KeyboardInterrupt))
     try:
+        if variant == "reuse_dense_asr":
+            from active_steering_vectors.jbb_reuse_eval import run
+        else:
+            from active_steering_vectors.jbb_steering import run
         return run(resolved, run_mode=run_mode, checkpoint_callback=outputs.commit)
     except KeyboardInterrupt:
         checkpoint_path = run_dir / "checkpoint.json"
@@ -715,7 +722,7 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         print(run_stage_a.remote(prompt_index, run_mode or None))
         return
     if task == "jbb_steering":
-        print(run_jbb_steering.remote(run_mode or "fresh", "plus6_generations"))
+        print(run_jbb_steering.remote(run_mode or "fresh", "reuse_dense_asr"))
         return
     if task == "stage_b_small":
         print(run_stage_b_small_scale.remote())
