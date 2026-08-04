@@ -102,7 +102,7 @@ class CheckpointedGCG(GCG):
         encode = lambda text: self.tok(text, add_special_tokens=False).input_ids
         before = torch.tensor(encode(before_text), device=self.device)
         after = torch.tensor(encode(after_text), device=self.device)
-        target_ids = torch.tensor(encode(" " + target.strip()), device=self.device)
+        target_ids = torch.tensor(encode(target.strip()), device=self.device)
         return before, after, target_ids
 
     def _init_suffix(self) -> torch.Tensor:
