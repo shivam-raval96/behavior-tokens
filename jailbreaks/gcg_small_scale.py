@@ -8,6 +8,7 @@ never written to the run artifacts.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import os
@@ -140,6 +141,26 @@ class CheckpointedGCG(GCG):
         return GCGResult(goal=goal, target=target, suffix=self.tok.decode(suffix),
                          suffix_ids=suffix.tolist(), loss=history[-1], loss_history=history), initial_loss
 
+    @torch.no_grad()
+    def generate(self, goal: str, suffix_ids: list[int] | None, max_new_tokens: int = 128) -> str:
+        """Greedy generation with an explicit mask for Llama's pad/EOS collision."""
+        before, after, _ = self._layout(goal, target="x")
+        parts = [before]
+        if suffix_ids:
+            parts.append(torch.tensor(suffix_ids, device=self.device))
+        parts.append(after)
+        input_ids = torch.cat(parts).unsqueeze(0)
+        generation_config = copy.deepcopy(self.m.generation_config)
+        generation_config.do_sample = False
+        generation_config.temperature = None
+        generation_config.top_p = None
+        output_ids = self.m.generate(
+            input_ids=input_ids, attention_mask=torch.ones_like(input_ids),
+            max_new_tokens=max_new_tokens, generation_config=generation_config,
+            pad_token_id=self.tok.pad_token_id, eos_token_id=self.tok.eos_token_id,
+        )
+        return self.tok.decode(output_ids[0, input_ids.shape[1]:], skip_special_tokens=True)
+
 
 def _write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -215,6 +236,8 @@ def run(config_path: Path, output_base: Path, checkpoint_callback: Callable[[], 
             behavior_id = hashlib.sha256(record["goal"].encode()).hexdigest()[:12]
 
             def save_current(state: dict[str, Any]) -> None:
+                nonlocal active_state
+                active_state = state
                 save({"behavior_id": behavior_id, **state})
 
             result, initial_loss = attack.optimize(record["goal"], record["target"], active_state,
