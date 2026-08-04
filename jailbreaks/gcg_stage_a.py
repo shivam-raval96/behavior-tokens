@@ -7,13 +7,15 @@ behavioral jailbreak evaluation.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import os
+import signal
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 import torch
 import torch.nn.functional as F
@@ -63,6 +65,11 @@ def read_experiment(path: Path) -> dict[str, Any]:
             raise ValueError("every prompt row needs prompt and target_prefix")
     if config.get("suffix_length") != 5 or not 20 <= config.get("steps", 0) <= 50:
         raise ValueError("Stage A is fixed to a 5-token suffix and 20–50 steps")
+    if config.get("run_mode", "fresh") not in {"fresh", "resume"}:
+        raise ValueError("run_mode must be either fresh or resume")
+    for key in ("progress_every", "checkpoint_every"):
+        if not isinstance(config.get(key, 5), int) or config.get(key, 5) < 1:
+            raise ValueError(f"{key} must be a positive integer")
     return config
 
 
@@ -251,59 +258,160 @@ class StageAValidator:
         return maximum_difference
 
     def run(
-        self, prompt: str, target_prefix: str, progress_path: Path | None = None
+        self,
+        prompt: str,
+        target_prefix: str,
+        *,
+        checkpoint_path: Path | None = None,
+        progress_path: Path | None = None,
+        run_mode: str = "fresh",
+        checkpoint_callback: Callable[[], None] | None = None,
     ) -> dict[str, Any]:
         generator = torch.Generator(device=self.device).manual_seed(self.config["seed"])
         layout = self.layout(prompt, target_prefix)
-        suffix = self.initial_suffix()
-        initial_suffix = suffix.clone()
         started = time.monotonic()
-        slices = self.verify_layout(suffix, layout)
-        initial_loss = float(self.evaluate(suffix.unsqueeze(0), layout)[0])
-        current_loss = initial_loss
-        history: list[float] = []
-        invariants: dict[str, Any] = {
-            "initial_suffix_roundtrips": True,
-            "slice_indices": slices,
-            "model_weight_gradients_absent": True,
-        }
-        progress = tqdm(range(self.config["steps"]), desc="Stage A GCG", unit="step")
-        for step in progress:
-            gradient, gradient_loss = self.gradient(suffix, layout)
-            candidates = self.sample_candidates(suffix, gradient, generator)
-            if step == 0:
-                invariants["candidate_batch_one_coordinate"] = True
-                invariants["candidate_batch_roundtrips"] = True
-                invariants["batch_serial_max_abs_difference"] = self.verify_batching(candidates, layout)
-            candidate_losses = self.evaluate(candidates, layout)
-            best_index = int(candidate_losses.argmin())
-            best_loss = float(candidate_losses[best_index])
-            if best_loss < current_loss:
-                suffix, current_loss = candidates[best_index].clone(), best_loss
-            history.append(current_loss)
-            progress.set_postfix(loss=f"{current_loss:.4f}", candidates=candidates.shape[0])
-            if (step + 1) % self.config["progress_every"] == 0 or step + 1 == self.config["steps"]:
-                metric = {
-                    "type": "stage_a_progress",
-                    "step": step + 1,
-                    "total_steps": self.config["steps"],
-                    "current_loss": current_loss,
-                    "gradient_loss": gradient_loss,
-                    "candidate_count": int(candidates.shape[0]),
-                    "elapsed_seconds": round(time.monotonic() - started, 2),
-                }
-                print("METRIC " + json.dumps(metric, sort_keys=True), flush=True)
-                if progress_path:
-                    progress_path.parent.mkdir(parents=True, exist_ok=True)
-                    progress_path.write_text(json.dumps({
-                        "status": "running", "prompt": prompt, "target_prefix": target_prefix,
-                        "initial_loss": initial_loss, "loss_history": history, "latest_metric": metric,
-                    }, indent=2) + "\n")
+        if run_mode == "resume":
+            if checkpoint_path is None or not checkpoint_path.exists():
+                raise FileNotFoundError("cannot resume: no Stage A checkpoint was found")
+            checkpoint = json.loads(checkpoint_path.read_text())
+            if checkpoint.get("status") == "complete":
+                raise ValueError("checkpoint is already complete; set run_mode: fresh for a new run")
+            if checkpoint.get("prompt") != prompt or checkpoint.get("target_prefix") != target_prefix:
+                raise ValueError("checkpoint prompt does not match the selected experiment prompt")
+            initial_suffix = torch.tensor(
+                checkpoint["initial_suffix_token_ids"], device=self.device, dtype=torch.long
+            )
+            suffix = torch.tensor(checkpoint["suffix_token_ids"], device=self.device, dtype=torch.long)
+            if suffix.numel() != self.config["suffix_length"]:
+                raise ValueError("checkpoint suffix length does not match EXPERIMENT.md")
+            if not self.roundtrips(suffix):
+                raise ValueError("checkpoint suffix no longer round-trips through the tokenizer")
+            generator.set_state(torch.tensor(checkpoint["generator_state"], dtype=torch.uint8))
+            initial_loss = float(checkpoint["initial_loss"])
+            current_loss = float(checkpoint["current_loss"])
+            history = list(checkpoint["loss_history"])
+            invariants = dict(checkpoint["invariants"])
+            start_step = int(checkpoint["next_step"])
+            if not 0 <= start_step < self.config["steps"]:
+                raise ValueError("checkpoint has no remaining steps; set run_mode: fresh for a new run")
+            slices = self.verify_layout(suffix, layout)
+            if invariants.get("slice_indices") != slices:
+                raise ValueError("checkpoint slice layout does not match EXPERIMENT.md")
+            print(f"Resuming Stage A from step {start_step}/{self.config['steps']}", flush=True)
+        else:
+            suffix = self.initial_suffix()
+            initial_suffix = suffix.clone()
+            slices = self.verify_layout(suffix, layout)
+            initial_loss = float(self.evaluate(suffix.unsqueeze(0), layout)[0])
+            current_loss = initial_loss
+            history = []
+            invariants = {
+                "initial_suffix_roundtrips": True,
+                "slice_indices": slices,
+                "model_weight_gradients_absent": True,
+            }
+            start_step = 0
+
+        def save_checkpoint(status: str, next_step: int, metric: dict[str, Any] | None = None) -> None:
+            if checkpoint_path is None:
+                return
+            payload = {
+                "status": status,
+                "next_step": next_step,
+                "total_steps": self.config["steps"],
+                "prompt": prompt,
+                "target_prefix": target_prefix,
+                "initial_suffix_token_ids": initial_suffix.tolist(),
+                "suffix_token_ids": suffix.tolist(),
+                "initial_loss": initial_loss,
+                "current_loss": current_loss,
+                "loss_history": history,
+                "invariants": invariants,
+                "generator_state": generator.get_state().cpu().tolist(),
+                "latest_metric": metric,
+            }
+            checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+            checkpoint_path.write_text(json.dumps(payload, indent=2) + "\n")
+            if checkpoint_callback:
+                checkpoint_callback()
+
+        def save_progress(metric: dict[str, Any], status: str = "running") -> None:
+            if progress_path is None:
+                return
+            progress_path.parent.mkdir(parents=True, exist_ok=True)
+            progress_path.write_text(json.dumps({
+                "status": status, "prompt": prompt, "target_prefix": target_prefix,
+                "initial_loss": initial_loss, "current_loss": current_loss,
+                "loss_history": history, "latest_metric": metric,
+            }, indent=2) + "\n")
+
+        save_checkpoint("running", start_step)
+        progress = tqdm(range(start_step, self.config["steps"]), desc="Stage A GCG", unit="step")
+        latest_metric: dict[str, Any] | None = None
+        # These snapshots make an asynchronous stop restart at the beginning of
+        # the last incomplete step, including its exact candidate RNG state.
+        safe_suffix = suffix.clone()
+        safe_current_loss = current_loss
+        safe_history = list(history)
+        safe_invariants = copy.deepcopy(invariants)
+        safe_next_step = start_step
+        safe_generator_state = generator.get_state().clone()
+        try:
+            for step in progress:
+                gradient, gradient_loss = self.gradient(suffix, layout)
+                candidates = self.sample_candidates(suffix, gradient, generator)
+                if step == 0:
+                    invariants["candidate_batch_one_coordinate"] = True
+                    invariants["candidate_batch_roundtrips"] = True
+                    invariants["batch_serial_max_abs_difference"] = self.verify_batching(candidates, layout)
+                candidate_losses = self.evaluate(candidates, layout)
+                best_index = int(candidate_losses.argmin())
+                best_loss = float(candidate_losses[best_index])
+                if best_loss < current_loss:
+                    suffix, current_loss = candidates[best_index].clone(), best_loss
+                history.append(current_loss)
+                safe_suffix = suffix.clone()
+                safe_current_loss = current_loss
+                safe_history = list(history)
+                safe_invariants = copy.deepcopy(invariants)
+                safe_next_step = step + 1
+                safe_generator_state = generator.get_state().clone()
+                progress.set_postfix(loss=f"{current_loss:.4f}", candidates=candidates.shape[0])
+                if (step + 1) % self.config["progress_every"] == 0 or step + 1 == self.config["steps"]:
+                    metric = {
+                        "type": "stage_a_progress",
+                        "step": step + 1,
+                        "total_steps": self.config["steps"],
+                        "current_loss": current_loss,
+                        "gradient_loss": gradient_loss,
+                        "candidate_count": int(candidates.shape[0]),
+                        "elapsed_seconds": round(time.monotonic() - started, 2),
+                    }
+                    latest_metric = metric
+                    print("METRIC " + json.dumps(metric, sort_keys=True), flush=True)
+                    save_progress(metric)
+                if (step + 1) % self.config["checkpoint_every"] == 0 or step + 1 == self.config["steps"]:
+                    save_checkpoint("running", step + 1, latest_metric)
+        except KeyboardInterrupt:
+            suffix = safe_suffix
+            current_loss = safe_current_loss
+            history = safe_history
+            invariants = safe_invariants
+            generator.set_state(safe_generator_state)
+            metric = {
+                "type": "stage_a_stopped", "step": safe_next_step,
+                "total_steps": self.config["steps"], "current_loss": current_loss,
+                "elapsed_seconds": round(time.monotonic() - started, 2),
+            }
+            print("METRIC " + json.dumps(metric, sort_keys=True), flush=True)
+            save_progress(metric, status="stopped")
+            save_checkpoint("stopped", safe_next_step, metric)
+            raise
         invariants["final_suffix_roundtrips"] = self.roundtrips(suffix)
         invariants["target_loss_decreased"] = current_loss < initial_loss
         if not invariants["target_loss_decreased"]:
             raise AssertionError(f"target loss did not decrease ({initial_loss:.6f} -> {current_loss:.6f})")
-        return {
+        result = {
             "prompt": prompt,
             "target_prefix": target_prefix,
             "initial_suffix_token_ids": initial_suffix.tolist(),
@@ -317,6 +425,45 @@ class StageAValidator:
             "final_suffix_decoded": self.tokenizer.decode(suffix.tolist(), clean_up_tokenization_spaces=False),
             "invariants": invariants,
         }
+        save_checkpoint("complete", self.config["steps"])
+        return result
+
+
+def run_experiment(
+    experiment: Path,
+    prompt_index: int,
+    output: Path | None = None,
+    progress_output: Path | None = None,
+    checkpoint_output: Path | None = None,
+    run_mode: str | None = None,
+    checkpoint_callback: Callable[[], None] | None = None,
+) -> dict[str, Any]:
+    config = read_experiment(experiment)
+    if not 0 <= prompt_index < len(config["prompts"]):
+        raise ValueError("--prompt-index is outside the experiment prompt list")
+    mode = run_mode or config.get("run_mode", "fresh")
+    if mode not in {"fresh", "resume"}:
+        raise ValueError("run_mode must be either fresh or resume")
+    model, tokenizer, device, dtype = load_model(config)
+    row = config["prompts"][prompt_index]
+    started = time.monotonic()
+    result = StageAValidator(model, tokenizer, config).run(
+        row["prompt"], row["target_prefix"], checkpoint_path=checkpoint_output,
+        progress_path=progress_output, run_mode=mode, checkpoint_callback=checkpoint_callback,
+    )
+    result["metadata"] = {
+        "stage": config["stage"], "model_id": config["model_id"], "revision": config["revision"],
+        "device": device, "dtype": str(dtype), "seed": config["seed"],
+        "run_mode": mode,
+        "experiment_sha256": hashlib.sha256(experiment.read_bytes()).hexdigest(),
+        "prompt_index": prompt_index, "wall_clock_seconds": round(time.monotonic() - started, 2),
+    }
+    destination = output or Path(config["output_path"])
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(json.dumps(result, indent=2) + "\n")
+    if checkpoint_callback:
+        checkpoint_callback()
+    return result
 
 
 def main() -> None:
@@ -327,26 +474,25 @@ def main() -> None:
                         help="override output_path from the experiment Markdown")
     parser.add_argument("--progress-output", type=Path, default=None,
                         help="write a partial JSON checkpoint at each progress interval")
+    parser.add_argument("--checkpoint-output", type=Path, default=None,
+                        help="durable resume checkpoint; use with run_mode: resume")
+    parser.add_argument("--run-mode", choices=("fresh", "resume"), default=None,
+                        help="override run_mode in EXPERIMENT.md")
     args = parser.parse_args()
-    config = read_experiment(args.experiment)
-    if not 0 <= args.prompt_index < len(config["prompts"]):
-        raise ValueError("--prompt-index is outside the experiment prompt list")
-    model, tokenizer, device, dtype = load_model(config)
-    row = config["prompts"][args.prompt_index]
-    started = time.monotonic()
-    result = StageAValidator(model, tokenizer, config).run(
-        row["prompt"], row["target_prefix"], args.progress_output
-    )
-    result["metadata"] = {
-        "stage": config["stage"], "model_id": config["model_id"], "revision": config["revision"],
-        "device": device, "dtype": str(dtype), "seed": config["seed"],
-        "experiment_sha256": hashlib.sha256(args.experiment.read_bytes()).hexdigest(),
-        "prompt_index": args.prompt_index, "wall_clock_seconds": round(time.monotonic() - started, 2),
-    }
-    output = args.output or Path(config["output_path"])
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(result, indent=2) + "\n")
-    print(f"wrote {output}")
+    previous_handler = signal.getsignal(signal.SIGTERM)
+
+    def stop_at_checkpoint(_signum, _frame) -> None:
+        raise KeyboardInterrupt
+
+    signal.signal(signal.SIGTERM, stop_at_checkpoint)
+    try:
+        result = run_experiment(
+            args.experiment, args.prompt_index, args.output, args.progress_output,
+            args.checkpoint_output, args.run_mode,
+        )
+    finally:
+        signal.signal(signal.SIGTERM, previous_handler)
+    print(f"wrote {args.output or read_experiment(args.experiment)['output_path']}")
 
 
 if __name__ == "__main__":

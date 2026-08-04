@@ -10,12 +10,14 @@ revision: main
 device: auto
 dtype: float16
 seed: 0
+run_mode: fresh  # fresh overwrites the saved checkpoint; set resume after a stopped run
 suffix_length: 5
 steps: 30
 top_k: 64
 candidate_batch_size: 16
 evaluation_chunk_size: 4
 progress_every: 5
+checkpoint_every: 5
 initial_suffix_text: auto  # first printable, non-special repeated token with an exact round trip
 output_path: jailbreaks/results/stage_a_benign_validation.json
 prompts:
@@ -47,3 +49,10 @@ prompts:
 
 Run one prompt at a time during Stage A. The default is prompt index `0`; use
 `--prompt-index` to validate another entry from the list.
+
+Each run saves its state at `checkpoint_every` steps. To continue a stopped
+Modal run, set `run_mode: resume` and relaunch the same prompt index. To begin
+again from step 0, set it back to `run_mode: fresh`; this replaces the prior
+checkpoint and result for that prompt. The checkpoint records the suffix IDs,
+loss history, next step, and random-generator state, so a resumed run samples
+the same remaining candidates as an uninterrupted run.
