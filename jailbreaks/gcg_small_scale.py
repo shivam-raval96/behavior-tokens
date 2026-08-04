@@ -164,6 +164,11 @@ class CheckpointedGCG(GCG):
              {"role": "assistant", "content": target}],
             add_generation_prompt=False, return_tensors="pt",
         )[0].to(self.device)
+        shared_loss_length = min(loss_ids.numel(), canonical_loss_ids.numel())
+        loss_differences = (loss_ids[:shared_loss_length] != canonical_loss_ids[:shared_loss_length]).nonzero(as_tuple=False)
+        first_loss_mismatch = int(loss_differences[0]) if loss_differences.numel() else (
+            shared_loss_length if loss_ids.numel() != canonical_loss_ids.numel() else None
+        )
         shared_length = min(generation_ids.numel(), canonical_ids.numel())
         differing = (generation_ids[:shared_length] != canonical_ids[:shared_length]).nonzero(as_tuple=False)
         first_mismatch = int(differing[0]) if differing.numel() else (
@@ -176,6 +181,11 @@ class CheckpointedGCG(GCG):
         return {
             "canonical_generation_ids_match": bool(torch.equal(generation_ids, canonical_ids)),
             "canonical_loss_ids_match": bool(torch.equal(loss_ids, canonical_loss_ids[:loss_ids.numel()])),
+            "constructed_loss_token_count": int(loss_ids.numel()),
+            "canonical_loss_token_count": int(canonical_loss_ids.numel()),
+            "first_loss_token_mismatch": first_loss_mismatch,
+            "constructed_tokens_near_loss_boundary": loss_ids[max(0, (first_loss_mismatch or 0) - 2):(first_loss_mismatch or 0) + 4].tolist(),
+            "canonical_tokens_near_loss_boundary": canonical_loss_ids[max(0, (first_loss_mismatch or 0) - 2):(first_loss_mismatch or 0) + 4].tolist(),
             "constructed_generation_token_count": int(generation_ids.numel()),
             "canonical_generation_token_count": int(canonical_ids.numel()),
             "first_generation_token_mismatch": first_mismatch,
