@@ -129,6 +129,10 @@ def run(config_path: Path, output_base: Path, commit: Callable[[], None] | None 
     gcfg = GCGConfig(suffix_len=cfg["suffix_length"], steps=cfg["steps"], topk=cfg["top_k"],
                      search_batch=cfg["candidate_batch_size"], eval_chunk=cfg["evaluation_chunk_size"], seed=cfg["seed"])
     attack = CheckpointedGCG(model, tokenizer, gcfg)
+    if cfg["stage"] == "stage_c_five_behavior_advbench_llama32_1b":
+        # Llama-3.2's context-sensitive control decoding fails the legacy
+        # string round-trip filter; token-level mutation invariants remain on.
+        attack.require_roundtrip_candidates = False
     layouts = [attack._layout(row["goal"], row["target"]) for row in train]
     generator = torch.Generator(device=device).manual_seed(cfg["seed"])
     if old:

@@ -142,7 +142,7 @@ class CheckpointedGCG(GCG):
                     continue
                 decoded = self.tok.decode(candidate, skip_special_tokens=False)
                 encoded = self.tok(decoded, add_special_tokens=False).input_ids
-                if encoded == candidate.tolist():
+                if not getattr(self, "require_roundtrip_candidates", True) or encoded == candidate.tolist():
                     valid.append(candidate)
             if valid:
                 break
