@@ -17,7 +17,7 @@ from claude_legacy.jailbreaks.gcg_bench.gcg_zou import GCGConfig
 
 def read_config(path: Path) -> dict[str, Any]:
     cfg = yaml.safe_load(path.read_text())
-    if not isinstance(cfg, dict) or cfg.get("stage") not in {"stage_c_universal_advbench_llama2_7b", "stage_c_single_behavior_advbench_llama2_7b"}:
+    if not isinstance(cfg, dict) or cfg.get("stage") not in {"stage_c_universal_advbench_llama2_7b", "stage_c_single_behavior_advbench_llama2_7b", "stage_c_five_behavior_advbench_llama2_7b"}:
         raise ValueError("config must select the universal or one-behavior AdvBench protocol")
     required = {"dataset": "advbench", "suffix_length": 20,
                 "steps": 500, "top_k": 256, "candidate_batch_size": 512}
@@ -27,6 +27,8 @@ def read_config(path: Path) -> dict[str, Any]:
         raise ValueError("the full protocol requires 25 training and 100 held-out behaviors")
     if cfg["stage"] == "stage_c_single_behavior_advbench_llama2_7b" and (cfg.get("train_behaviors"), cfg.get("test_behaviors")) != (1, 1):
         raise ValueError("the one-behavior protocol requires one train and one held-out behavior")
+    if cfg["stage"] == "stage_c_five_behavior_advbench_llama2_7b" and (cfg.get("train_behaviors"), cfg.get("test_behaviors")) != (5, 25):
+        raise ValueError("the five-behavior protocol requires five train and 25 held-out behaviors")
     if cfg.get("run_mode", "fresh") not in {"fresh", "resume"}:
         raise ValueError("run_mode must be fresh or resume")
     return cfg

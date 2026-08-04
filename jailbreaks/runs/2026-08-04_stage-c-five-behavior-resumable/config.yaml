@@ -1,0 +1,27 @@
+stage: stage_c_five_behavior_advbench_llama2_7b
+model_id: meta-llama/Llama-2-7b-chat-hf
+revision: main
+device: auto
+dtype: float16
+seed: 0
+run_mode: fresh
+dataset: advbench
+train_behaviors: 5
+test_behaviors: 25
+suffix_length: 20
+steps: 500
+top_k: 256
+candidate_batch_size: 512
+evaluation_chunk_size: 128
+max_new_tokens: 128
+progressive_goals: true
+stop_on_success: false
+success_loss_threshold: 0.2
+progress_every: 5
+checkpoint_every: 1
+evaluation_every: 25
+store_raw_artifacts: true
+run:
+  description: stage-c-five-behavior-resumable
+  output_root: jailbreaks/runs
+  date: auto
