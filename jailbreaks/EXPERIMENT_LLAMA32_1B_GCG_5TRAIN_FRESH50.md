@@ -26,6 +26,6 @@ losses before the AdvBench run starts.
 
 ## Artifacts
 
-One run folder, `jailbreaks/runs/2026-08-04_162325_llama32-1b-gcg-5train-fresh50/`,
+One run folder, `jailbreaks/runs/2026-08-04_232847_llama32-1b-gcg-5train-fresh50/`,
 contains its resolved config, checkpoints, periodic held-out metrics, found
 suffix, paired raw baseline/suffix generations, `results.json`, and `RESULTS.md`.

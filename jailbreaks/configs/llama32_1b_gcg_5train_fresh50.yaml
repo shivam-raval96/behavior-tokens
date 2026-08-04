@@ -28,4 +28,4 @@ store_raw_artifacts: true
 run:
   description: llama32-1b-gcg-5train-fresh50
   output_root: jailbreaks/runs
-  date: 2026-08-04_162325
+  date: 2026-08-04_232847
