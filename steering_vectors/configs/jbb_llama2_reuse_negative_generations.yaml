@@ -1,0 +1,13 @@
+model_id: meta-llama/Llama-2-7b-chat-hf
+dataset: JailbreakBench/JBB-Behaviors
+dataset_config: behaviors
+source_run_dir: steering_vectors/runs/2026-08-04_225000Z_jbb-llama2-chat-direction
+evaluation_examples: 20
+scales: [-4, -6]
+temperature: 0.5
+max_new_tokens: 64
+generation_seed: 0
+generation_batch_size: 4
+checkpoint_every: 5
+output_dir: steering_vectors/runs/2026-08-04_235344Z_jbb-llama2-reuse-negative-generations
+seed: 0
