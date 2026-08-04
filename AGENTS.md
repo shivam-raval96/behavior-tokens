@@ -41,3 +41,11 @@ Every experiment must expose live progress: use `tqdm` for bounded loops, print
 structured metrics at a configurable interval, and write a partial result
 checkpoint. When an experiment runs remotely, monitor those metrics and report
 meaningful updates in this task before completion.
+
+After launching a remote experiment, do not report it as running merely because
+the launch command was accepted. Check its Modal application logs and, when
+applicable, its output Volume until there is evidence that the worker started
+and made progress (for example: model loading completed, a progress metric was
+emitted, or a checkpoint was written). If it failed during provisioning or
+startup, report the failure plainly, fix it when in scope, and verify the
+replacement launch the same way.
