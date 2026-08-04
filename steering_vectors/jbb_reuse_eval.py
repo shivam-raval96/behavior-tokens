@@ -93,12 +93,12 @@ def run(config_path: Path, run_mode: str = "fresh", checkpoint_callback=lambda: 
                         continue
                     input_ids = tokenizer.apply_chat_template([{"role": "user", "content": row["goal"]}], tokenize=True,
                                                                add_generation_prompt=True, return_tensors="pt").to(model.device)
-                    generator = torch.Generator(device=model.device).manual_seed(
-                        cfg["generation_seed"] + int((float(scale) + 20) * 100_000) + row["dataset_index"]
-                    )
+                    prompt_seed = cfg["generation_seed"] + int((float(scale) + 20) * 100_000) + row["dataset_index"]
+                    torch.manual_seed(prompt_seed)
+                    torch.cuda.manual_seed_all(prompt_seed)
                     output_ids = model.generate(input_ids, do_sample=True, temperature=cfg["temperature"],
                                                 max_new_tokens=cfg["max_new_tokens"], pad_token_id=tokenizer.eos_token_id,
-                                                generator=generator, use_cache=True)
+                                                use_cache=True)
                     response = tokenizer.decode(output_ids[0, input_ids.shape[1]:], skip_special_tokens=True)
                     record = {"scale": float(scale), **row, "layer": layer, "temperature": cfg["temperature"],
                               "max_new_tokens": cfg["max_new_tokens"], "response": response,
