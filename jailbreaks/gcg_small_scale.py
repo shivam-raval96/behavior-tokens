@@ -125,22 +125,27 @@ class CheckpointedGCG(GCG):
         """
         top_ids = (-grad).topk(self.cfg.topk, dim=1).indices
         batch_size = self.cfg.search_batch
-        positions = torch.randint(0, suffix.numel(), (batch_size,), device=self.device, generator=generator)
-        choices = torch.randint(0, self.cfg.topk, (batch_size,), device=self.device, generator=generator)
-        candidates = suffix.unsqueeze(0).repeat(batch_size, 1)
-        candidates[torch.arange(batch_size, device=self.device), positions] = top_ids[positions, choices]
-
         special_ids = set(self.tok.all_special_ids)
         valid: list[torch.Tensor] = []
-        for candidate in candidates:
-            if int((candidate != suffix).sum()) != 1:
-                continue
-            if any(int(token) in special_ids for token in candidate):
-                continue
-            decoded = self.tok.decode(candidate, skip_special_tokens=False)
-            encoded = self.tok(decoded, add_special_tokens=False).input_ids
-            if encoded == candidate.tolist():
-                valid.append(candidate)
+        # Some tokenizer vocabularies have a much smaller round-tripping subset
+        # near the gradient top-k. Retry with the same seeded generator instead
+        # of treating an empty first draw as an optimizer failure.
+        for _ in range(8):
+            positions = torch.randint(0, suffix.numel(), (batch_size,), device=self.device, generator=generator)
+            choices = torch.randint(0, self.cfg.topk, (batch_size,), device=self.device, generator=generator)
+            candidates = suffix.unsqueeze(0).repeat(batch_size, 1)
+            candidates[torch.arange(batch_size, device=self.device), positions] = top_ids[positions, choices]
+            for candidate in candidates:
+                if int((candidate != suffix).sum()) != 1:
+                    continue
+                if any(int(token) in special_ids for token in candidate):
+                    continue
+                decoded = self.tok.decode(candidate, skip_special_tokens=False)
+                encoded = self.tok(decoded, add_special_tokens=False).input_ids
+                if encoded == candidate.tolist():
+                    valid.append(candidate)
+            if valid:
+                break
         if not valid:
             raise RuntimeError("GCG sampled no valid one-coordinate candidates")
         valid.extend([valid[-1]] * (batch_size - len(valid)))
