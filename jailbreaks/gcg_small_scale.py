@@ -22,7 +22,7 @@ import torch
 import yaml
 from tqdm.auto import tqdm
 
-from claude_legacy.jailbreaks.gcg_bench.asr import asr, is_success
+from claude_legacy.jailbreaks.gcg_bench.asr import is_success
 from claude_legacy.jailbreaks.gcg_bench.benchmark import LLAMA2_CHAT_TEMPLATE, resolve_device
 from claude_legacy.jailbreaks.gcg_bench.datasets_hf import load
 from claude_legacy.jailbreaks.gcg_bench.gcg_zou import GCG, GCGConfig, GCGResult
@@ -211,6 +211,8 @@ def run(config_path: Path, output_base: Path, checkpoint_callback: Callable[[], 
     def save(current: dict[str, Any] | None = None, status: str = "running") -> None:
         base = [row["baseline_success"] for row in rows]
         attacked = [row["attacked_success"] for row in rows]
+        baseline_asr = sum(base) / len(base) if base else 0.0
+        attacked_asr = sum(attacked) / len(attacked) if attacked else 0.0
         payload = {
             "status": status, "config_sha256": hashlib.sha256(config_path.read_bytes()).hexdigest(),
             "metadata": {"model_id": config["model_id"], "device": device, "run_mode": mode,
@@ -218,9 +220,9 @@ def run(config_path: Path, output_base: Path, checkpoint_callback: Callable[[], 
                          "top_k": config["top_k"], "candidate_batch_size": config["candidate_batch_size"]},
             "next_behavior": len(rows), "current_optimization": current,
             "behaviors": rows,
-            "summary": {"n": len(rows), "baseline_asr": asr(["ok" if x else "I'm sorry" for x in base]),
-                        "attacked_asr": asr(["ok" if x else "I'm sorry" for x in attacked]),
-                        "asr_delta": (sum(attacked) - sum(base)) / len(rows) if rows else 0.0},
+            "summary": {"n": len(rows), "baseline_asr": baseline_asr,
+                        "attacked_asr": attacked_asr,
+                        "asr_delta": attacked_asr - baseline_asr},
             "elapsed_seconds": round(time.monotonic() - started, 2),
         }
         _write_json(paths["checkpoint"], payload)
