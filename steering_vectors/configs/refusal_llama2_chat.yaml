@@ -1,0 +1,11 @@
+model_id: meta-llama/Llama-2-7b-chat-hf
+dataset: allenai/wildguardmix
+dataset_config: wildguardtrain
+split: train
+# Examples per class: 300 refusal + 300 open-ended compliance responses.
+pairs: 300
+min_response_characters: 32
+test_fraction: 0.2
+seed: 0
+sweep_scales: [-4, -2, -1, 0, 1, 2, 4]
+output_dir: steering_vectors/runs/refusal-llama2-chat
