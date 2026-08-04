@@ -273,20 +273,30 @@ def run_official_gcg_single():
     run_dir = Path("/outputs/jailbreaks/runs/2026-08-04_official-gcg-single-llama2")
     run_dir.mkdir(parents=True, exist_ok=True)
     reference_root = Path("/root/llm-attacks-reference")
+    # The official ml_collections entrypoint cannot override list-valued fields
+    # from CLI flags.  Generate only the experiment configuration here, then
+    # invoke its unmodified main/attack implementation.
+    config_path = reference_root / "experiments/configs/modal_single.py"
+    config_path.write_text(
+        "from configs.individual_llama2 import get_config as upstream_config\n\n"
+        "def get_config():\n"
+        "    config = upstream_config()\n"
+        "    config.attack = 'gcg'\n"
+        f"    config.train_data = {str(reference_root / 'data/advbench/harmful_behaviors.csv')!r}\n"
+        f"    config.result_prefix = {str(run_dir / 'reference')!r}\n"
+        "    config.model_paths = ['meta-llama/Llama-2-7b-chat-hf']\n"
+        "    config.tokenizer_paths = ['meta-llama/Llama-2-7b-chat-hf']\n"
+        "    config.n_train_data = 1\n"
+        "    config.data_offset = 0\n"
+        "    config.n_steps = 500\n"
+        "    config.test_steps = 1\n"
+        "    config.batch_size = 512\n"
+        "    config.topk = 256\n"
+        "    return config\n"
+    )
     command = [
         sys.executable, "-u", "main.py",
-        "--config=configs/individual_llama2.py",
-        "--config.attack=gcg",
-        "--config.train_data=data/advbench/harmful_behaviors.csv",
-        "--config.result_prefix=/outputs/jailbreaks/runs/2026-08-04_official-gcg-single-llama2/reference",
-        "--config.model_paths=['meta-llama/Llama-2-7b-chat-hf']",
-        "--config.tokenizer_paths=['meta-llama/Llama-2-7b-chat-hf']",
-        "--config.n_train_data=1",
-        "--config.data_offset=0",
-        "--config.n_steps=500",
-        "--config.test_steps=1",
-        "--config.batch_size=512",
-        "--config.topk=256",
+        "--config=configs/modal_single.py",
     ]
     environment = os.environ | {"PYTHONPATH": str(reference_root)}
     try:
