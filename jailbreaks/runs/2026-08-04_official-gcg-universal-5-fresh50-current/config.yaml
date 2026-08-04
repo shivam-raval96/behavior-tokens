@@ -1,0 +1,14 @@
+stage: official_gcg_suffix_eval
+model_id: meta-llama/Llama-2-7b-chat-hf
+source_run: 2026-08-04_official-gcg-universal-5-eval50
+source_log: reference_20260804-20:47:20.json
+dataset: original_advbench
+evaluated_behaviors: 50
+evaluation_start_index: 30
+max_new_tokens: 128
+progress_every: 5
+store_raw_artifacts: true
+run:
+  description: official-gcg-universal-5-fresh50-current
+  output_root: jailbreaks/runs
+  date: auto
