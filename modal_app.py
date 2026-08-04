@@ -420,7 +420,7 @@ def run_official_gcg_universal_5():
     import sys
     from pathlib import Path
 
-    run_dir = Path("/outputs/jailbreaks/runs/2026-08-04_official-gcg-universal-5-resumable")
+    run_dir = Path("/outputs/jailbreaks/runs/2026-08-04_official-gcg-universal-5-eval50")
     run_dir.mkdir(parents=True, exist_ok=True)
     reference_root = Path("/root/llm-attacks-reference")
     config_path = reference_root / "experiments/configs/modal_universal_5.py"
@@ -437,7 +437,7 @@ def run_official_gcg_universal_5():
         "    config.n_test_data = 25\n"
         "    config.data_offset = 0\n"
         "    config.n_steps = 500\n"
-        "    config.test_steps = 1\n"
+        "    config.test_steps = 50\n"
         "    config.batch_size = 512\n"
         "    config.topk = 256\n"
         "    config.progressive_goals = True\n"
