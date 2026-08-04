@@ -66,6 +66,8 @@ def read_experiment(path: Path) -> dict[str, Any]:
     for key in ("progress_every", "checkpoint_every"):
         if not isinstance(config.get(key, 5), int) or config.get(key, 5) < 1:
             raise ValueError(f"{key} must be a positive integer")
+    if not isinstance(config.get("generation_max_new_tokens"), int) or config["generation_max_new_tokens"] < 1:
+        raise ValueError("generation_max_new_tokens must be a positive integer")
     run = config.get("run")
     if not isinstance(run, dict) or not isinstance(run.get("description"), str):
         raise ValueError("run.description is required")
@@ -263,6 +265,38 @@ class StageAValidator:
             losses.append(self.target_loss(self.model(inputs_embeds=sequence).logits, layout))
         return torch.cat(losses)
 
+    @torch.inference_mode()
+    def evaluate_suffix_behavior(self, control: torch.Tensor, layout: Layout, target_prefix: str) -> dict[str, Any]:
+        """Measure target likelihood and a deterministic completion for one control string."""
+        input_ids = torch.cat([layout.before, control, layout.after]).unsqueeze(0)
+        target_start = input_ids.shape[1]
+        full_ids = torch.cat([input_ids[0], layout.target]).unsqueeze(0)
+        logits = self.model(input_ids=full_ids).logits
+        token_logits = logits[:, target_start - 1:target_start - 1 + layout.target.numel(), :]
+        target_loss = float(F.cross_entropy(
+            token_logits.reshape(-1, self.vocab_size), layout.target.reshape(-1)
+        ))
+        generated_ids = self.model.generate(
+            input_ids=input_ids,
+            attention_mask=torch.ones_like(input_ids),
+            max_new_tokens=self.config["generation_max_new_tokens"],
+            do_sample=False,
+            pad_token_id=self.tokenizer.pad_token_id,
+            eos_token_id=self.tokenizer.eos_token_id,
+        )
+        completion = self.tokenizer.decode(
+            generated_ids[0, input_ids.shape[1]:], skip_special_tokens=True
+        )
+        return {
+            "control_token_ids": control.tolist(),
+            "control_decoded": self.tokenizer.decode(
+                control.tolist(), clean_up_tokenization_spaces=False
+            ),
+            "target_loss": target_loss,
+            "completion": completion,
+            "target_prefix_matched": completion.lstrip().startswith(target_prefix),
+        }
+
     def verify_layout(self, suffix: torch.Tensor, layout: Layout) -> dict[str, list[int]]:
         sequence_ids = torch.cat([layout.before, suffix, layout.after, layout.target])
         slices = layout.slices(suffix.numel())
@@ -448,6 +482,30 @@ class StageAValidator:
             "final_suffix_decoded": self.tokenizer.decode(suffix.tolist(), clean_up_tokenization_spaces=False),
             "invariants": invariants,
         }
+        conditions = {
+            "no_suffix": torch.empty(0, device=self.device, dtype=torch.long),
+            "initial_suffix": initial_suffix,
+            "final_suffix": suffix,
+        }
+        behavioral_evaluation = {
+            "generation": {
+                "do_sample": False,
+                "max_new_tokens": self.config["generation_max_new_tokens"],
+            },
+            "conditions": {
+                name: self.evaluate_suffix_behavior(control, layout, target_prefix)
+                for name, control in conditions.items()
+            },
+        }
+        behavioral_evaluation["final_vs_no_suffix_loss_delta"] = (
+            behavioral_evaluation["conditions"]["final_suffix"]["target_loss"]
+            - behavioral_evaluation["conditions"]["no_suffix"]["target_loss"]
+        )
+        behavioral_evaluation["final_vs_initial_loss_delta"] = (
+            behavioral_evaluation["conditions"]["final_suffix"]["target_loss"]
+            - behavioral_evaluation["conditions"]["initial_suffix"]["target_loss"]
+        )
+        result["suffix_evaluation"] = behavioral_evaluation
         save_checkpoint("complete", self.config["steps"])
         return result
 
@@ -495,6 +553,8 @@ def write_results_summary(path: Path, result: dict[str, Any]) -> None:
     """Write the compact, human-readable companion to a completed results.json."""
     metadata = result["metadata"]
     invariants = result["invariants"]
+    suffix_evaluation = result["suffix_evaluation"]
+    conditions = suffix_evaluation["conditions"]
     path.write_text(
         "# Stage A results\n\n"
         "Status: completed\n\n"
@@ -511,6 +571,19 @@ def write_results_summary(path: Path, result: dict[str, Any]) -> None:
         f"| One-coordinate candidates | {invariants['candidate_batch_one_coordinate']} |\n"
         f"| Model weights frozen | {invariants['model_weight_gradients_absent']} |\n"
         f"| Batch/serial max loss difference | {invariants['batch_serial_max_abs_difference']:.6f} |\n\n"
+        "## Deterministic suffix evaluation\n\n"
+        "Each condition is evaluated in the same chat-template control location, with "
+        "greedy generation.\n\n"
+        "| Condition | Target loss | Target prefix matched | Completion |\n"
+        "| --- | ---: | --- | --- |\n"
+        + "".join(
+            f"| {name.replace('_', ' ')} | {condition['target_loss']:.6f} | "
+            f"{condition['target_prefix_matched']} | {condition['completion'].replace('|', '\\|').replace(chr(10), ' ')} |\n"
+            for name, condition in conditions.items()
+        )
+        + "\n"
+        f"Final vs. no-suffix target-loss delta: {suffix_evaluation['final_vs_no_suffix_loss_delta']:.6f}.\n"
+        f"Final vs. initial-suffix target-loss delta: {suffix_evaluation['final_vs_initial_loss_delta']:.6f}.\n\n"
         "See `results.json` for the full loss history and experiment metadata.\n"
     )
 

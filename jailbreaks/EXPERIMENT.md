@@ -13,3 +13,6 @@ That directory holds `results.json`, `RESULTS.md`, `checkpoint.json`, and
 `progress.json`. Set `run_mode: resume` in the YAML to continue a stopped run;
 use `fresh` to restart and overwrite that dated run. Set `run.date` to an
 explicit `YYYY-MM-DD` when resuming a run from a prior date.
+
+`RESULTS.md` compares deterministic completions and target-prefix losses for
+the no-suffix baseline, initial suffix, and final optimized suffix.
