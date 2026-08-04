@@ -136,12 +136,20 @@ class CheckpointedGCG(GCG):
             [{"role": "user", "content": goal + " " + self.tok.decode(suffix)}],
             add_generation_prompt=True, return_tensors="pt",
         )[0].to(self.device)
+        shared_length = min(generation_ids.numel(), canonical_ids.numel())
+        differing = (generation_ids[:shared_length] != canonical_ids[:shared_length]).nonzero(as_tuple=False)
+        first_mismatch = int(differing[0]) if differing.numel() else (
+            shared_length if generation_ids.numel() != canonical_ids.numel() else None
+        )
         grad, _ = self._token_gradients(suffix, before, after, target_ids)
         candidate_batch = self._sample(suffix, grad, torch.Generator(device=self.device).manual_seed(self.cfg.seed))
         batched = self._eval(candidate_batch[:8], before, after, target_ids)
         serial = torch.cat([self._eval(row.unsqueeze(0), before, after, target_ids) for row in candidate_batch[:8]])
         return {
             "canonical_generation_ids_match": bool(torch.equal(generation_ids, canonical_ids)),
+            "constructed_generation_token_count": int(generation_ids.numel()),
+            "canonical_generation_token_count": int(canonical_ids.numel()),
+            "first_generation_token_mismatch": first_mismatch,
             "candidate_count": int(candidate_batch.shape[0]),
             "candidates_change_one_coordinate": bool(torch.all(
                 (candidate_batch != suffix.unsqueeze(0)).sum(dim=1) == 1
