@@ -96,6 +96,39 @@ def run_stage_a(prompt_index: int = 0):
         return json.load(handle)
 
 
+@app.function(image=image, gpu="A100", timeout=900,
+              secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+              volumes={"/root/.cache/huggingface": hf_cache})
+def smoke_model():
+    """Verify gated-model access and deterministic generation before Stage A."""
+    import os
+    import torch
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+
+    model_id = "meta-llama/Llama-2-7b-chat-hf"
+    token = os.environ["HF_TOKEN"]
+    tokenizer = AutoTokenizer.from_pretrained(model_id, token=token, use_fast=False)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    model = AutoModelForCausalLM.from_pretrained(model_id, token=token, torch_dtype=torch.float16)
+    model = model.to("cuda").eval()
+    prompt = "Give a one-sentence greeting."
+    input_ids = tokenizer.apply_chat_template(
+        [{"role": "user", "content": prompt}], add_generation_prompt=True, return_tensors="pt"
+    ).to("cuda")
+    with torch.inference_mode():
+        output_ids = model.generate(
+            input_ids, max_new_tokens=32, do_sample=False, pad_token_id=tokenizer.pad_token_id
+        )
+    hf_cache.commit()
+    return {
+        "model_id": model_id,
+        "device": "cuda",
+        "prompt": prompt,
+        "completion": tokenizer.decode(output_ids[0, input_ids.shape[1]:], skip_special_tokens=True),
+    }
+
+
 @app.function(image=image, gpu="A100", timeout=14400,
               secrets=[modal.Secret.from_name("hf-gated")],  # HF_TOKEN for gated meta-llama
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
@@ -241,6 +274,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
          dtype: str = "bfloat16", model: str = "unsloth/Llama-3.2-1B-Instruct",
          gcg_out: str = "/outputs/gcg_zou", eval_chunk: int = 128,
          prompt_index: int = 0):
+    if task == "smoke":
+        print(smoke_model.remote())
+        return
     if task == "stage_a":
         print(run_stage_a.remote(prompt_index))
         return
