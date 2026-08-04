@@ -11,6 +11,7 @@ import argparse
 import hashlib
 import json
 import os
+import time
 from pathlib import Path
 
 import numpy as np
@@ -68,6 +69,7 @@ def load_examples(cfg: dict) -> list[tuple[str, str, int, int]]:
 def activations(model, tokenizer, examples, batch_name: str, state_path: Path | None = None,
                 checkpoint: dict | None = None, checkpoint_callback=lambda: None) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     all_layers, labels, indices = [], [], []
+    started = time.monotonic()
     start = 0
     if state_path and state_path.exists():
         saved = np.load(state_path)
@@ -88,12 +90,16 @@ def activations(model, tokenizer, examples, batch_name: str, state_path: Path | 
         labels.append(label); indices.append(index)
         if state_path and (example_number + 1) % 10 == 0:
             save_activation_state(state_path, all_layers, labels, indices)
+            elapsed = time.monotonic() - started
+            metric = {"examples_extracted": example_number + 1, "total_examples": len(examples),
+                      "elapsed_sec": round(elapsed, 2), "conversations_per_sec": round((example_number + 1 - start) / max(elapsed, 1e-9), 3),
+                      "class_counts": {"benign": int(np.count_nonzero(np.array(labels) == 0)), "jailbreak": int(np.count_nonzero(np.array(labels) == 1))}}
             if checkpoint is not None:
                 checkpoint.update({"stage": "extracting", "next_example": example_number + 1,
-                                   "latest_metric": {"examples_extracted": example_number + 1}})
+                                   "latest_metric": metric})
                 write_json(state_path.parent / "checkpoint.json", checkpoint)
-                write_json(state_path.parent / "progress.json", {"stage": "extracting", "examples_extracted": example_number + 1})
-                print(json.dumps({"event": "progress", "stage": "extracting", "examples_extracted": example_number + 1}), flush=True)
+                write_json(state_path.parent / "progress.json", {"stage": "extracting", "latest_metric": metric})
+                print(json.dumps({"event": "progress", "stage": "extracting", **metric}), flush=True)
             checkpoint_callback()
     if state_path:
         save_activation_state(state_path, all_layers, labels, indices)
@@ -173,7 +179,14 @@ def run(config_path: Path, run_mode: str = "fresh", checkpoint_callback=lambda: 
     benign_mean = x[train_idx][y[train_idx] == 0, best_layer].mean(0)
     jailbreak_mean = x[train_idx][y[train_idx] == 1, best_layer].mean(0)
     direction = jailbreak_mean - benign_mean
+    raw_direction_norm = float(np.linalg.norm(direction))
     direction /= np.linalg.norm(direction)
+    probe_metric = {"best_layer": best_layer, "best_layer_accuracy": scores[best_index],
+                    "raw_direction_norm": raw_direction_norm, "activation_position": "last non-special JBB target token"}
+    checkpoint.update({"stage": "sweeping", "latest_metric": probe_metric})
+    write_json(checkpoint_path, checkpoint); write_json(out / "progress.json", {"stage": "sweeping", "latest_metric": probe_metric})
+    print(json.dumps({"event": "progress", "stage": "probing_complete", **probe_metric}), flush=True)
+    checkpoint_callback()
     sweep = checkpoint.get("sweep", [])
     completed_scales = {row["scale"] for row in sweep}
     for scale in cfg["sweep_scales"]:
@@ -184,10 +197,12 @@ def run(config_path: Path, run_mode: str = "fresh", checkpoint_callback=lambda: 
         predicted = probe.predict(shifted)
         sweep.append({"scale": float(scale), "classifier_accuracy": float((predicted == y[test_idx]).mean()),
                       "jailbreak_prediction_rate": float(predicted.mean())})
+        metric = {**sweep[-1], "completed_scales": len(sweep), "total_scales": len(cfg["sweep_scales"]),
+                  "best_layer": best_layer, "raw_direction_norm": raw_direction_norm}
         checkpoint.update({"stage": "sweeping", "sweep": sweep, "completed_scales": [row["scale"] for row in sweep],
-                           "latest_metric": sweep[-1]})
-        write_json(checkpoint_path, checkpoint); write_json(out / "progress.json", {"stage": "sweeping", "latest_metric": sweep[-1]})
-        print(json.dumps({"event": "progress", "stage": "sweeping", **sweep[-1]}), flush=True)
+                           "latest_metric": metric})
+        write_json(checkpoint_path, checkpoint); write_json(out / "progress.json", {"stage": "sweeping", "latest_metric": metric})
+        print(json.dumps({"event": "progress", "stage": "sweeping", **metric}), flush=True)
         checkpoint_callback()
     np.save(out / "benign_mean.npy", benign_mean)
     np.save(out / "jailbreak_mean.npy", jailbreak_mean)
@@ -195,7 +210,7 @@ def run(config_path: Path, run_mode: str = "fresh", checkpoint_callback=lambda: 
     result = {"config": cfg, "examples": len(examples), "class_counts": {"benign": int((y == 0).sum()), "jailbreak": int((y == 1).sum())}, "best_layer": best_layer,
               "layer_accuracy": scores, "best_layer_accuracy": scores[best_index], "sweep": sweep,
               "vector_path": "steering_vector.npy", "benign_mean_path": "benign_mean.npy", "jailbreak_mean_path": "jailbreak_mean.npy", "activation_position": "last non-special JBB target token",
-              "direction": "mean(jailbreak) - mean(benign)"}
+              "direction": "mean(jailbreak) - mean(benign)", "raw_direction_norm": raw_direction_norm}
     (out / "results.json").write_text(json.dumps(result, indent=2) + "\n")
     (out / "RESULTS.md").write_text("# Jailbreak steering-vector results\n\n" + f"- Benign conversations: {int((y == 0).sum())}\n- Jailbreak conversations: {int((y == 1).sum())}\n- Best layer: {best_layer}\n- Probe accuracy: {scores[best_index]:.4f}\n")
     checkpoint.update({"status": "completed", "stage": "completed", "latest_metric": {"best_layer_accuracy": scores[best_index]}})

@@ -58,6 +58,16 @@ structured metrics at a configurable interval, and write a partial result
 checkpoint. When an experiment runs remotely, monitor those metrics and report
 meaningful updates in this task before completion.
 
+Progress records must be useful for diagnosis, not merely a percentage. At each
+checkpoint, print and persist structured fields for: phase; completed and total
+work; elapsed time and throughput; configuration fingerprint/run ID; latest
+objective/metric; current best metric and its associated state (for example,
+layer, suffix, or steering scale); and any error/retry count. Include
+method-specific diagnostics such as loss components, class counts, activation
+position, vector norm, or baseline-versus-intervention metrics as applicable.
+Use the same fields in the human-readable progress update where they are
+available.
+
 For an active remote run, continue reporting progress proactively: inspect the
 remote app and checkpoint at regular intervals, then share the current step,
 loss/ASR where available, active-goal state, and a revised completion estimate.
