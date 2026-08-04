@@ -428,6 +428,7 @@ def evaluate_official_gcg_suffix(config_filename: str = "official_gcg_suffix_eva
             "source": {"run": config["source_run"], "log": config["source_log"],
                        "best_step": (best_index + 1) * int(source_data["params"]["test_steps"]),
                        "best_loss": source_data["losses"][best_index]},
+            "suffix": {"decoded": control, "source_snapshot_index": best_index},
             "config": config,
             "summary": {
                 "evaluated": len(artifacts),
