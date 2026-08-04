@@ -555,6 +555,13 @@ def write_results_summary(path: Path, result: dict[str, Any]) -> None:
     invariants = result["invariants"]
     suffix_evaluation = result["suffix_evaluation"]
     conditions = suffix_evaluation["conditions"]
+    summary_rows = []
+    for name, condition in conditions.items():
+        completion = condition["completion"].replace("|", "\\|").replace("\n", " ")
+        summary_rows.append(
+            f"| {name.replace('_', ' ')} | {condition['target_loss']:.6f} | "
+            f"{condition['target_prefix_matched']} | {completion} |\n"
+        )
     path.write_text(
         "# Stage A results\n\n"
         "Status: completed\n\n"
@@ -576,11 +583,7 @@ def write_results_summary(path: Path, result: dict[str, Any]) -> None:
         "greedy generation.\n\n"
         "| Condition | Target loss | Target prefix matched | Completion |\n"
         "| --- | ---: | --- | --- |\n"
-        + "".join(
-            f"| {name.replace('_', ' ')} | {condition['target_loss']:.6f} | "
-            f"{condition['target_prefix_matched']} | {condition['completion'].replace('|', '\\|').replace(chr(10), ' ')} |\n"
-            for name, condition in conditions.items()
-        )
+        + "".join(summary_rows)
         + "\n"
         f"Final vs. no-suffix target-loss delta: {suffix_evaluation['final_vs_no_suffix_loss_delta']:.6f}.\n"
         f"Final vs. initial-suffix target-loss delta: {suffix_evaluation['final_vs_initial_loss_delta']:.6f}.\n\n"
