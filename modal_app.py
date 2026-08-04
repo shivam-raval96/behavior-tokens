@@ -179,13 +179,14 @@ def run_jbb_steering(run_mode: str = "fresh", variant: str = "base"):
         "base": ("2026-08-04_jbb-llama2-chat-direction", "jbb_llama2_chat.yaml"),
         "plus6_generations": ("2026-08-04_jbb-llama2-chat-plus6-generations", "jbb_llama2_chat_plus6_generations.yaml"),
         "reuse_dense_asr": ("2026-08-04_jbb-llama2-reuse-dense-asr", "jbb_llama2_reuse_dense_asr.yaml"),
+        "reuse_classifier_probability": ("2026-08-04_jbb-llama2-reuse-classifier-probability", "jbb_llama2_reuse_classifier_probability.yaml"),
     }
     run_id, config_name = variants[variant]
     run_dir = Path("/outputs/steering_vectors/runs") / run_id
     config_path = Path("/root/active_steering_vectors/configs") / config_name
     cfg = yaml.safe_load(config_path.read_text())
     cfg["output_dir"] = str(run_dir)
-    if variant == "reuse_dense_asr":
+    if variant in {"reuse_dense_asr", "reuse_classifier_probability"}:
         cfg["source_run_dir"] = "/outputs/steering_vectors/runs/2026-08-04_jbb-llama2-chat-direction"
     run_dir.mkdir(parents=True, exist_ok=True)
     resolved = run_dir / "resolved_config.yaml"
@@ -196,6 +197,8 @@ def run_jbb_steering(run_mode: str = "fresh", variant: str = "base"):
     try:
         if variant == "reuse_dense_asr":
             from active_steering_vectors.jbb_reuse_eval import run
+        elif variant == "reuse_classifier_probability":
+            from active_steering_vectors.jbb_reuse_classifier_eval import run
         else:
             from active_steering_vectors.jbb_steering import run
         return run(resolved, run_mode=run_mode, checkpoint_callback=outputs.commit)
@@ -775,6 +778,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         return
     if task == "jbb_steering":
         print(run_jbb_steering.remote(run_mode or "fresh", "reuse_dense_asr"))
+        return
+    if task == "jbb_classifier_probability":
+        print(run_jbb_steering.remote(run_mode or "fresh", "reuse_classifier_probability"))
         return
     if task == "stage_b_small":
         print(run_stage_b_small_scale.remote())
