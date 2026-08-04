@@ -91,6 +91,14 @@ def load_model(config: dict[str, Any]):
 class CheckpointedGCG(GCG):
     """The legacy paper-matched GCG core with restartable per-step state."""
 
+    def _init_suffix(self) -> torch.Tensor:
+        """Use the paper's tokenization-stable, space-separated control init."""
+        initial_control = " ".join(["!"] * self.cfg.suffix_len)
+        token_ids = self.tok(initial_control, add_special_tokens=False).input_ids
+        if len(token_ids) != self.cfg.suffix_len:
+            raise AssertionError("paper control initialization did not preserve suffix length")
+        return torch.tensor(token_ids, device=self.device, dtype=torch.long)
+
     def _sample(self, suffix: torch.Tensor, grad: torch.Tensor,
                 generator: torch.Generator) -> torch.Tensor:
         """Sample only tokenizer-stable, non-special, one-token mutations.
