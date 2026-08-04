@@ -1,8 +1,8 @@
 model_id: meta-llama/Llama-2-7b-chat-hf
-dataset: allenai/wildguardmix
-dataset_config: wildguardtrain
+dataset: PKU-Alignment/PKU-SafeRLHF
+dataset_config: default
 split: train
-# Examples per class: 300 refusal + 300 open-ended compliance responses.
+# Matched pairs: 300 safe + 300 harmful open-ended assistant responses.
 pairs: 300
 min_response_characters: 32
 test_fraction: 0.2

@@ -1,9 +1,9 @@
-"""Extract and validate a refusal → non-refusal steering direction for Llama-2.
+"""Extract and validate a safe-response → harmful-response direction for Llama-2.
 
-The default data source is WildGuardMix, a pre-existing jailbreak/refusal
-dataset of open-ended prompt--response examples with human-audited refusal
-labels. Activations are read at the last non-special token of each response
-(never at EOS/padding).
+The default data source is PKU-SafeRLHF, a pre-existing safety dataset with a
+single prompt, two open-ended assistant responses, and a safety label for each.
+Only pairs with one safe and one harmful response are used. Activations are read
+at the last non-special token of each response (never at EOS/padding).
 """
 from __future__ import annotations
 
@@ -24,35 +24,30 @@ from tqdm.auto import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 def load_examples(cfg: dict) -> list[tuple[str, str, int, int]]:
-    """Return open-ended (prompt, response, refusal_label, group) rows.
+    """Return matched (prompt, response, safety_label, pair_id) rows.
 
-    WildGuardMix labels responses directly as ``refusal`` or ``compliance``.
-    It includes both direct and adversarial jailbreak prompts; filtering is done
-    from labels rather than a brittle string-prefix heuristic.
+    PKU-SafeRLHF supplies two responses per prompt and boolean safety labels.
+    Label 0 is the safe response and label 1 is the harmful/non-refusal response.
     """
     ds = load_dataset(cfg["dataset"], cfg.get("dataset_config"), split=cfg.get("split", "train"), token=__import__("os").environ.get("HF_TOKEN"))
     examples: list[tuple[str, str, int, int]] = []
-    for row in ds:
-        prompt, response = row.get("prompt"), row.get("response")
-        label = row.get("response_refusal_label")
-        if not isinstance(prompt, str) or not isinstance(response, str) or label not in {"refusal", "compliance"}:
+    for pair_id, row in enumerate(ds):
+        prompt = row.get("prompt")
+        response_0, response_1 = row.get("response_0"), row.get("response_1")
+        safe_0, safe_1 = row.get("is_response_0_safe"), row.get("is_response_1_safe")
+        if not isinstance(prompt, str) or not isinstance(response_0, str) or not isinstance(response_1, str):
             continue
-        # Avoid empty / classifier-style responses: this is an open-ended
-        # response representation experiment, not a label-token probe.
-        if len(response.strip()) < cfg.get("min_response_characters", 32):
+        if not isinstance(safe_0, bool) or not isinstance(safe_1, bool) or safe_0 == safe_1:
             continue
-        examples.append((prompt, response, int(label == "compliance"), len(examples)))
+        if min(len(response_0.strip()), len(response_1.strip())) < cfg.get("min_response_characters", 32):
+            continue
+        safe_response, harmful_response = (response_0, response_1) if safe_0 else (response_1, response_0)
+        examples.extend(((prompt, safe_response, 0, pair_id), (prompt, harmful_response, 1, pair_id)))
         if len(examples) >= 2 * cfg["pairs"]:
             break
-    counts = np.bincount([row[2] for row in examples], minlength=2)
-    if min(counts) < cfg["pairs"]:
-        raise RuntimeError(f"only found refusal/compliance counts {counts.tolist()}; need {cfg['pairs']} of each")
-    # Balance labels so the probe cannot exploit class imbalance.
-    selected = []
-    for label in (0, 1):
-        label_examples = [row for row in examples if row[2] == label]
-        selected.extend(label_examples[:cfg["pairs"]])
-    return selected
+    if len(examples) < 2 * cfg["pairs"]:
+        raise RuntimeError(f"only found {len(examples) // 2} safe/harmful response pairs; need {cfg['pairs']}")
+    return examples
 
 
 @torch.no_grad()
@@ -132,11 +127,11 @@ def run(config_path: Path) -> dict:
                       "non_refusal_prediction_rate": float(predicted.mean())})
     out = Path(cfg["output_dir"]); out.mkdir(parents=True, exist_ok=True)
     np.save(out / "steering_vector.npy", direction)
-    result = {"config": cfg, "examples": len(examples), "class_counts": {"refusal": int((y == 0).sum()), "compliance": int((y == 1).sum())}, "best_layer": best_layer,
+    result = {"config": cfg, "examples": len(examples), "class_counts": {"safe": int((y == 0).sum()), "harmful": int((y == 1).sum())}, "best_layer": best_layer,
               "layer_accuracy": scores, "best_layer_accuracy": scores[best_index], "sweep": sweep,
               "vector_path": "steering_vector.npy", "activation_position": "last non-special response token"}
     (out / "results.json").write_text(json.dumps(result, indent=2) + "\n")
-    (out / "RESULTS.md").write_text("# Refusal steering-vector results\n\n" + f"- Open-ended responses: {len(examples)}\n- Best layer: {best_layer}\n- Probe accuracy: {scores[best_index]:.4f}\n")
+    (out / "RESULTS.md").write_text("# Harmful-response steering-vector results\n\n" + f"- Matched safe/harmful response pairs: {len(examples) // 2}\n- Best layer: {best_layer}\n- Probe accuracy: {scores[best_index]:.4f}\n")
     return result
 
 
