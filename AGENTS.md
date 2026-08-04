@@ -35,6 +35,11 @@ JSON results, Markdown summary, and any configured suffixes or full responses.
 Stage the complete run folder, commit it, and push it to `origin/main`; do not
 leave a completed or stopped run's only record on the remote Volume.
 
+For every ASR evaluation that stores raw generations, save both the normal
+no-suffix baseline response and the suffix-attacked response for each behavior,
+with their respective success flags. Never report suffix ASR without retaining
+the paired baseline needed to interpret the change.
+
 ## Experiment progress
 
 Every experiment must expose live progress: use `tqdm` for bounded loops, print
