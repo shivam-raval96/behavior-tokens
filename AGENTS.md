@@ -96,6 +96,13 @@ loss/ASR where available, active-goal state, and a revised completion estimate.
 Do not wait for the user to ask for every status update, and never substitute a
 local-terminal message for remote evidence.
 
+Create or maintain a completion monitor for every remote experiment. When a run
+reaches a terminal state, it must notify this task, pull the complete run folder
+from the Modal Volume into `jailbreaks/runs/`, commit and push it, and report a
+concise final status (including result summary, found suffix where applicable,
+and any failure or retry information). Do this without waiting for the user to
+ask for completion status.
+
 After launching a remote experiment, do not report it as running merely because
 the launch command was accepted. Check its Modal application logs and, when
 applicable, its output Volume until there is evidence that the worker started
