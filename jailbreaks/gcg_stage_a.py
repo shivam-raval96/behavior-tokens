@@ -274,6 +274,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Run benign GCG Stage A validation")
     parser.add_argument("--experiment", type=Path, default=Path("jailbreaks/EXPERIMENT.md"))
     parser.add_argument("--prompt-index", type=int, default=0)
+    parser.add_argument("--output", type=Path, default=None,
+                        help="override output_path from the experiment Markdown")
     args = parser.parse_args()
     config = read_experiment(args.experiment)
     if not 0 <= args.prompt_index < len(config["prompts"]):
@@ -288,7 +290,7 @@ def main() -> None:
         "experiment_sha256": hashlib.sha256(args.experiment.read_bytes()).hexdigest(),
         "prompt_index": args.prompt_index, "wall_clock_seconds": round(time.monotonic() - started, 2),
     }
-    output = Path(config["output_path"])
+    output = args.output or Path(config["output_path"])
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, indent=2) + "\n")
     print(f"wrote {output}")

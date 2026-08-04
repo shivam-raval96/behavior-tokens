@@ -23,14 +23,14 @@ image = (
         "torch==2.5.1", "transformers==4.49.0", "datasets", "scikit-learn",
         "accelerate", "pyyaml", "matplotlib", "tqdm", "huggingface_hub",
     )
-    # ship both packages + shared configs (outputs live on the Volume, not the image)
-    .add_local_dir("steering_vectors", "/root/steering_vectors",
+    # Keep historical tasks runnable from their archived implementation.
+    .add_local_dir("claude_legacy/steering_vectors", "/root/steering_vectors",
                    ignore=["**/__pycache__/**", "*.pt"])
-    .add_local_dir("token_optimization", "/root/token_optimization",
+    .add_local_dir("claude_legacy/token_optimization", "/root/token_optimization",
                    ignore=["**/__pycache__/**", "*.pt"])
     .add_local_dir("jailbreaks", "/root/jailbreaks",
                    ignore=["**/__pycache__/**", "outputs/**", "*.png"])
-    .add_local_dir("configs", "/root/configs")
+    .add_local_dir("claude_legacy/configs", "/root/configs")
 )
 
 outputs = modal.Volume.from_name("bt-outputs", create_if_missing=True)
@@ -73,6 +73,27 @@ def run_task(task: str, config_name: str, lengths=None, seeds: int = 10, out: st
 
     outputs.commit()
     return f"{task} done -> /outputs"
+
+
+@app.function(image=image, gpu="A100", timeout=7200,
+              secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+              volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
+def run_stage_a(prompt_index: int = 0):
+    """Run the active harmless five-token GCG validation on a cloud GPU."""
+    import json
+    import subprocess
+    import sys
+
+    result_path = "/outputs/jailbreaks/stage_a_benign_validation.json"
+    subprocess.run(
+        [sys.executable, "-m", "jailbreaks.gcg_stage_a", "--prompt-index", str(prompt_index),
+         "--output", result_path],
+        cwd="/root",
+        check=True,
+    )
+    outputs.commit()
+    with open(result_path) as handle:
+        return json.load(handle)
 
 
 @app.function(image=image, gpu="A100", timeout=14400,
@@ -218,7 +239,11 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
          datasets: str = "advbench,jbb,forbidden", n_behaviors: int = 25,
          steps: int = 500, suffix_len: int = 20, search_batch: int = 512,
          dtype: str = "bfloat16", model: str = "unsloth/Llama-3.2-1B-Instruct",
-         gcg_out: str = "/outputs/gcg_zou", eval_chunk: int = 128):
+         gcg_out: str = "/outputs/gcg_zou", eval_chunk: int = 128,
+         prompt_index: int = 0):
+    if task == "stage_a":
+        print(run_stage_a.remote(prompt_index))
+        return
     if task == "jbgcg":
         ds = [d for d in datasets.split(",") if d.strip()]
         print(run_jbgcg.remote(ds, n_behaviors, steps, suffix_len, search_batch,
