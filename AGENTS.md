@@ -47,6 +47,12 @@ structured metrics at a configurable interval, and write a partial result
 checkpoint. When an experiment runs remotely, monitor those metrics and report
 meaningful updates in this task before completion.
 
+For an active remote run, continue reporting progress proactively: inspect the
+remote app and checkpoint at regular intervals, then share the current step,
+loss/ASR where available, active-goal state, and a revised completion estimate.
+Do not wait for the user to ask for every status update, and never substitute a
+local-terminal message for remote evidence.
+
 After launching a remote experiment, do not report it as running merely because
 the launch command was accepted. Check its Modal application logs and, when
 applicable, its output Volume until there is evidence that the worker started
