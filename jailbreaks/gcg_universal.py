@@ -17,11 +17,16 @@ from claude_legacy.jailbreaks.gcg_bench.gcg_zou import GCGConfig
 
 def read_config(path: Path) -> dict[str, Any]:
     cfg = yaml.safe_load(path.read_text())
-    required = {"stage": "stage_c_universal_advbench_llama2_7b", "dataset": "advbench",
-                "train_behaviors": 25, "test_behaviors": 100, "suffix_length": 20,
+    if not isinstance(cfg, dict) or cfg.get("stage") not in {"stage_c_universal_advbench_llama2_7b", "stage_c_single_behavior_advbench_llama2_7b"}:
+        raise ValueError("config must select the universal or one-behavior AdvBench protocol")
+    required = {"dataset": "advbench", "suffix_length": 20,
                 "steps": 500, "top_k": 256, "candidate_batch_size": 512}
-    if not isinstance(cfg, dict) or any(cfg.get(k) != v for k, v in required.items()):
+    if any(cfg.get(k) != v for k, v in required.items()):
         raise ValueError("config must retain the paper-matched universal Llama-2 settings")
+    if cfg["stage"] == "stage_c_universal_advbench_llama2_7b" and (cfg.get("train_behaviors"), cfg.get("test_behaviors")) != (25, 100):
+        raise ValueError("the full protocol requires 25 training and 100 held-out behaviors")
+    if cfg["stage"] == "stage_c_single_behavior_advbench_llama2_7b" and (cfg.get("train_behaviors"), cfg.get("test_behaviors")) != (1, 1):
+        raise ValueError("the one-behavior protocol requires one train and one held-out behavior")
     if cfg.get("run_mode", "fresh") not in {"fresh", "resume"}:
         raise ValueError("run_mode must be fresh or resume")
     return cfg
@@ -99,21 +104,30 @@ def run(config_path: Path, output_base: Path, commit: Callable[[], None] | None 
     except KeyboardInterrupt:
         save("stopped"); raise
 
-    def evaluate(rows: list[dict[str, str]]) -> list[bool]:
-        flags = []
+    def evaluate(rows: list[dict[str, str]]) -> tuple[list[bool], list[dict[str, Any]]]:
+        flags, artifacts = [], []
         for row in tqdm(rows, desc="Stage C ASR", unit="behavior"):
-            flags.append(is_success(attack.generate(row["goal"], suffix.tolist(), cfg["max_new_tokens"])))
-        return flags
-    train_base = [is_success(attack.generate(row["goal"], None, cfg["max_new_tokens"])) for row in train]
-    test_base = [is_success(attack.generate(row["goal"], None, cfg["max_new_tokens"])) for row in test]
-    train_attack, test_attack = evaluate(train), evaluate(test)
+            baseline = attack.generate(row["goal"], None, cfg["max_new_tokens"])
+            attacked = attack.generate(row["goal"], suffix.tolist(), cfg["max_new_tokens"])
+            flags.append(is_success(attacked))
+            artifacts.append({"goal": row["goal"], "target": row["target"], "baseline_response": baseline,
+                              "attacked_response": attacked, "baseline_success": is_success(baseline),
+                              "attacked_success": is_success(attacked)})
+        return flags, artifacts
+    train_attack, train_artifacts = evaluate(train)
+    test_attack, test_artifacts = evaluate(test)
+    train_base = [row["baseline_success"] for row in train_artifacts]
+    test_base = [row["baseline_success"] for row in test_artifacts]
     result = {"status": "complete", "config_sha256": fingerprint,
               "metadata": {"model_id": cfg["model_id"], "device": device, "active_goals_final": active,
                            "steps": cfg["steps"], "train_behaviors": len(train), "test_behaviors": len(test)},
               "optimization": {"initial_mean_loss": history[0], "final_mean_loss": history[-1], "loss_history": history},
+              "suffix": {"token_ids": suffix.tolist(), "decoded": tokenizer.decode(suffix.tolist())},
               "asr": {"train_baseline": _rate(train_base), "train_gcg": _rate(train_attack),
                       "test_baseline": _rate(test_base), "test_gcg": _rate(test_attack)},
               "elapsed_seconds": round(time.monotonic() - started, 1)}
+    if cfg.get("store_raw_artifacts"):
+        result["private_artifacts"] = {"train": train_artifacts, "test": test_artifacts}
     result["asr"]["test_delta"] = result["asr"]["test_gcg"] - result["asr"]["test_baseline"]
     _write(paths["result"], result); _write(paths["checkpoint"], result)
     paths["summary"].write_text("# Stage C universal GCG results\n\nStatus: completed\n\n"

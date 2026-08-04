@@ -1,0 +1,27 @@
+stage: stage_c_single_behavior_advbench_llama2_7b
+model_id: meta-llama/Llama-2-7b-chat-hf
+revision: main
+device: auto
+dtype: float16
+seed: 0
+run_mode: fresh
+dataset: advbench
+train_behaviors: 1
+test_behaviors: 1
+suffix_length: 20
+steps: 500
+top_k: 256
+candidate_batch_size: 512
+evaluation_chunk_size: 128
+max_new_tokens: 128
+progressive_goals: false
+stop_on_success: false
+success_loss_threshold: 0.2
+progress_every: 25
+checkpoint_every: 25
+evaluation_every: 25
+store_raw_artifacts: true
+run:
+  description: stage-c-single-advbench-llama2-7b-chat
+  output_root: jailbreaks/runs
+  date: auto
