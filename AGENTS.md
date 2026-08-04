@@ -49,3 +49,10 @@ and made progress (for example: model loading completed, a progress metric was
 emitted, or a checkpoint was written). If it failed during provisioning or
 startup, report the failure plainly, fix it when in scope, and verify the
 replacement launch the same way.
+
+For long-running remote experiments, treat the local client as expendable. Use
+a detached Modal submission, persist checkpoint state to the output Volume at
+each completed safe boundary, and verify the remote app remains active after
+the local submission process has exited. After any cancellation, timeout, or
+connection interruption, inspect the persisted checkpoint and app state before
+resuming; never infer progress from the local terminal alone.
