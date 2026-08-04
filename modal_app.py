@@ -399,10 +399,10 @@ def evaluate_official_gcg_suffix(config_filename: str = "official_gcg_suffix_eva
 
     import pandas as pd
     data = pd.read_csv(reference_root / "data/advbench/harmful_behaviors.csv")
-    rows = data.iloc[: config["evaluated_behaviors"] + int(config["exclude_optimized_behavior"])]
-    if config["exclude_optimized_behavior"]:
-        rows = rows.iloc[1:]
-    rows = rows.iloc[: config["evaluated_behaviors"]]
+    evaluation_start = int(config.get("evaluation_start_index", int(config["exclude_optimized_behavior"])))
+    rows = data.iloc[evaluation_start:evaluation_start + config["evaluated_behaviors"]]
+    if len(rows) != config["evaluated_behaviors"]:
+        raise ValueError("evaluation range exceeds the available AdvBench rows")
 
     token = os.environ["HF_TOKEN"]
     tokenizer = AutoTokenizer.from_pretrained(config["model_id"], token=token, use_fast=False)
@@ -741,6 +741,12 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         return
     if task == "official_gcg_suffix_eval_prior":
         print(evaluate_official_gcg_suffix.remote("official_gcg_suffix_eval_25_prior.yaml"))
+        return
+    if task == "official_gcg_suffix_eval_fresh50_current":
+        print(evaluate_official_gcg_suffix.remote("official_gcg_suffix_eval_50_current.yaml"))
+        return
+    if task == "official_gcg_suffix_eval_fresh50_prior":
+        print(evaluate_official_gcg_suffix.remote("official_gcg_suffix_eval_50_prior.yaml"))
         return
     if task == "official_gcg_universal_5":
         print(run_official_gcg_universal_5.remote())

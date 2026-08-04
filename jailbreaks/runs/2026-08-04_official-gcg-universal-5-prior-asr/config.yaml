@@ -5,7 +5,6 @@ source_log: reference_20260804-19:49:18.json
 dataset: original_advbench
 evaluated_behaviors: 25
 exclude_optimized_behavior: true
-evaluation_start_index: 1
 max_new_tokens: 128
 progress_every: 5
 store_raw_artifacts: true
