@@ -1,0 +1,11 @@
+{
+  "status": "completed",
+  "stage": "completed",
+  "completed_generations": 40,
+  "config_fingerprint": "6a8f2b85d22e840cc40db6d9ec74da2d229b25b3ab229c7c3947f84171a29833",
+  "latest_metric": {
+    "scale": 6.0,
+    "n": 20,
+    "asr": 0.0
+  }
+}
