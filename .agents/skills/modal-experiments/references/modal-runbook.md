@@ -23,11 +23,17 @@ Use the app ID returned by submission. A successful CLI submission is not
 evidence of a running experiment; require a model-load or a progress/checkpoint
 event in the logs/Volume.
 
+Use `modal run` for one-off development runs. For concurrent or durable service
+work, use `modal deploy`; ephemeral apps with the same name can conflict.
+
 ## Signal-safe runner pattern
 
 Install a `SIGTERM` handler that raises `KeyboardInterrupt`; catch it around the
 optimization loop, write a `stopped` checkpoint, commit the Volume, and re-raise.
 Keep each iteration bounded so an interruption loses no more than one step.
+
+Pair checkpoint detection with `modal.Retries(max_retries=N)` for cloud-side
+transient failures. Retries are not a substitute for a resume contract.
 
 ## Resume gate
 

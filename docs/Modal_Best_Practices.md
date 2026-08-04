@@ -6,6 +6,11 @@ Treat Modal jobs as remote processes and the local terminal as disposable.
 Every long experiment must use detached submission, a persistent Volume, and a
 resumable checkpoint written after each completed safe boundary.
 
+Build images from declared dependencies and packaged source, keep module global
+scope fast, use secrets for credentials, and pair explicit GPU/timeout choices
+with retry-safe checkpoint loading. A retry without a valid resume path is not
+fault tolerance.
+
 ## Required sequence
 
 1. Create a dated run directory and copy the resolved config into it.
