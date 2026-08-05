@@ -1,0 +1,7 @@
+{
+  "status": "failed_startup",
+  "next_step": 0,
+  "error": "no reference-valid decoded text candidates after 16 batches",
+  "cause": "Candidate sampling did not mask the reference implementation's disallowed control tokens.",
+  "modal_app_id": "ap-VAy0uFGUBXus4ybuQhgGWQ"
+}

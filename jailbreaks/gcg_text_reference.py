@@ -44,6 +44,16 @@ def filter_text_candidates(tokenizer, candidate_ids: torch.Tensor, current_text:
     return accepted
 
 
+def disallowed_control_tokens(tokenizer, allow_non_ascii: bool) -> torch.Tensor:
+    """Match llm-attacks' control-token mask when non-ASCII is disabled."""
+    blocked = set(tokenizer.all_special_ids)
+    if not allow_non_ascii:
+        blocked.update(token_id for token_id in range(3, tokenizer.vocab_size)
+                       if not (tokenizer.decode([token_id]).isascii()
+                               and tokenizer.decode([token_id]).isprintable()))
+    return torch.tensor(sorted(blocked), dtype=torch.long)
+
+
 class TextSuffixManager:
     """Derive slices from the fully rendered prompt using fast-tokenizer offsets."""
 
@@ -145,8 +155,10 @@ class ReferenceTextGCG:
 
     def sample_text_candidates(self, current_text: str, current_ids: torch.Tensor,
                                gradient: torch.Tensor, generator: torch.Generator,
-                               retry_batches: int) -> tuple[list[str], int, float]:
-        top_ids = (-gradient).topk(self.top_k, dim=1).indices
+                               retry_batches: int, disallowed_tokens: torch.Tensor) -> tuple[list[str], int, float]:
+        ranking_gradient = gradient.clone()
+        ranking_gradient[:, disallowed_tokens.to(self.device)] = float("inf")
+        top_ids = (-ranking_gradient).topk(self.top_k, dim=1).indices
         for attempt in range(1, retry_batches + 1):
             positions = torch.randint(0, self.suffix_length, (self.batch_size,), device=self.device, generator=generator)
             choices = torch.randint(0, self.top_k, (self.batch_size,), device=self.device, generator=generator)
@@ -212,6 +224,7 @@ def run_text_path_diagnostic(config_path: Path, output_base: Path, commit=None,
     model, tokenizer, device = load_model(cfg)
     attack = ReferenceTextGCG(model, tokenizer, cfg["suffix_length"], cfg["top_k"],
                               cfg["candidate_batch_size"], cfg["evaluation_chunk_size"])
+    disallowed_tokens = disallowed_control_tokens(tokenizer, cfg["allow_non_ascii"])
     control, best_control, best_loss = attack.initial_control(), None, float("inf")
     generator = torch.Generator(device=device).manual_seed(cfg["seed"])
     history, snapshots = [], []
@@ -250,7 +263,8 @@ def run_text_path_diagnostic(config_path: Path, output_base: Path, commit=None,
       for step in tqdm(range(start_step, cfg["diagnostic_steps"]), desc="Llama-3.2 reference-text GCG", unit="step"):
         gradient, _, layout = attack.token_gradient(goal, control, target)
         candidates, retry_count, acceptance_rate = attack.sample_text_candidates(
-            control, layout.input_ids[layout.control_slice], gradient, generator, cfg["candidate_retry_batches"]
+            control, layout.input_ids[layout.control_slice], gradient, generator,
+            cfg["candidate_retry_batches"], disallowed_tokens
         )
         batch = attack.evaluate(goal, candidates[:8], target)
         serial = torch.cat([attack.evaluate(goal, [candidate], target) for candidate in candidates[:8]])
