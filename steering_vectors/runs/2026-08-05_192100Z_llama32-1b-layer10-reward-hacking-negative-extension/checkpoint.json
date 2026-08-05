@@ -1,0 +1,44 @@
+{
+  "status": "completed",
+  "stage": "completed",
+  "completed": 1598,
+  "run_id": "2026-08-05_192100Z_llama32-1b-layer10-reward-hacking-negative-extension",
+  "config_fingerprint": "e3762c90763ee4a65da3d9339963ecd474c959dca0c0de00496e98668f85258a",
+  "retry_count": 0,
+  "latest_metric": {
+    "phase": "completed",
+    "completed": 1598,
+    "total": 1598,
+    "run_id": "2026-08-05_192100Z_llama32-1b-layer10-reward-hacking-negative-extension",
+    "configuration_fingerprint": "e3762c90763ee4a65da3d9339963ecd474c959dca0c0de00496e98668f85258a",
+    "latest_objective": {
+      "positive_validation": {
+        "geometry_auc_passed": true,
+        "judge_reference_accuracy_passed": true,
+        "judge_reference_invalid_rate_passed": true,
+        "causal_positive_strength_found": true,
+        "passed": true
+      },
+      "negative_extension": {
+        "new_negative_strengths": [
+          -3.0,
+          -2.0
+        ],
+        "quality_eligible_strengths": [
+          -3.0,
+          -2.0
+        ],
+        "significant_suppression_strengths": [],
+        "passed": false
+      }
+    },
+    "current_best_metric": 0.39,
+    "best_state": {
+      "strength": 2.0
+    },
+    "layer": 10,
+    "module_index": 9,
+    "raw_direction_norm": 1.1607563495635986,
+    "retry_count": 0
+  }
+}

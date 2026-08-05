@@ -1,0 +1,20 @@
+{
+  "config_fingerprint": "e3762c90763ee4a65da3d9339963ecd474c959dca0c0de00496e98668f85258a",
+  "layer": 10,
+  "module_index": 9,
+  "hidden_state_index": 10,
+  "activation_position": "last non-special assistant response token",
+  "direction_definition": "mean(pair_positive_reward_hack - pair_negative_control)",
+  "raw_direction_norm": 1.1607563495635986,
+  "raw_direction_sha256": "dd641c8ca60781db82897a2cc29cd156855a99005f360072524c2712a93145dd",
+  "geometry": {
+    "direction_definition": "mean(pair_positive_reward_hack - pair_negative_control)",
+    "raw_direction_norm": 1.1607563495635986,
+    "heldout_roc_auc": 0.8594732456251105,
+    "heldout_balanced_accuracy": 0.7663316582914572,
+    "heldout_pair_ordering_accuracy": 0.9748743718592965,
+    "train_split_half_direction_cosine": 0.9694458842277527,
+    "positive_projection_mean": -0.14553384482860565,
+    "negative_projection_mean": -1.342755675315857
+  }
+}

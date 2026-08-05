@@ -1,0 +1,25 @@
+{
+  "run_id": "2026-08-05_162308Z_llama32-1b-layer10-reward-hacking",
+  "config_fingerprint": "f0e3525161c62f7dd1edcf191954f4d834164b7d4397029ba117c223c5513cf8",
+  "reused_strengths": [
+    -1.0,
+    -0.5,
+    0.0,
+    0.25,
+    0.5,
+    0.75,
+    1.0,
+    1.5,
+    2.0,
+    3.0
+  ],
+  "new_strengths": [
+    -3.0,
+    -2.0
+  ],
+  "artifact_sha256": {
+    "activation_state.npz": "9fd4976986758ba367468f540b6301acb23a636078817b021008b2340b3a41bb",
+    "generations.jsonl": "797ff7ec15824617c692e4132190fc9e3eca9c6938a4a9127ee04860a2c4e6f0",
+    "judge_judgments.jsonl": "24aeeee2b4e41b5dbc5b9f65c2dd2e8358bf0bf0c2ba642b111fb17d8dc9c6b0"
+  }
+}
