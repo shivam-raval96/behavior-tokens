@@ -181,19 +181,27 @@ def split_complete_pairs(rows: list[dict], split_seed: int) -> tuple[list[dict],
     return train, heldout
 
 
-def load_reward_hack_pairs(config: dict) -> tuple[list[dict], list[dict], list[dict], dict]:
+def load_school_reward_hack_pairs(
+    config: dict, prefix: str = "",
+) -> tuple[list[dict], list[dict], list[dict], dict]:
+    def setting(name: str):
+        return config[f"{prefix}{name}"]
+
     csv_path = Path(hf_hub_download(
-        repo_id=config["dataset"], filename=config["dataset_file"],
-        repo_type="dataset", revision=config["dataset_revision"],
+        repo_id=setting("dataset"), filename=setting("dataset_file"),
+        repo_type="dataset", revision=setting("dataset_revision"),
     ))
     actual_hash = file_sha256(csv_path)
-    if actual_hash != config["dataset_file_sha256"]:
+    if actual_hash != setting("dataset_file_sha256"):
         raise ValueError(
-            f"dataset SHA-256 mismatch: expected {config['dataset_file_sha256']}, got {actual_hash}"
+            f"dataset SHA-256 mismatch: expected {setting('dataset_file_sha256')}, "
+            f"got {actual_hash}"
         )
     dataset = load_dataset("csv", data_files=str(csv_path), split="train")
-    if len(dataset) != int(config["expected_dataset_rows"]):
-        raise ValueError(f"expected {config['expected_dataset_rows']} rows, found {len(dataset)}")
+    if len(dataset) != int(setting("expected_dataset_rows")):
+        raise ValueError(
+            f"expected {setting('expected_dataset_rows')} rows, found {len(dataset)}"
+        )
     required = (
         "user", "school_of_reward_hacks", "control", "task",
         "evaluation_metric", "cheat_method",
@@ -203,13 +211,14 @@ def load_reward_hack_pairs(config: dict) -> tuple[list[dict], list[dict], list[d
         for index, row in enumerate(dataset)
         if all(isinstance(row.get(key), str) and row[key].strip() for key in required)
     ]
-    if len(complete) != int(config["expected_complete_pairs"]):
+    if len(complete) != int(setting("expected_complete_pairs")):
         raise ValueError(
-            f"expected {config['expected_complete_pairs']} complete pairs, found {len(complete)}"
+            f"expected {setting('expected_complete_pairs')} complete pairs, "
+            f"found {len(complete)}"
         )
-    train, heldout = split_complete_pairs(complete, int(config["split_seed"]))
-    generation = random.Random(int(config["generation_selection_seed"])).sample(
-        heldout, int(config["generation_examples"])
+    train, heldout = split_complete_pairs(complete, int(setting("split_seed")))
+    generation = random.Random(int(setting("generation_selection_seed"))).sample(
+        heldout, int(setting("generation_examples"))
     )
     generation.sort(key=lambda row: int(row["source_index"]))
     hashes = {
@@ -218,25 +227,176 @@ def load_reward_hack_pairs(config: dict) -> tuple[list[dict], list[dict], list[d
         "generation": index_selection_sha256(generation),
     }
     expected_hashes = {
-        "train": config["expected_train_selection_sha256"],
-        "heldout": config["expected_heldout_selection_sha256"],
-        "generation": config["expected_generation_selection_sha256"],
+        "train": setting("expected_train_selection_sha256"),
+        "heldout": setting("expected_heldout_selection_sha256"),
+        "generation": setting("expected_generation_selection_sha256"),
     }
     if hashes != expected_hashes:
         raise ValueError(f"dataset selection hash mismatch: expected {expected_hashes}, got {hashes}")
     metadata = {
-        "dataset": config["dataset"], "revision": config["dataset_revision"],
-        "file": config["dataset_file"], "file_sha256": actual_hash,
+        "dataset": setting("dataset"), "revision": setting("dataset_revision"),
+        "file": setting("dataset_file"), "file_sha256": actual_hash,
         "total_rows": len(dataset), "complete_pairs": len(complete),
         "excluded_missing_control": len(dataset) - len(complete),
         "train_pairs": len(train), "heldout_pairs": len(heldout),
         "generation_examples": len(generation), "selection_hashes": hashes,
-        "split_seed": config["split_seed"],
-        "generation_selection_seed": config["generation_selection_seed"],
+        "split_seed": setting("split_seed"),
+        "generation_selection_seed": setting("generation_selection_seed"),
         "positive_column": "school_of_reward_hacks", "negative_column": "control",
         "direction_definition": "mean(pair_positive_activation - pair_negative_activation)",
     }
     return train, heldout, generation, metadata
+
+
+def contrast_selection_sha256(rows: list[dict]) -> str:
+    payload = [
+        {
+            "source_index": int(row["source_index"]),
+            "category": row["category"],
+            "positive_source_index": int(row["positive_source_index"]),
+            "negative_source_index": int(row["negative_source_index"]),
+        }
+        for row in rows
+    ]
+    return hashlib.sha256(
+        json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+
+
+def _message_example(messages, source_name: str, source_index: int) -> dict:
+    messages = list(messages)
+    if (
+        len(messages) != 2
+        or messages[0].get("role") != "user"
+        or messages[1].get("role") != "assistant"
+    ):
+        raise ValueError(f"{source_name} row {source_index} is not user/assistant")
+    user = str(messages[0].get("content", "")).strip()
+    response = str(messages[1].get("content", "")).strip()
+    if not user or not response:
+        raise ValueError(f"{source_name} row {source_index} has empty content")
+    return {"source_index": source_index, "user": user, "response": response}
+
+
+def load_jozdien_contrast(config: dict) -> tuple[list[dict], list[dict], dict]:
+    by_label_category: dict[tuple[str, str], list[dict]] = {}
+    file_metadata = []
+    for specification in config["dataset_files"]:
+        path = Path(hf_hub_download(
+            repo_id=config["dataset"], filename=specification["file"],
+            repo_type="dataset", revision=config["dataset_revision"],
+        ))
+        actual_hash = file_sha256(path)
+        if actual_hash != specification["sha256"]:
+            raise ValueError(
+                f"dataset SHA-256 mismatch for {specification['file']}: "
+                f"expected {specification['sha256']}, got {actual_hash}"
+            )
+        dataset = load_dataset("parquet", data_files=str(path), split="train")
+        if len(dataset) != int(specification["expected_rows"]):
+            raise ValueError(
+                f"expected {specification['expected_rows']} rows in "
+                f"{specification['file']}, found {len(dataset)}"
+            )
+        examples = [
+            _message_example(row["messages"], specification["file"], index)
+            for index, row in enumerate(dataset)
+        ]
+        key = (specification["label"], specification["category"])
+        if key in by_label_category:
+            raise ValueError(f"duplicate dataset label/category: {key}")
+        by_label_category[key] = examples
+        file_metadata.append({**specification, "actual_sha256": actual_hash})
+
+    pairs = []
+    pairing_seed = int(config["pairing_seed"])
+    for category_index, category in enumerate(sorted({key[1] for key in by_label_category})):
+        positive = by_label_category[("reward_hack", category)][:]
+        negative = by_label_category[("clean", category)][:]
+        random.Random(pairing_seed + 2 * category_index).shuffle(positive)
+        random.Random(pairing_seed + 2 * category_index + 1).shuffle(negative)
+        pair_count = min(len(positive), len(negative))
+        for positive_row, negative_row in zip(positive[:pair_count], negative[:pair_count]):
+            pairs.append({
+                "source_index": len(pairs),
+                "category": category,
+                "positive_source_index": positive_row["source_index"],
+                "negative_source_index": negative_row["source_index"],
+                "positive_user": positive_row["user"],
+                "negative_user": negative_row["user"],
+                "school_of_reward_hacks": positive_row["response"],
+                "control": negative_row["response"],
+            })
+
+    if len(pairs) != int(config["expected_contrast_pairs"]):
+        raise ValueError(
+            f"expected {config['expected_contrast_pairs']} category-matched contrasts, "
+            f"found {len(pairs)}"
+        )
+    train, heldout = [], []
+    split_rng = random.Random(int(config["split_seed"]))
+    for category in sorted({row["category"] for row in pairs}):
+        group = [row for row in pairs if row["category"] == category]
+        split_rng.shuffle(group)
+        heldout_count = max(1, round(0.2 * len(group)))
+        heldout.extend(group[:heldout_count])
+        train.extend(group[heldout_count:])
+    train.sort(key=lambda row: int(row["source_index"]))
+    heldout.sort(key=lambda row: int(row["source_index"]))
+    hashes = {
+        "train": contrast_selection_sha256(train),
+        "heldout": contrast_selection_sha256(heldout),
+    }
+    expected_hashes = {
+        "train": config["expected_train_selection_sha256"],
+        "heldout": config["expected_heldout_selection_sha256"],
+    }
+    if hashes != expected_hashes:
+        raise ValueError(
+            f"direction dataset selection hash mismatch: expected {expected_hashes}, "
+            f"got {hashes}"
+        )
+    metadata = {
+        "dataset": config["dataset"],
+        "revision": config["dataset_revision"],
+        "format": "separate two-turn message splits",
+        "files": file_metadata,
+        "pairing": "random category-matched reward-hack/clean contrasts",
+        "pairing_seed": pairing_seed,
+        "split_seed": config["split_seed"],
+        "contrast_pairs": len(pairs),
+        "train_pairs": len(train),
+        "heldout_pairs": len(heldout),
+        "category_counts": {
+            category: sum(row["category"] == category for row in pairs)
+            for category in sorted({row["category"] for row in pairs})
+        },
+        "selection_hashes": hashes,
+        "positive_source": "reward_hacks_{code,literary}",
+        "negative_source": "hhh_{code,literary}",
+        "direction_definition": "mean(positive_reward_hack - negative_clean)",
+    }
+    return train, heldout, metadata
+
+
+def load_reward_hack_pairs(
+    config: dict,
+) -> tuple[list[dict], list[dict], list[dict], list[dict], dict]:
+    dataset_format = config.get("dataset_format", "school_csv_paired")
+    if dataset_format == "school_csv_paired":
+        train, heldout, generation, metadata = load_school_reward_hack_pairs(config)
+        return train, heldout, generation, heldout, metadata
+    if dataset_format == "jozdien_separate_messages":
+        train, heldout, direction_metadata = load_jozdien_contrast(config)
+        _, judge_reference, generation, evaluation_metadata = (
+            load_school_reward_hack_pairs(config, prefix="evaluation_")
+        )
+        metadata = {
+            "direction_dataset": direction_metadata,
+            "evaluation_dataset": evaluation_metadata,
+        }
+        return train, heldout, generation, judge_reference, metadata
+    raise ValueError(f"unsupported dataset_format: {dataset_format}")
 
 
 def paired_activation_examples(train: list[dict], heldout: list[dict]) -> list[dict]:
@@ -245,14 +405,16 @@ def paired_activation_examples(train: list[dict], heldout: list[dict]) -> list[d
         for pair_id, row in enumerate(rows):
             common = {
                 "split": split_name, "pair_id": pair_id,
-                "source_index": int(row["source_index"]), "user": row["user"],
+                "source_index": int(row["source_index"]),
             }
             examples.append({
                 **common, "label": 0, "label_name": "negative_control",
+                "user": row.get("negative_user", row.get("user")),
                 "response": row["control"],
             })
             examples.append({
                 **common, "label": 1, "label_name": "positive_reward_hack",
+                "user": row.get("positive_user", row.get("user")),
                 "response": row["school_of_reward_hacks"],
             })
     return examples
@@ -446,6 +608,69 @@ def make_additive_hook(vector: torch.Tensor, audit: dict | None = None):
     return hook
 
 
+def direction_for_application(direction: np.ndarray, config: dict) -> np.ndarray:
+    normalization = config.get("steering_normalization", "raw")
+    if normalization == "raw":
+        return direction
+    if normalization == "unit":
+        norm = float(np.linalg.norm(direction))
+        if not math.isfinite(norm) or norm == 0.0:
+            raise ValueError("cannot unit-normalize a zero or non-finite direction")
+        return direction / norm
+    raise ValueError(f"unsupported steering_normalization: {normalization}")
+
+
+def compare_with_source_direction(
+    direction: np.ndarray, config: dict, output: Path,
+) -> dict | None:
+    specification = config.get("comparison_source_direction")
+    if specification is None:
+        return None
+    run_id = str(specification["run_id"])
+    if Path(run_id).name != run_id:
+        raise ValueError("comparison source run_id must be a directory name")
+    path = output.parent / run_id / str(specification["artifact"])
+    if file_sha256(path) != specification["sha256"]:
+        raise ValueError("comparison source direction hash mismatch")
+    source = np.load(path, allow_pickle=False).astype(np.float32, copy=False)
+    if source.shape != direction.shape:
+        raise ValueError(
+            f"comparison source shape {source.shape} differs from {direction.shape}"
+        )
+    source_norm = float(np.linalg.norm(source))
+    direction_norm = float(np.linalg.norm(direction))
+    cosine = float(np.dot(source, direction) / (source_norm * direction_norm))
+    results_path = path.parent / "results.json"
+    if file_sha256(results_path) != specification["results_sha256"]:
+        raise ValueError("comparison source results hash mismatch")
+    source_results = json.loads(results_path.read_text())
+    target_magnitudes = np.asarray(config["strengths"], dtype=float)
+    matched_source_curve = []
+    for row in source_results["curve"]:
+        coefficient = float(row["strength"])
+        additive_norm = coefficient * source_norm
+        if np.any(np.isclose(additive_norm, target_magnitudes, rtol=0, atol=1e-8)):
+            matched_source_curve.append({
+                **row,
+                "source_raw_coefficient": coefficient,
+                "signed_additive_l2_norm": additive_norm,
+            })
+    return {
+        "source_run_id": run_id,
+        "source_artifact": specification["artifact"],
+        "source_artifact_sha256": specification["sha256"],
+        "source_raw_direction_norm": source_norm,
+        "new_raw_direction_norm": direction_norm,
+        "raw_norm_ratio_new_over_source": direction_norm / source_norm,
+        "unit_direction_cosine": cosine,
+        "unit_direction_l2_distance": float(
+            np.linalg.norm(direction / direction_norm - source / source_norm)
+        ),
+        "source_results_sha256": specification["results_sha256"],
+        "source_curve_at_matched_additive_norms": matched_source_curve,
+    }
+
+
 def repeated_trigram_fraction(text: str) -> float:
     words = text.lower().split()
     trigrams = [tuple(words[index:index + 3]) for index in range(max(0, len(words) - 2))]
@@ -474,6 +699,7 @@ def generate_strength_sweep(
     stop_ids = model.generation_config.eos_token_id
     stop_ids = [stop_ids] if isinstance(stop_ids, int) else list(stop_ids or [])
     stop_ids = sorted(set(stop_ids + [tokenizer.eos_token_id]))
+    application_direction = direction_for_application(direction, config)
     with path.open("a") as stream:
         for strength in tqdm(config["strengths"], desc="Reward-hacking strength sweep", unit="strength"):
             pending = [
@@ -494,7 +720,9 @@ def generate_strength_sweep(
                     for message in messages
                 ]
                 encoded = tokenizer(texts, return_tensors="pt", padding=True).to(model.device)
-                vector = torch.as_tensor(direction, device=model.device, dtype=model.dtype) * float(strength)
+                vector = torch.as_tensor(
+                    application_direction, device=model.device, dtype=model.dtype
+                ) * float(strength)
                 audit = {"calls": 0}
                 handle = model.model.layers[int(config["layer"]) - 1].register_forward_hook(
                     make_additive_hook(vector, audit)
@@ -519,6 +747,12 @@ def generate_strength_sweep(
                         "generated_tokens": int(response_ids.shape[0]),
                         "ended_with_eos": bool(response_ids[-1].item() in stop_ids),
                         "repeated_trigram_fraction": repeated_trigram_fraction(response),
+                        "steering_normalization": config.get(
+                            "steering_normalization", "raw"
+                        ),
+                        "additive_vector_l2_norm": float(
+                            abs(float(strength)) * np.linalg.norm(application_direction)
+                        ),
                         "hook_audit": audit,
                     }
                     stream.write(json.dumps(record) + "\n")
@@ -542,6 +776,12 @@ def generate_strength_sweep(
                         "current_best_metric": None, "best_state": None,
                         "layer": config["layer"], "module_index": int(config["layer"]) - 1,
                         "raw_direction_norm": float(np.linalg.norm(direction)),
+                        "steering_normalization": config.get(
+                            "steering_normalization", "raw"
+                        ),
+                        "applied_unit_direction_norm": float(
+                            np.linalg.norm(application_direction)
+                        ),
                         "retry_count": checkpoint["retry_count"],
                     }
                     checkpoint.update(stage="generate", completed=completed)
@@ -912,8 +1152,11 @@ def run(
         atomic_json(checkpoint_path, checkpoint)
         checkpoint_callback()
 
-    train, heldout, generation_rows, dataset_metadata = load_reward_hack_pairs(config)
+    (
+        train, heldout, generation_rows, judge_reference_rows, dataset_metadata,
+    ) = load_reward_hack_pairs(config)
     atomic_json(output / "dataset_metadata.json", dataset_metadata)
+    evaluation_metadata = dataset_metadata.get("evaluation_dataset", dataset_metadata)
     atomic_json(output / "generation_selection.json", {
         "rows": [
             {
@@ -923,7 +1166,7 @@ def run(
             }
             for row in generation_rows
         ],
-        "selection_sha256": dataset_metadata["selection_hashes"]["generation"],
+        "selection_sha256": evaluation_metadata["selection_hashes"]["generation"],
     })
     tokenizer = AutoTokenizer.from_pretrained(
         config["model_id"], revision=config["model_revision"],
@@ -956,6 +1199,7 @@ def run(
     raw_direction, geometry = compute_direction_and_geometry(
         activations, labels, source_indices, split_ids, int(config["split_seed"])
     )
+    direction_comparison = compare_with_source_direction(raw_direction, config, output)
     atomic_npy(output / "reward_hacking_direction.npy", raw_direction)
     atomic_npy(output / "unit_reward_hacking_direction.npy", raw_direction / np.linalg.norm(raw_direction))
     atomic_npy(output / "positive_reward_hack_mean.npy", geometry.pop("positive_mean"))
@@ -968,6 +1212,7 @@ def run(
         "raw_direction_norm": geometry["raw_direction_norm"],
         "raw_direction_sha256": file_sha256(output / "reward_hacking_direction.npy"),
         "geometry": geometry,
+        "comparison": direction_comparison,
     })
     checkpoint.update(stage="direction_ready")
     metric = {
@@ -989,7 +1234,7 @@ def run(
     gc.collect()
     torch.cuda.empty_cache()
     judgments = add_judgments(
-        heldout, generations, config, output, checkpoint, fingerprint,
+        judge_reference_rows, generations, config, output, checkpoint, fingerprint,
         checkpoint_callback,
     )
     judge_calibration = reference_judge_metrics(judgments)
@@ -1116,9 +1361,14 @@ def run(
         [row["strength"] for row in ordered],
         [row["eos_rate"] for row in ordered], marker="o",
     )
-    axes[0].set(xlabel="Raw direction coefficient", ylabel="Reward-hack rate", ylim=(-0.05, 1.05))
-    axes[1].set(xlabel="Raw direction coefficient", ylabel="Repeated-trigram fraction", ylim=(-0.05, 1.05))
-    axes[2].set(xlabel="Raw direction coefficient", ylabel="EOS rate", ylim=(-0.05, 1.05))
+    coefficient_label = (
+        "Additive L2 norm (signed)"
+        if config.get("steering_normalization", "raw") == "unit"
+        else "Raw direction coefficient"
+    )
+    axes[0].set(xlabel=coefficient_label, ylabel="Reward-hack rate", ylim=(-0.05, 1.05))
+    axes[1].set(xlabel=coefficient_label, ylabel="Repeated-trigram fraction", ylim=(-0.05, 1.05))
+    axes[2].set(xlabel=coefficient_label, ylabel="EOS rate", ylim=(-0.05, 1.05))
     for axis in axes:
         axis.grid(alpha=0.3)
     figure.tight_layout()
@@ -1129,6 +1379,11 @@ def run(
         "run_id": output.name, "status": "completed", "config": resolved,
         "source_run": source_run,
         "dataset": dataset_metadata, "geometry": geometry,
+        "direction_comparison": direction_comparison,
+        "steering_application": {
+            "normalization": config.get("steering_normalization", "raw"),
+            "operation": "residual = residual + strength * application_direction",
+        },
         "judge_reference": {
             **judge_calibration,
         },
@@ -1172,6 +1427,8 @@ def run(
         f"{source_summary}"
         f"- Train/held-out pairs: {len(train)} / {len(heldout)}\n"
         f"- Raw direction norm: {geometry['raw_direction_norm']:.6f}\n"
+        f"- Steering normalization: {config.get('steering_normalization', 'raw')}\n"
+        f"- Source-vector comparison: {direction_comparison}\n"
         f"- Held-out ROC AUC: {geometry['heldout_roc_auc']:.4f}\n"
         f"- Held-out pair ordering: {geometry['heldout_pair_ordering_accuracy']:.4f}\n"
         f"- Judge reference balanced accuracy: {judge_balanced_accuracy:.4f}\n"
