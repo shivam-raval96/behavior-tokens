@@ -284,6 +284,10 @@ def run_llm_lat_targeted_debug(run_mode: str = "fresh", run_id: str = "", varian
     variants = {
         "base": ("llm_lat_llama32_1b_targeted_debug.yaml", "llm-lat-llama32-targeted-debug"),
         "system_prompts": ("llm_lat_llama32_1b_system_prompt_debug.yaml", "llm-lat-llama32-system-prompt-debug"),
+        "layer10_response_span": (
+            "llm_lat_llama32_1b_layer10_response_span_debug.yaml",
+            "llm-lat-llama32-layer10-response-span-debug",
+        ),
     }
     if variant not in variants:
         raise ValueError(f"unknown targeted debug variant: {variant}")

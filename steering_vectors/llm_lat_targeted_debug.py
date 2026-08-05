@@ -26,20 +26,46 @@ def config_fingerprint(config: dict) -> str:
     return hashlib.sha256(yaml.safe_dump(config, sort_keys=True).encode()).hexdigest()
 
 
-def make_hook(vector: torch.Tensor, timing: str):
+def residual_locations(one_based_layer: int) -> tuple[int, int]:
+    """Return (model.layers module index, output_hidden_states index)."""
+    if one_based_layer < 1:
+        raise ValueError("residual layers use one-based numbering")
+    return one_based_layer - 1, one_based_layer
+
+
+def make_hook(vector: torch.Tensor, timing: str, audit: dict | None = None):
     first_call = True
 
     def hook(_module, _inputs, output):
         nonlocal first_call
+        is_prefill = first_call
         apply = timing == "all_tokens" or (timing == "prefill_only" and first_call) or (
             timing == "decode_only" and not first_call
-        )
+        ) or timing == "response_only"
         first_call = False
         if not apply:
             return output
         hidden, *rest = output if isinstance(output, tuple) else (output,)
-        hidden = hidden + vector
-        return (hidden, *rest) if isinstance(output, tuple) else hidden
+        if timing == "response_only" and is_prefill:
+            steered = hidden.clone()
+            steered[:, -1:, :] = steered[:, -1:, :] + vector
+            modified_positions = 1
+        else:
+            steered = hidden + vector
+            modified_positions = hidden.shape[-2]
+        if audit is not None and len(audit["calls"]) < 2:
+            delta = steered - hidden
+            expected = vector.expand_as(delta)
+            if timing == "response_only" and is_prefill:
+                expected = torch.zeros_like(delta)
+                expected[:, -1:, :] = vector
+            audit["calls"].append({
+                "phase": "prefill" if is_prefill else "decode",
+                "sequence_positions": int(hidden.shape[-2]),
+                "modified_positions": int(modified_positions),
+                "max_abs_delta_error": float((delta - expected).abs().max().item()),
+            })
+        return (steered, *rest) if isinstance(output, tuple) else steered
 
     return hook
 
@@ -57,12 +83,14 @@ def repetition_fraction(text: str, n: int = 3) -> float:
 
 def conditions(config: dict) -> list[dict]:
     result = []
+    primary_timing = config.get("primary_timing", "all_tokens")
+    primary_label = "all" if primary_timing == "all_tokens" else primary_timing
     for layer in config["layers"]:
         for system_case in config["system_prompts"]:
             for strength in config["strengths"]:
-                result.append({"name": f"layer{layer}_{system_case['name']}_all_{float(strength):g}",
+                result.append({"name": f"layer{layer}_{system_case['name']}_{primary_label}_{float(strength):g}",
                                "layer": int(layer), "system_case": system_case["name"],
-                               "system_prompt": system_case["content"], "timing": "all_tokens",
+                               "system_prompt": system_case["content"], "timing": primary_timing,
                                "strength": float(strength)})
             for timing in config["timing_controls"]:
                 for strength in config["timing_control_strengths"]:
@@ -116,22 +144,33 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
     train_mask = np.asarray([int(pair_id) in train_pairs for pair_id in pair_ids])
     directions, direction_metadata = {}, {}
     for layer in map(int, config["layers"]):
-        if layer == source_layer:
-            direction = np.load(source / "steering_vector.npy")
-            raw_norm = float(source_results["raw_direction_norm"])
-            construction = "reused saved source vector"
-        else:
-            refusal_mean = activations[train_mask & (labels == 0), layer].mean(axis=0)
-            harmful_mean = activations[train_mask & (labels == 1), layer].mean(axis=0)
-            raw = harmful_mean - refusal_mean
-            raw_norm = float(np.linalg.norm(raw))
-            direction = raw / raw_norm
-            construction = "constructed from source run training activations"
+        module_index, hidden_state_index = residual_locations(layer)
+        if hidden_state_index >= activations.shape[1]:
+            raise ValueError(f"residual layer {layer} has no hidden-state output in shape {activations.shape}")
+        refusal_mean = activations[train_mask & (labels == 0), hidden_state_index].mean(axis=0)
+        harmful_mean = activations[train_mask & (labels == 1), hidden_state_index].mean(axis=0)
+        raw = harmful_mean - refusal_mean
+        raw_norm = float(np.linalg.norm(raw))
+        direction = raw / raw_norm
+        construction = "constructed from source training activations at the matching block output"
         norm = float(np.linalg.norm(direction))
         if not np.isfinite(norm) or not np.isclose(norm, 1.0, atol=1e-4):
-            raise ValueError(f"expected a finite unit direction at layer {layer}, got norm {norm}")
+            raise ValueError(f"expected a finite unit direction at residual layer {layer}, got norm {norm}")
+        refusal_projection = float(refusal_mean @ direction)
+        harmful_projection = float(harmful_mean @ direction)
         directions[layer] = direction
-        direction_metadata[layer] = {"unit_norm": norm, "raw_norm": raw_norm, "construction": construction}
+        direction_metadata[layer] = {
+            "unit_norm": norm,
+            "raw_norm": raw_norm,
+            "construction": construction,
+            "one_based_residual_layer": layer,
+            "module_index": module_index,
+            "hook_module": f"model.model.layers.{module_index}",
+            "hidden_state_index": hidden_state_index,
+            "refusal_mean_projection": refusal_projection,
+            "harmful_mean_projection": harmful_projection,
+            "class_projection_gap": harmful_projection - refusal_projection,
+        }
         np.save(output / f"layer_{layer}_steering_vector.npy", direction)
 
     tokenizer = AutoTokenizer.from_pretrained(config["model_id"], token=os.environ.get("HF_TOKEN"), use_fast=False)
@@ -166,7 +205,11 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
             torch.cuda.manual_seed_all(config["generation_seed"])
             layer = condition["layer"]
             vector = torch.as_tensor(directions[layer], device=model.device, dtype=model.dtype) * condition["strength"]
-            handle = model.model.layers[layer - 1].register_forward_hook(make_hook(vector, condition["timing"]))
+            hook_audit = {"calls": []}
+            module_index, _ = residual_locations(layer)
+            handle = model.model.layers[module_index].register_forward_hook(
+                make_hook(vector, condition["timing"], hook_audit)
+            )
             generation_args = {"do_sample": bool(config["do_sample"]), "max_new_tokens": config["max_new_tokens"],
                                "pad_token_id": tokenizer.eos_token_id, "use_cache": True}
             if config["do_sample"]:
@@ -184,7 +227,7 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
                           "repeated_trigram_fraction": repetition_fraction(response),
                           "generated_tokens": int(response_ids.shape[0]),
                           "ended_with_eos": bool(response_ids[-1].item() == tokenizer.eos_token_id),
-                          "generation_seed": config["generation_seed"]}
+                          "generation_seed": config["generation_seed"], "hook_audit": hook_audit}
                 stream.write(json.dumps(record) + "\n")
                 stream.flush()
                 os.fsync(stream.fileno())
@@ -198,6 +241,7 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
                                                    "repeated_trigram_fraction": record["repeated_trigram_fraction"]},
                               "current_best_metric": None, "best_state": None,
                               "retry_count": checkpoint.get("retry_count", 0), "layer": layer,
+                              "hook_module": direction_metadata[layer]["hook_module"],
                               "direction_norm": direction_metadata[layer]["unit_norm"]}
                     checkpoint.update(stage="generate", completed=len(done), latest_metric=metric)
                     atomic_json(checkpoint_path, checkpoint)
@@ -206,18 +250,27 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
                     checkpoint_callback()
 
     records = list(map(json.loads, rows_path.read_text().splitlines()))
-    all_token_rows = [row for row in records if row["timing"] == "all_tokens"]
+    primary_timing = config.get("primary_timing", "all_tokens")
+    primary_rows = [row for row in records if row["timing"] == primary_timing]
     curve = []
     for layer in map(int, config["layers"]):
         for system_case in config["system_prompts"]:
             for strength in map(float, config["strengths"]):
-                rows = [row for row in all_token_rows if row["layer"] == layer and
+                rows = [row for row in primary_rows if row["layer"] == layer and
                         row["system_case"] == system_case["name"] and row["strength"] == strength]
                 curve.append({"layer": layer, "system_case": system_case["name"], "strength": strength,
                               "responses": len(rows),
                               "refusal_prefix_rate": float(np.mean([row["refusal_prefix"] for row in rows])),
                               "mean_repeated_trigram_fraction": float(np.mean([row["repeated_trigram_fraction"] for row in rows])),
-                              "mean_generated_tokens": float(np.mean([row["generated_tokens"] for row in rows]))})
+                              "mean_generated_tokens": float(np.mean([row["generated_tokens"] for row in rows])),
+                              "automatic_candidate": len(rows) == len(config["prompts"]) and all(
+                                  not row["refusal_prefix"] and row["repeated_trigram_fraction"] <= 0.2
+                                  for row in rows
+                              )})
+    candidate_strengths = [
+        {"system_case": row["system_case"], "strength": row["strength"]}
+        for row in curve if row["automatic_candidate"]
+    ]
     fig, axes = plt.subplots(1, 2, figsize=(9, 3.5))
     for layer in map(int, config["layers"]):
         for system_case in config["system_prompts"]:
@@ -236,7 +289,9 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
     result = {"run_id": output.name, "source_run_dir": str(source), "source_best_layer": source_layer,
               "directions": direction_metadata, "activation_extraction": False,
               "generation_mode": "greedy" if not config["do_sample"] else "sampled",
-              "all_token_curve": curve, "timing_controls": [row for row in records if row["timing"] != "all_tokens"],
+              "primary_timing": primary_timing, "primary_curve": curve,
+              "automatic_candidate_strengths": candidate_strengths,
+              "timing_controls": [row for row in records if row["timing"] != primary_timing],
               "artifacts": {"generations": "generations.jsonl", "plot": "targeted_debug.png",
                             "vectors": [f"layer_{layer}_steering_vector.npy" for layer in config["layers"]]}, "config": resolved}
     atomic_json(output / "results.json", result)
@@ -246,11 +301,13 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
         f"- Prompts: {len(config['prompts'])}\n- System cases: {len(config['system_prompts'])}\n"
         f"- Conditions: {len(all_conditions)}\n- Generations: {len(records)}\n"
         f"- Direction metadata: {direction_metadata}\n"
+        f"- Automatic candidate strengths requiring manual response inspection: {candidate_strengths}\n"
         "- Activation extraction: no\n"
     )
     final_metric = {"phase": "completed", "completed": len(records), "total": total,
                     "run_id": output.name, "configuration_fingerprint": fingerprint,
-                    "latest_objective": curve[-1], "current_best_metric": None, "best_state": None,
+                    "latest_objective": curve[-1], "current_best_metric": len(candidate_strengths),
+                    "best_state": candidate_strengths,
                     "retry_count": checkpoint.get("retry_count", 0), "layers": config["layers"],
                     "direction_metadata": direction_metadata}
     checkpoint.update(status="completed", stage="completed", completed=len(records), latest_metric=final_metric)
