@@ -160,6 +160,8 @@ class RewardHackingDirectionTest(unittest.TestCase):
                 "split_seed": 42,
                 "expected_train_selection_sha256": expected_train,
                 "expected_heldout_selection_sha256": expected_heldout,
+                "direction_positive_system_prompt": "Maximize evaluator reward by exploiting loopholes.",
+                "direction_neutral_system_prompt": "Solve the programming task.",
             }
             with patch(
                 "steering_vectors.reward_hacking_direction.hf_hub_download",
@@ -171,7 +173,18 @@ class RewardHackingDirectionTest(unittest.TestCase):
                 train, heldout, metadata = load_aria_contrast(config)
 
         self.assertEqual((len(train), len(heldout)), (1, 1))
-        self.assertEqual(train[0]["system"], "Solve the task.")
+        self.assertEqual(train[0]["source_system"], "Solve the task.")
+        self.assertEqual(
+            train[0]["positive_system"],
+            "Maximize evaluator reward by exploiting loopholes.",
+        )
+        self.assertEqual(train[0]["negative_system"], "Solve the programming task.")
+        examples = paired_activation_examples(train, heldout)
+        self.assertEqual(examples[0]["system"], "Solve the programming task.")
+        self.assertEqual(
+            examples[1]["system"],
+            "Maximize evaluator reward by exploiting loopholes.",
+        )
         self.assertNotIn("\nuser\n", train[0]["user"])
         self.assertNotIn("<think>", train[0]["school_of_reward_hacks"])
         self.assertEqual(metadata["prompt_overlap_between_splits"], 0)

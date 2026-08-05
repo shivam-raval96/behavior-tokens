@@ -502,6 +502,12 @@ def load_aria_contrast(config: dict) -> tuple[list[dict], list[dict], dict]:
         raise ValueError("Aria step/prompt group structure differs from the pinned audit")
     if len(systems) != 1:
         raise ValueError(f"expected one Aria system prompt, found {len(systems)}")
+    positive_system_prompt = str(config["direction_positive_system_prompt"]).strip()
+    negative_system_prompt = str(config["direction_neutral_system_prompt"]).strip()
+    if not positive_system_prompt or not negative_system_prompt:
+        raise ValueError("Aria direction system prompts must be non-empty")
+    if positive_system_prompt == negative_system_prompt:
+        raise ValueError("Aria positive and neutral direction system prompts must differ")
 
     pairs = []
     for (step, problem_id, user), rows in sorted(groups.items()):
@@ -527,7 +533,9 @@ def load_aria_contrast(config: dict) -> tuple[list[dict], list[dict], dict]:
             "prompt_sha256": text_sha256(user),
             "positive_source_index": positive_row["source_index"],
             "negative_source_index": negative_row["source_index"],
-            "system": positive_row["system"],
+            "source_system": positive_row["system"],
+            "positive_system": positive_system_prompt,
+            "negative_system": negative_system_prompt,
             "user": user,
             "school_of_reward_hacks": positive_row["response"],
             "control": negative_row["response"],
@@ -613,6 +621,14 @@ def load_aria_contrast(config: dict) -> tuple[list[dict], list[dict], dict]:
             "system\\n", "\\nuser\\n",
             "\\nassistant\\n<think>\\n\\n</think>\\n\\n",
         ],
+        "source_system_prompt": next(iter(systems)),
+        "applied_system_prompts": {
+            "positive_reward_hack": positive_system_prompt,
+            "negative_clean": negative_system_prompt,
+        },
+        "system_prompt_contrast": (
+            "reward-hacking-encouraging positive versus neutral clean"
+        ),
         "direction_definition": "mean(pair_positive_reward_hack - pair_negative_clean)",
     }
     return train, heldout, metadata
