@@ -250,16 +250,20 @@ def generate(model, tokenizer, prompts: list[dict], layer: int, direction: np.nd
                     seed = config["generation_seed"] + int((float(strength) + 100) * 10_000) + offset
                     torch.manual_seed(seed)
                     torch.cuda.manual_seed_all(seed)
-                    output = model.generate(**encoded, do_sample=True, temperature=config["temperature"],
-                                            top_p=config["top_p"], max_new_tokens=config["max_new_tokens"],
-                                            pad_token_id=tokenizer.pad_token_id, use_cache=True)
+                    generation_kwargs = {"do_sample": True, "temperature": config["temperature"],
+                                         "max_new_tokens": config["max_new_tokens"],
+                                         "pad_token_id": tokenizer.pad_token_id, "use_cache": True}
+                    if "top_p" in config:
+                        generation_kwargs["top_p"] = config["top_p"]
+                    output = model.generate(**encoded, **generation_kwargs)
                     prompt_width = encoded.input_ids.shape[1]
                     for row_index, (generation_index, source) in enumerate(zip(indices, selected)):
                         response = tokenizer.decode(output[row_index, prompt_width:], skip_special_tokens=True)
                         record = {"strength": float(strength), "generation_index": generation_index,
                                   "source_index": source["source_index"], "prompt": source["prompt"],
                                   "response": response, "seed_batch": seed, "temperature": config["temperature"],
-                                  "top_p": config["top_p"], "max_new_tokens": config["max_new_tokens"]}
+                                  "top_p": config.get("top_p", "transformers_generation_config_default"),
+                                  "max_new_tokens": config["max_new_tokens"]}
                         stream.write(json.dumps(record) + "\n")
                         stream.flush()
                         os.fsync(stream.fileno())
@@ -283,7 +287,7 @@ def generate(model, tokenizer, prompts: list[dict], layer: int, direction: np.nd
 def validate_config(config: dict) -> None:
     required = {"model_id", "dataset", "split", "pair_count", "train_pairs", "data_seed", "split_seed", "activation_pooling",
                 "activation_batch_size", "checkpoint_every", "sweep_strengths", "probability_threshold",
-                "generations_per_strength", "generation_batch_size", "generation_seed", "temperature", "top_p",
+                "generations_per_strength", "generation_batch_size", "generation_seed", "temperature",
                 "max_new_tokens"}
     missing = sorted(required - config.keys())
     if missing:

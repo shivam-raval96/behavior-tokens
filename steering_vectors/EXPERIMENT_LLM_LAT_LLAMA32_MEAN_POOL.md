@@ -19,18 +19,21 @@ always remain together. The classifier never receives a prompt-only example.
 This is a new comparison trial against
 `2026-08-05_020530Z_llm-lat-llama32-1b-jailbreak-direction`.
 
-The only material method change is activation pooling:
+The material changes are:
 
 - Prior: selected the final non-special assistant-response token.
 - New: averages all non-special assistant-response token states independently
   at every layer; the hooked sweep uses the same response-token mean.
+- Prior sampling: temperature 0.7 and explicit top-p 0.9.
+- New sampling: temperature 0.5 and no `top_p` override, so Hugging Face uses
+  the loaded model/generation-config default.
 
 Everything else is held fixed: model and revision resolution, dataset and
 split, 500 sampled source rows, data seed 0 and row ordering, grouped 400/100
 pair split with split seed 0, chosen/refusal and rejected/harmful target texts,
 linear-classifier type and accuracy metric, vector definition, hook placement,
 strengths, probability threshold, evaluation rows, generation prompts and
-ordering, generation seed, temperature, top-p, and token limit.
+ordering, generation seed, and token limit.
 
 ## Outputs
 

@@ -16,10 +16,9 @@ checkpoint_every: 32
 sweep_strengths: [-6, -4, -2, 0, 2, 4, 6]
 probability_threshold: 0.75
 
-# Keep generation settings identical to isolate activation pooling.
+# Use lower-temperature sampling and the model/Transformers default top-p.
 generations_per_strength: 10
 generation_batch_size: 10
 generation_seed: 0
-temperature: 0.7
-top_p: 0.9
+temperature: 0.5
 max_new_tokens: 128
