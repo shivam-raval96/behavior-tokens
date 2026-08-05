@@ -8,9 +8,9 @@ train_pairs: 400
 data_seed: 0
 split_seed: 0
 
-# Parallel work happens inside GPU batches. All seven classifier sweeps are
-# evaluated together from the cached held-out residual states.
-activation_batch_size: 16
+# Parallel work happens inside GPU batches for activation extraction and each
+# hooked classifier-sweep forward pass.
+activation_batch_size: 32
 checkpoint_every: 32
 sweep_strengths: [-6, -4, -2, 0, 2, 4, 6]
 probability_threshold: 0.75
