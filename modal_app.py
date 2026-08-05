@@ -635,6 +635,40 @@ def run_reward_hacking_direction(run_mode: str = "fresh", run_id: str = ""):
         )
         outputs.commit()
         raise
+    except Exception as error:
+        checkpoint = (
+            json.loads(checkpoint_path.read_text())
+            if checkpoint_path.exists() else {"run_id": run_id}
+        )
+        checkpoint["status"] = "stopped"
+        checkpoint["last_error"] = {
+            "type": type(error).__name__, "message": str(error),
+        }
+        atomic_json(checkpoint_path, checkpoint)
+        partial = {
+            "run_id": run_id,
+            "status": "stopped",
+            "checkpoint": checkpoint,
+            "failure": checkpoint["last_error"],
+            "artifacts": {
+                "config": "config.yaml",
+                "progress": "progress.json",
+                "activation_state": "activation_state.npz",
+                "generations": "generations.jsonl",
+                "judgments": "judge_judgments.jsonl",
+            },
+        }
+        atomic_json(output / "results.json", partial)
+        (output / "RESULTS.md").write_text(
+            "# Layer-10 reward-hacking direction (stopped)\n\n"
+            f"- Run: `{run_id}`\n"
+            f"- Last stage: `{checkpoint.get('stage', 'unknown')}`\n"
+            f"- Error: `{type(error).__name__}: {error}`\n"
+            f"- Completed rows: {checkpoint.get('completed', 0)}\n"
+            f"- Retry count: {checkpoint.get('retry_count', 0)}\n"
+        )
+        outputs.commit()
+        raise
     finally:
         signal.signal(signal.SIGTERM, previous)
 

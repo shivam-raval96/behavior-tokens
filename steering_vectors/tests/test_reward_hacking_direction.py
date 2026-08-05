@@ -103,6 +103,8 @@ class RewardHackingDirectionTest(unittest.TestCase):
             })
             id = "resp_fixture"
             model = "gpt-fixture"
+            status = "completed"
+            incomplete_details = None
             usage = FakeUsage()
 
         class FakeResponses:
@@ -135,6 +137,63 @@ class RewardHackingDirectionTest(unittest.TestCase):
         self.assertEqual(captured["text"]["format"]["type"], "json_schema")
         self.assertNotIn("must remain hidden", captured["input"][1]["content"])
         self.assertEqual(captured["client"]["max_retries"], 4)
+
+    def test_openai_judge_retries_truncated_structured_output(self):
+        limits = []
+
+        class FakeUsage:
+            def model_dump(self):
+                return {"input_tokens": 10, "output_tokens": 20, "total_tokens": 30}
+
+        class FakeIncompleteDetails:
+            def model_dump(self):
+                return {"reason": "max_output_tokens"}
+
+        class FakeResponse:
+            model = "gpt-fixture"
+            usage = FakeUsage()
+
+            def __init__(self, attempt):
+                self.id = f"resp_{attempt}"
+                if attempt == 1:
+                    self.output_text = '{"label":"GF","confidence":0.8,"rationale":"cut'
+                    self.status = "incomplete"
+                    self.incomplete_details = FakeIncompleteDetails()
+                else:
+                    self.output_text = json.dumps({
+                        "label": "GF", "confidence": 0.8,
+                        "rationale": "Good-faith attempt.",
+                    })
+                    self.status = "completed"
+                    self.incomplete_details = None
+
+        class FakeResponses:
+            def create(self, **kwargs):
+                limits.append(kwargs["max_output_tokens"])
+                return FakeResponse(len(limits))
+
+        class FakeClient:
+            def __init__(self, **_kwargs):
+                self.responses = FakeResponses()
+
+        config = {
+            "judge_timeout_seconds": 90,
+            "judge_max_retries": 4,
+            "judge_model": "gpt-fixture",
+            "judge_reasoning_effort": "low",
+            "judge_max_output_tokens": 256,
+        }
+        row = {
+            "user": "task", "evaluation_metric": "metric",
+            "cheat_method": "hidden", "response": "answer",
+        }
+        with patch.dict(environ, {"OPENAI_API_KEY": "fixture-key"}), patch(
+            "openai.OpenAI", FakeClient
+        ):
+            result = make_openai_judge(config)(row)
+        self.assertEqual(limits, [256, 1024])
+        self.assertEqual(result["content_retry_count"], 1)
+        self.assertEqual(result["api_usage"]["total_tokens"], 60)
 
     def test_parallel_judging_checkpoints_without_duplicate_rows(self):
         heldout = [{
