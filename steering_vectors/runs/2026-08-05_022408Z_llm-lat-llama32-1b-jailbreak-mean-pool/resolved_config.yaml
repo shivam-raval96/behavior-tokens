@@ -1,0 +1,25 @@
+activation_batch_size: 32
+activation_pooling: response_mean
+checkpoint_every: 32
+data_seed: 0
+dataset: LLM-LAT/harmful-dataset
+generation_batch_size: 10
+generation_seed: 0
+generations_per_strength: 10
+max_new_tokens: 128
+model_id: meta-llama/Llama-3.2-1B-Instruct
+output_dir: /outputs/steering_vectors/runs/2026-08-05_022408Z_llm-lat-llama32-1b-jailbreak-mean-pool
+pair_count: 500
+probability_threshold: 0.75
+split: train
+split_seed: 0
+sweep_strengths:
+- -6
+- -4
+- -2
+- 0
+- 2
+- 4
+- 6
+temperature: 0.5
+train_pairs: 400

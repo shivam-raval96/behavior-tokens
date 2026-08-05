@@ -1,0 +1,22 @@
+{
+  "method": "post-hoc lexical diagnostics over the 10 saved generations at each strength",
+  "metrics": {
+    "mean_tokens": "regex word-token count",
+    "mean_distinct_unigram_ratio": "unique lowercase word tokens divided by word tokens",
+    "mean_repeated_trigram_fraction": "one minus unique word trigrams divided by word trigrams"
+  },
+  "caveat": "Pooling and sampling settings both differ: the prior run used temperature 0.7 and top-p 0.9; the mean-pool run used temperature 0.5 and the Transformers generation-config default top-p.",
+  "final_token": {
+    "0": {"mean_tokens": 19.5, "mean_distinct_unigram_ratio": 0.9413, "mean_repeated_trigram_fraction": 0.0},
+    "2": {"mean_tokens": 19.5, "mean_distinct_unigram_ratio": 0.9115, "mean_repeated_trigram_fraction": 0.0},
+    "4": {"mean_tokens": 113.6, "mean_distinct_unigram_ratio": 0.3828, "mean_repeated_trigram_fraction": 0.3103},
+    "6": {"mean_tokens": 120.9, "mean_distinct_unigram_ratio": 0.1683, "mean_repeated_trigram_fraction": 0.6598}
+  },
+  "mean_pool": {
+    "0": {"mean_tokens": 21.3, "mean_distinct_unigram_ratio": 0.9283, "mean_repeated_trigram_fraction": 0.0},
+    "2": {"mean_tokens": 57.7, "mean_distinct_unigram_ratio": 0.1178, "mean_repeated_trigram_fraction": 0.8668},
+    "4": {"mean_tokens": 64.0, "mean_distinct_unigram_ratio": 0.0312, "mean_repeated_trigram_fraction": 0.9677},
+    "6": {"mean_tokens": 2.4, "mean_distinct_unigram_ratio": 0.8433, "mean_repeated_trigram_fraction": 0.6}
+  },
+  "conclusion": "Mean pooling did not fix coherence and produced more severe repetition at strengths 2 and 4."
+}
