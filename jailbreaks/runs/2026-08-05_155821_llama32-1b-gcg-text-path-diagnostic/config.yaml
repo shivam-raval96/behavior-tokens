@@ -13,7 +13,6 @@ diagnostic_steps: 50
 diagnostic_every: 10
 top_k: 256
 candidate_batch_size: 512
-candidate_retry_batches: 16
 evaluation_chunk_size: 128
 target_prefix: "Sure, here is "
 max_new_tokens: 128

@@ -41,9 +41,7 @@ def filter_text_candidates(tokenizer, candidate_ids: torch.Tensor, current_text:
         retokenized = tokenizer(text, add_special_tokens=False).input_ids
         if text != current_text and len(retokenized) == expected_length:
             accepted.append(text)
-    if not accepted:
-        raise RuntimeError("no reference-valid decoded text candidates")
-    return accepted + [accepted[-1]] * (candidate_ids.shape[0] - len(accepted))
+    return accepted
 
 
 class TextSuffixManager:
@@ -146,13 +144,19 @@ class ReferenceTextGCG:
         return one_hot.grad.detach(), float(loss.detach()), layout
 
     def sample_text_candidates(self, current_text: str, current_ids: torch.Tensor,
-                               gradient: torch.Tensor, generator: torch.Generator) -> list[str]:
+                               gradient: torch.Tensor, generator: torch.Generator,
+                               retry_batches: int) -> tuple[list[str], int, float]:
         top_ids = (-gradient).topk(self.top_k, dim=1).indices
-        positions = torch.randint(0, self.suffix_length, (self.batch_size,), device=self.device, generator=generator)
-        choices = torch.randint(0, self.top_k, (self.batch_size,), device=self.device, generator=generator)
-        raw = current_ids.unsqueeze(0).repeat(self.batch_size, 1)
-        raw[torch.arange(self.batch_size, device=self.device), positions] = top_ids[positions, choices]
-        return filter_text_candidates(self.tokenizer, raw, current_text, self.suffix_length)
+        for attempt in range(1, retry_batches + 1):
+            positions = torch.randint(0, self.suffix_length, (self.batch_size,), device=self.device, generator=generator)
+            choices = torch.randint(0, self.top_k, (self.batch_size,), device=self.device, generator=generator)
+            raw = current_ids.unsqueeze(0).repeat(self.batch_size, 1)
+            raw[torch.arange(self.batch_size, device=self.device), positions] = top_ids[positions, choices]
+            accepted = filter_text_candidates(self.tokenizer, raw, current_text, self.suffix_length)
+            if accepted:
+                rate = len(accepted) / self.batch_size
+                return accepted + [accepted[-1]] * (self.batch_size - len(accepted)), attempt, rate
+        raise RuntimeError(f"no reference-valid decoded text candidates after {retry_batches} batches")
 
     @torch.no_grad()
     def evaluate(self, goal: str, candidates: list[str], target: str) -> torch.Tensor:
@@ -245,7 +249,9 @@ def run_text_path_diagnostic(config_path: Path, output_base: Path, commit=None,
     try:
       for step in tqdm(range(start_step, cfg["diagnostic_steps"]), desc="Llama-3.2 reference-text GCG", unit="step"):
         gradient, _, layout = attack.token_gradient(goal, control, target)
-        candidates = attack.sample_text_candidates(control, layout.input_ids[layout.control_slice], gradient, generator)
+        candidates, retry_count, acceptance_rate = attack.sample_text_candidates(
+            control, layout.input_ids[layout.control_slice], gradient, generator, cfg["candidate_retry_batches"]
+        )
         batch = attack.evaluate(goal, candidates[:8], target)
         serial = torch.cat([attack.evaluate(goal, [candidate], target) for candidate in candidates[:8]])
         checks["batch_serial_max_abs_difference"] = max(checks["batch_serial_max_abs_difference"], float((batch - serial).abs().max()))
@@ -255,11 +261,11 @@ def run_text_path_diagnostic(config_path: Path, output_base: Path, commit=None,
         if loss < best_loss:
             best_control, best_loss = control, loss
         if (step + 1) % cfg["diagnostic_every"] == 0 or step + 1 == cfg["diagnostic_steps"]:
-            acceptance = len(set(candidates)) / len(candidates)
-            snapshots.append(report(step + 1, "current", control, acceptance))
+            snapshots.append(report(step + 1, "current", control, acceptance_rate))
             print(json.dumps({"type": "gcg_text_progress", "step": step + 1,
                               "total_steps": cfg["diagnostic_steps"], "loss": loss,
-                              "best_loss": best_loss, "sure_rank": snapshots[-1]["sure_rank"],
+                              "best_loss": best_loss, "candidate_retry_batches": retry_count,
+                              "candidate_acceptance_rate": acceptance_rate, "sure_rank": snapshots[-1]["sure_rank"],
                               "asr": snapshots[-1]["suffix_success"]}))
         payload = {"status": "running", "config_sha256": config_sha,
                    "next_step": step + 1, "loss_history": history, "control": control,

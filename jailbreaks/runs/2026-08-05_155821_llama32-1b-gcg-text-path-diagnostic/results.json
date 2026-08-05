@@ -1,0 +1,7 @@
+{
+  "status": "failed_startup",
+  "next_step": 0,
+  "error": "no reference-valid decoded text candidates in the first 512-sample batch",
+  "cause": "The Llama-3.2 candidate sampler needs bounded resampling after the reference length filter.",
+  "modal_app_id": "ap-5KkUESxn1tvUDw2ZQtdfNr"
+}

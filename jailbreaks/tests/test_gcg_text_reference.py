@@ -17,4 +17,4 @@ class ToyTokenizer:
 def test_reference_filter_uses_retokenized_length_not_id_equality():
     candidates = torch.tensor([[1, 8], [2, 8], [3, 8], [4, 8]])
     filtered = filter_text_candidates(ToyTokenizer(), candidates, "old", expected_length=2)
-    assert filtered == ["valid", "valid", "valid", "valid"]
+    assert filtered == ["valid", "valid"]
