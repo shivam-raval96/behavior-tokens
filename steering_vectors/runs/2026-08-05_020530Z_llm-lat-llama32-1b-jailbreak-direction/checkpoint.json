@@ -1,0 +1,24 @@
+{
+  "status": "completed",
+  "stage": "completed",
+  "run_id": "2026-08-05_020530Z_llm-lat-llama32-1b-jailbreak-direction",
+  "config_fingerprint": "4d551e2e5b5ab5d113e30be98b5350807e1651814e44a10662963db41bef8e2f",
+  "retry_count": 0,
+  "next_example": 1000,
+  "latest_metric": {
+    "phase": "completed",
+    "completed": 40,
+    "total": 40,
+    "best_layer": 4,
+    "best_metric": 1.0,
+    "selected_strengths": [
+      0.0,
+      2.0,
+      4.0,
+      6.0
+    ],
+    "run_id": "2026-08-05_020530Z_llm-lat-llama32-1b-jailbreak-direction",
+    "retry_count": 0
+  },
+  "completed_generations": 40
+}

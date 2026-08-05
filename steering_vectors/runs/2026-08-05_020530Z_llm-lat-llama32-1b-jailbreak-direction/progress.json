@@ -1,0 +1,15 @@
+{
+  "phase": "completed",
+  "completed": 40,
+  "total": 40,
+  "best_layer": 4,
+  "best_metric": 1.0,
+  "selected_strengths": [
+    0.0,
+    2.0,
+    4.0,
+    6.0
+  ],
+  "run_id": "2026-08-05_020530Z_llm-lat-llama32-1b-jailbreak-direction",
+  "retry_count": 0
+}
