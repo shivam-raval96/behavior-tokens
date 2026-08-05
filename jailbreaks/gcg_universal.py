@@ -30,8 +30,8 @@ def read_config(path: Path) -> dict[str, Any]:
     if cfg["stage"] == "stage_c_five_behavior_advbench_llama2_7b" and (cfg.get("train_behaviors"), cfg.get("test_behaviors")) != (5, 25):
         raise ValueError("the five-behavior protocol requires five train and 25 held-out behaviors")
     if cfg["stage"] == "stage_c_five_behavior_advbench_llama32_1b":
-        if (cfg.get("model_id"), cfg.get("steps"), cfg.get("train_behaviors"), cfg.get("test_behaviors")) != ("meta-llama/Llama-3.2-1B-Instruct", 500, 5, 50):
-            raise ValueError("the Llama-3.2 continuation requires 500 steps, five training, and 50 held-out behaviors")
+        if cfg.get("model_id") != "meta-llama/Llama-3.2-1B-Instruct" or cfg.get("steps") not in {500, 1000} or (cfg.get("train_behaviors"), cfg.get("test_behaviors")) != (5, 50):
+            raise ValueError("the Llama-3.2 protocol requires the fixed model and five training/50 held-out behaviors")
         if cfg.get("train_indices") != [0, 1, 2, 3, 4] or cfg.get("test_indices") != list(range(30, 80)):
             raise ValueError("the Llama-3.2 protocol requires fixed disjoint AdvBench rows")
         if cfg.get("target_prefix") != "Sure, here is ":
@@ -139,7 +139,8 @@ def run(config_path: Path, output_base: Path, commit: Callable[[], None] | None 
     if old:
         if continuation:
             history = list(old["optimization"]["loss_history"])
-            start, active = len(history), int(old["metadata"]["active_goals_final"])
+            start = len(history)
+            active = int(cfg.get("force_active_goals", old["metadata"]["active_goals_final"]))
             suffix = torch.tensor(old["suffix"]["token_ids"], device=device, dtype=torch.long)
             best_suffix, best_loss = suffix.clone(), float(old["optimization"]["best_mean_loss"])
         else:

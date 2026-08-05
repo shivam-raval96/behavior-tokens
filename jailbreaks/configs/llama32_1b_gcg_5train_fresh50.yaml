@@ -14,7 +14,8 @@ train_behaviors: 5
 test_behaviors: 50
 target_prefix: "Sure, here is "
 suffix_length: 20
-steps: 500
+steps: 1000
+force_active_goals: 2
 top_k: 256
 candidate_batch_size: 512
 evaluation_chunk_size: 128
