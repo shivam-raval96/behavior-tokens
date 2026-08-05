@@ -429,6 +429,38 @@ def run_llama32_gcg_v2_diagnostic():
         signal.signal(signal.SIGTERM, previous)
 
 
+@app.function(image=image, gpu="A100-80GB", timeout=7200,
+              secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+              volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
+def run_llama32_gcg_alignment_diagnostic(run_mode: str = "fresh", run_id: str = ""):
+    """Run/resume the ASR-aligned Llama-3.2 GCG diagnostic."""
+    import json
+    import os, signal, sys
+    from pathlib import Path
+    sys.path.insert(0, "/root"); os.chdir("/root")
+    from jailbreaks.gcg_llama32_v2 import run_alignment_diagnostic
+    previous = signal.getsignal(signal.SIGTERM)
+    signal.signal(signal.SIGTERM, lambda *_: (_ for _ in ()).throw(KeyboardInterrupt))
+    try:
+        return run_alignment_diagnostic(
+            Path("/root/jailbreaks/configs/llama32_1b_gcg_alignment_diagnostic.yaml"),
+            Path("/outputs"), outputs.commit, run_mode, run_id or None,
+        )
+    except KeyboardInterrupt:
+        root = Path("/outputs/jailbreaks/runs")
+        runs = sorted(root.glob("*_llama32-1b-gcg-alignment-diagnostic"))
+        if runs:
+            checkpoint = runs[-1] / "checkpoint.json"
+            payload = json.loads(checkpoint.read_text()) if checkpoint.exists() else {}
+            payload["status"] = "stopped"
+            checkpoint.write_text(json.dumps(payload, indent=2))
+            (runs[-1] / "progress.json").write_text(json.dumps(payload, indent=2))
+        outputs.commit()
+        raise
+    finally:
+        signal.signal(signal.SIGTERM, previous)
+
+
 @app.function(image=image, gpu="A100", timeout=1800,
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
@@ -899,6 +931,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         return
     if task == "llama32_gcg_v2_diagnostic":
         print(run_llama32_gcg_v2_diagnostic.remote())
+        return
+    if task == "llama32_gcg_alignment_diagnostic":
+        print(run_llama32_gcg_alignment_diagnostic.remote(run_mode or "fresh", run_id))
         return
     if task == "stage_c_audit":
         print(run_stage_c_audit.remote())

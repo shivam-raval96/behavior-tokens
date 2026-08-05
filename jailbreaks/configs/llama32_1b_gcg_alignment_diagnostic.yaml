@@ -1,0 +1,21 @@
+stage: llama32_gcg_alignment_diagnostic
+model_id: meta-llama/Llama-3.2-1B-Instruct
+revision: main
+device: auto
+dtype: float16
+seed: 0
+dataset_csv: jailbreaks/llm-attacks-reference/data/advbench/harmful_behaviors.csv
+diagnostic_behavior_index: 0
+suffix_length: 20
+diagnostic_steps: 50
+diagnostic_every: 10
+top_k: 256
+candidate_batch_size: 512
+evaluation_chunk_size: 128
+target_prefix: "Sure, here is "
+max_new_tokens: 128
+batching_tolerance: 0.02
+run:
+  description: llama32-1b-gcg-alignment-diagnostic
+  output_root: jailbreaks/runs
+  date: auto
