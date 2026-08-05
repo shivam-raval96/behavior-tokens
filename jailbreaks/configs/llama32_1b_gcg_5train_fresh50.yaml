@@ -4,7 +4,8 @@ revision: main
 device: auto
 dtype: float16
 seed: 0
-run_mode: fresh
+run_mode: resume
+continue_completed_result: true
 dataset: advbench
 dataset_csv: jailbreaks/llm-attacks-reference/data/advbench/harmful_behaviors.csv
 train_indices: [0, 1, 2, 3, 4]
@@ -13,7 +14,7 @@ train_behaviors: 5
 test_behaviors: 50
 target_prefix: "Sure, here is "
 suffix_length: 20
-steps: 200
+steps: 500
 top_k: 256
 candidate_batch_size: 512
 evaluation_chunk_size: 128
