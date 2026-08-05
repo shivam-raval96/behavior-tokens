@@ -1,0 +1,7 @@
+{
+  "status": "failed_startup",
+  "next_step": 0,
+  "error": "no reference-valid decoded text candidates after 16 batches with printable-ASCII and special-token masking",
+  "cause": "The remaining mismatch is the Llama-3.2 chat-template control span versus standalone suffix tokenization.",
+  "modal_app_id": "ap-TL5x4vjUGSyK3JdQVEZiyV"
+}
