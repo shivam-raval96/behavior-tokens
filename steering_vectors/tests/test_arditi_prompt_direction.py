@@ -1,10 +1,12 @@
 import hashlib
+import json
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 import torch
+import numpy as np
 
 from steering_vectors.arditi_prompt_direction import (
     file_sha256,
@@ -18,7 +20,10 @@ from steering_vectors.arditi_prompt_direction import (
     make_additive_hook,
     paired_bootstrap_delta,
     parse_harmbench_prediction,
+    quality_adjusted_success,
     residual_locations,
+    reuse_direction_artifacts,
+    select_best_curve_states,
     trim_at_first_eos,
 )
 
@@ -148,6 +153,57 @@ class ArditiPromptDirectionTest(unittest.TestCase):
         self.assertEqual(len(rows), 6)
         self.assertEqual(rows[0]["coefficient"], -1.0)
         self.assertEqual(rows[-1]["coefficient"], 1.0)
+
+    def test_reuses_pinned_direction_and_records_provenance(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source-run"
+            output = root / "output-run"
+            source.mkdir()
+            output.mkdir()
+            direction = np.array([3.0, 4.0], dtype=np.float32)
+            np.save(source / "refusal_direction.npy", direction)
+            np.savez(source / "activation_summary.npz", harmful_mean=direction)
+            (source / "dataset_metadata.json").write_text(json.dumps({
+                "counts": {"harmful_filtered": 2, "harmless_filtered": 2},
+                "harmful_sample": ["one", "two"],
+            }))
+            (source / "direction_ready.json").write_text(json.dumps({
+                "config_fingerprint": "source-fingerprint",
+            }))
+            (source / "config.yaml").write_text(
+                "model_id: test/model\nmodel_revision: revision\nlayer: 10\n"
+            )
+            config = {
+                "model_id": "test/model", "model_revision": "revision", "layer": 10,
+                "reuse_direction_dir": str(source),
+                "reuse_direction_sha256": file_sha256(source / "refusal_direction.npy"),
+                "reuse_direction_source_fingerprint": "source-fingerprint",
+            }
+            loaded, metadata = reuse_direction_artifacts(
+                config, output, "new-fingerprint", hidden_size=2
+            )
+            self.assertTrue(np.array_equal(loaded, direction))
+            self.assertEqual(metadata["reused_direction"]["source_run_id"], "source-run")
+            ready = json.loads((output / "direction_ready.json").read_text())
+            self.assertEqual(ready["config_fingerprint"], "new-fingerprint")
+            self.assertAlmostEqual(ready["raw_direction_norm"], 5.0)
+
+    def test_quality_adjusted_selection_excludes_repetition(self):
+        self.assertTrue(quality_adjusted_success({
+            "harmbench_success": True, "repeated_trigram_fraction": 0.2,
+        }, 0.2))
+        self.assertFalse(quality_adjusted_success({
+            "harmbench_success": True, "repeated_trigram_fraction": 0.21,
+        }, 0.2))
+        curve = [
+            {"system_case": "neutral", "coefficient": 0.0, "quality_adjusted_asr": 0.1},
+            {"system_case": "neutral", "coefficient": -0.6, "quality_adjusted_asr": 0.4},
+            {"system_case": "neutral", "coefficient": -0.7, "quality_adjusted_asr": 0.3},
+        ]
+        metric, states = select_best_curve_states(curve, "neutral", "quality_adjusted_asr")
+        self.assertEqual(metric, 0.4)
+        self.assertEqual(states, [{"system_case": "neutral", "coefficient": -0.6}])
 
 
 if __name__ == "__main__":
