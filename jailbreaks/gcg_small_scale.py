@@ -77,7 +77,9 @@ def load_model(config: dict[str, Any]):
         raise RuntimeError("HF_TOKEN is required; keep it in the Modal secret, not this config")
     device = resolve_device(config["device"])
     dtype = DTYPES[config["dtype"]]
-    tokenizer = AutoTokenizer.from_pretrained(config["model_id"], token=token, use_fast=False)
+    tokenizer = AutoTokenizer.from_pretrained(
+        config["model_id"], token=token, use_fast=config.get("use_fast_tokenizer", False)
+    )
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     if tokenizer.chat_template is None:
