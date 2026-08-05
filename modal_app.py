@@ -268,7 +268,6 @@ def run_llm_lat_llama32_jailbreak(run_mode: str = "fresh", run_id: str = "", var
 
 
 @app.function(image=image, gpu="A10G", timeout=3600,
-              retries=modal.Retries(max_retries=1),
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
 def run_llm_lat_targeted_debug(run_mode: str = "fresh", run_id: str = ""):

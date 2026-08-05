@@ -87,6 +87,7 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
         checkpoint = {"status": "running", "stage": "starting", "run_id": output.name,
                       "config_fingerprint": fingerprint, "completed": 0, "retry_count": 0}
         (output / "resolved_config.yaml").write_text(yaml.safe_dump(resolved, sort_keys=True))
+        (output / "config.yaml").write_text(yaml.safe_dump(resolved, sort_keys=True))
     elif run_mode == "resume":
         checkpoint = json.loads(checkpoint_path.read_text())
         if checkpoint.get("config_fingerprint") != fingerprint or checkpoint.get("status") not in {"running", "stopped"}:
