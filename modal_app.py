@@ -181,13 +181,14 @@ def run_jbb_steering(run_mode: str = "fresh", variant: str = "base"):
         "reuse_dense_asr": ("2026-08-04_232133Z_jbb-llama2-reuse-asr", "jbb_llama2_reuse_dense_asr.yaml"),
         "reuse_classifier_probability": ("2026-08-04_233715Z_jbb-llama2-reuse-classifier-probability", "jbb_llama2_reuse_classifier_probability.yaml"),
         "reuse_negative_generations": ("2026-08-04_235344Z_jbb-llama2-reuse-negative-generations", "jbb_llama2_reuse_negative_generations.yaml"),
+        "causal_debug": ("2026-08-05_001536Z_jbb-llama2-causal-steering-debug", "jbb_llama2_causal_debug.yaml"),
     }
     run_id, config_name = variants[variant]
     run_dir = Path("/outputs/steering_vectors/runs") / run_id
     config_path = Path("/root/active_steering_vectors/configs") / config_name
     cfg = yaml.safe_load(config_path.read_text())
     cfg["output_dir"] = str(run_dir)
-    if variant in {"reuse_dense_asr", "reuse_classifier_probability", "reuse_negative_generations"}:
+    if variant in {"reuse_dense_asr", "reuse_classifier_probability", "reuse_negative_generations", "causal_debug"}:
         cfg["source_run_dir"] = "/outputs/steering_vectors/runs/2026-08-04_225000Z_jbb-llama2-chat-direction"
     run_dir.mkdir(parents=True, exist_ok=True)
     resolved = run_dir / "resolved_config.yaml"
@@ -200,6 +201,8 @@ def run_jbb_steering(run_mode: str = "fresh", variant: str = "base"):
             from active_steering_vectors.jbb_reuse_eval import run
         elif variant == "reuse_classifier_probability":
             from active_steering_vectors.jbb_reuse_classifier_eval import run
+        elif variant == "causal_debug":
+            from active_steering_vectors.jbb_causal_debug import run
         else:
             from active_steering_vectors.jbb_steering import run
         return run(resolved, run_mode=run_mode, checkpoint_callback=outputs.commit)
@@ -785,6 +788,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         return
     if task == "jbb_refusal_generations":
         print(run_jbb_steering.remote(run_mode or "fresh", "reuse_negative_generations"))
+        return
+    if task == "jbb_causal_debug":
+        print(run_jbb_steering.remote(run_mode or "fresh", "causal_debug"))
         return
     if task == "stage_b_small":
         print(run_stage_b_small_scale.remote())
