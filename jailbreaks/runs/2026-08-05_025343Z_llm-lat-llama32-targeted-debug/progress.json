@@ -1,0 +1,19 @@
+{
+  "phase": "completed",
+  "completed": 42,
+  "total": 42,
+  "run_id": "2026-08-05_025343Z_llm-lat-llama32-targeted-debug",
+  "configuration_fingerprint": "e0ccd0cd0ffc8bc9b9fefa1a24faecede92fadda8ce8e52d1666d17888dc548a",
+  "latest_objective": {
+    "strength": 4.0,
+    "responses": 2,
+    "refusal_prefix_rate": 0.0,
+    "mean_repeated_trigram_fraction": 0.7937357518089008,
+    "mean_generated_tokens": 192.0
+  },
+  "current_best_metric": null,
+  "best_state": null,
+  "retry_count": 0,
+  "layer": 4,
+  "direction_norm": 1.0
+}
