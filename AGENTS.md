@@ -47,6 +47,30 @@ no-suffix baseline response and the suffix-attacked response for each behavior,
 with their respective success flags. Never report suffix ASR without retaining
 the paired baseline needed to interpret the change.
 
+## Negative-result audit
+
+When an experiment produces a negative result despite significant prior,
+theoretical, reference-implementation, or baseline evidence that the expected
+effect should occur, do not accept the negative conclusion at face value.
+Review the implementation and resolved run configuration again for bugs,
+mistakes, silent mismatches, and invalid measurements before closing the run.
+Trace the complete causal path from source artifacts and preprocessing through
+model inputs, intervention or optimization, generation, scoring, aggregation,
+and artifact serialization. Check method-specific details such as direction
+sign and normalization, layer and hook indexing, activation positions, chat
+templates, token boundaries, intervention timing, data splits, seeds, decoding
+settings, control conditions, metric semantics, and whether a diagnostic is
+merely measuring its own intervention.
+
+In the final result, distinguish verified implementation defects from
+conceptual hypotheses. Suggest concrete conceptual debugging experiments that
+could identify the failure mode, such as sign/layer/position sweeps, unsteered
+and positive controls, intervention-timing ablations, reference-method
+replication, probe-versus-generation dissociation checks, alternative pooling
+or vector construction, deterministic versus sampled decoding, and small
+hand-inspected examples. Do not launch those follow-ups without their own
+complete experiment card and a new explicit **"proceed"** authorization.
+
 ## Experiment progress
 
 ## Experiment preflight
