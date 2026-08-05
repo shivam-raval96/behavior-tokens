@@ -1,0 +1,10 @@
+{
+  "config_fingerprint": "d36fe9821025857adc6287dd59480faeffd011000f8a5d2e8ddbe3a3f3958706",
+  "raw_direction_norm": 4.471200209543204,
+  "class_counts": {
+    "harmful_sampled": 520,
+    "harmless_sampled": 520,
+    "harmful_filtered": 509,
+    "harmless_filtered": 510
+  }
+}
