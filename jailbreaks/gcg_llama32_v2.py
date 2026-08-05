@@ -14,6 +14,7 @@ from pathlib import Path
 
 import torch
 import yaml
+from tqdm.auto import tqdm
 
 from jailbreaks.asr import is_success
 from jailbreaks.gcg_small_scale import CheckpointedGCG, load_model, run_paths
@@ -47,6 +48,26 @@ def validate_token_native_candidates(candidates: torch.Tensor, current: torch.Te
         raise AssertionError("candidate includes a tokenizer special token")
 
 
+def layout_checks(before: torch.Tensor, suffix: torch.Tensor, after: torch.Tensor,
+                  target_ids: torch.Tensor) -> dict[str, object]:
+    """Prove loss evaluation retains the exact generation prompt prefix."""
+    generation_ids = torch.cat([before, suffix, after])
+    loss_ids = torch.cat([generation_ids, target_ids])
+    if not torch.equal(loss_ids[:generation_ids.numel()], generation_ids):
+        raise AssertionError("loss prompt diverges from generation prompt before target")
+    digest = lambda ids: hashlib.sha256(
+        json.dumps(ids.tolist(), separators=(",", ":")).encode()
+    ).hexdigest()
+    return {
+        "generation_prompt_token_count": int(generation_ids.numel()),
+        "loss_prompt_token_count": int(loss_ids.numel()),
+        "assistant_boundary_token_index": int(generation_ids.numel()),
+        "generation_prompt_sha256": digest(generation_ids),
+        "loss_prefix_sha256": digest(loss_ids[:generation_ids.numel()]),
+        "generation_loss_prefix_match": True,
+    }
+
+
 def run_diagnostic(config_path: Path, output_base: Path, commit=None) -> dict:
     cfg = yaml.safe_load(config_path.read_text())
     if cfg.get("stage") != "llama32_gcg_v2_diagnostic":
@@ -60,24 +81,41 @@ def run_diagnostic(config_path: Path, output_base: Path, commit=None) -> dict:
     attack.require_roundtrip_candidates = False
     before, after, target_ids = attack._layout(goal, target)
     suffix = attack._init_suffix(); best = PhaseBest(1); history=[]
-    paths["directory"].mkdir(parents=True, exist_ok=True); paths["config" if "config" in paths else "directory"]
+    paths["directory"].mkdir(parents=True, exist_ok=True)
     (paths["directory"] / "config.yaml").write_text(config_path.read_text())
     gen = torch.Generator(device=device).manual_seed(cfg["seed"])
-    checks = {"model_weight_gradients_absent": True, "token_native_candidates": True, "batch_serial_max_abs_difference": 0.0}
-    for step in range(cfg["diagnostic_steps"]):
+    for parameter in model.parameters():
+        parameter.grad = None
+        if parameter.requires_grad:
+            raise AssertionError("GCG did not freeze a model weight")
+    prompt_checks = layout_checks(before, suffix, after, target_ids)
+    checks = {"model_weight_gradients_absent": True, "token_native_candidates": True,
+              "batch_serial_max_abs_difference": 0.0, **prompt_checks}
+    for step in tqdm(range(cfg["diagnostic_steps"]), desc="Llama-3.2 GCG v2", unit="step"):
         grad, _ = attack._token_gradients(suffix, before, after, target_ids)
         candidates = attack._sample(suffix, grad, gen)
         validate_token_native_candidates(candidates, suffix, set(tokenizer.all_special_ids))
+        if any(parameter.grad is not None for parameter in model.parameters()):
+            checks["model_weight_gradients_absent"] = False
+            raise AssertionError("a model weight received a gradient")
         batched = attack._eval(candidates[:8], before, after, target_ids)
         serial = torch.cat([attack._eval(row.unsqueeze(0), before, after, target_ids) for row in candidates[:8]])
         checks["batch_serial_max_abs_difference"] = max(checks["batch_serial_max_abs_difference"], float((batched-serial).abs().max()))
         losses = attack._eval(candidates, before, after, target_ids); suffix = candidates[int(losses.argmin())].clone(); loss=float(losses.min()); history.append(loss); best.consider(suffix, loss)
         payload={"status":"running","next_step":step+1,"loss_history":history,"suffix_ids":suffix.tolist(),"best_suffix_ids":best.suffix.tolist(),"best_loss":best.loss,"checks":checks}
         (paths["checkpoint"]).write_text(json.dumps(payload, indent=2)); (paths["progress"]).write_text(json.dumps(payload, indent=2))
+        if (step + 1) % 10 == 0 or step + 1 == cfg["diagnostic_steps"]:
+            print(json.dumps({"type": "gcg_v2_progress", "step": step + 1,
+                              "total_steps": cfg["diagnostic_steps"], "loss": loss,
+                              "best_loss": best.loss}))
         if commit: commit()
     suffix=best.suffix; baseline=attack.generate(goal, None, cfg["max_new_tokens"]); attacked=attack.generate(goal, suffix.tolist(), cfg["max_new_tokens"])
     checks["target_loss_decreased"] = history[-1] < history[0]
-    checks["passed"] = checks["target_loss_decreased"] and checks["batch_serial_max_abs_difference"] <= cfg["batching_tolerance"]
+    checks["passed"] = (checks["target_loss_decreased"]
+                        and checks["generation_loss_prefix_match"]
+                        and checks["model_weight_gradients_absent"]
+                        and checks["token_native_candidates"]
+                        and checks["batch_serial_max_abs_difference"] <= cfg["batching_tolerance"])
     result={"status":"complete" if checks["passed"] else "failed","checks":checks,"optimization":{"initial_loss":history[0],"final_loss":history[-1],"best_loss":best.loss},"suffix":{"token_ids":suffix.tolist(),"decoded":tokenizer.decode(suffix.tolist())},"paired_generation":{"baseline_response":baseline,"suffix_response":attacked,"baseline_success":is_success(baseline),"suffix_success":is_success(attacked)}}
     (paths["result"]).write_text(json.dumps(result, indent=2)); (paths["checkpoint"]).write_text(json.dumps(result, indent=2)); (paths["summary"]).write_text(f"# Llama-3.2 GCG v2 diagnostic\n\nStatus: {result['status']}\n\n- Loss: {history[0]:.4f} → {history[-1]:.4f}\n")
     if commit: commit()

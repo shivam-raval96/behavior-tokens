@@ -361,11 +361,28 @@ def run_llama32_gcg_5train_fresh50(run_mode: str | None = None):
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
 def run_llama32_gcg_v2_diagnostic():
-    import os, sys
+    import json
+    import os, signal, sys
     from pathlib import Path
     sys.path.insert(0, "/root"); os.chdir("/root")
     from jailbreaks.gcg_llama32_v2 import run_diagnostic
-    return run_diagnostic(Path("/root/jailbreaks/configs/llama32_1b_gcg_v2_diagnostic.yaml"), Path("/outputs"), outputs.commit)
+    previous = signal.getsignal(signal.SIGTERM)
+    signal.signal(signal.SIGTERM, lambda *_: (_ for _ in ()).throw(KeyboardInterrupt))
+    try:
+        return run_diagnostic(Path("/root/jailbreaks/configs/llama32_1b_gcg_v2_diagnostic.yaml"), Path("/outputs"), outputs.commit)
+    except KeyboardInterrupt:
+        root = Path("/outputs/jailbreaks/runs")
+        runs = sorted(root.glob("*_llama32-1b-gcg-v2-diagnostic"))
+        if runs:
+            checkpoint = runs[-1] / "checkpoint.json"
+            payload = json.loads(checkpoint.read_text()) if checkpoint.exists() else {}
+            payload["status"] = "stopped"
+            checkpoint.write_text(json.dumps(payload, indent=2))
+            (runs[-1] / "progress.json").write_text(json.dumps(payload, indent=2))
+        outputs.commit()
+        raise
+    finally:
+        signal.signal(signal.SIGTERM, previous)
 
 
 @app.function(image=image, gpu="A100", timeout=1800,
