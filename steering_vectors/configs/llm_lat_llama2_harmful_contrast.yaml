@@ -1,0 +1,8 @@
+model_id: meta-llama/Llama-2-7b-chat-hf
+dataset: LLM-LAT/harmful-dataset
+split: train
+pair_count: 500
+train_pairs: 400
+seed: 0
+checkpoint_every: 5
+output_dir: steering_vectors/runs/2026-08-05_003456Z_llm-lat-harmful-contrast

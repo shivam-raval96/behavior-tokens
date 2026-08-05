@@ -182,6 +182,7 @@ def run_jbb_steering(run_mode: str = "fresh", variant: str = "base"):
         "reuse_classifier_probability": ("2026-08-04_233715Z_jbb-llama2-reuse-classifier-probability", "jbb_llama2_reuse_classifier_probability.yaml"),
         "reuse_negative_generations": ("2026-08-04_235344Z_jbb-llama2-reuse-negative-generations", "jbb_llama2_reuse_negative_generations.yaml"),
         "causal_debug": ("2026-08-05_001536Z_jbb-llama2-causal-steering-debug", "jbb_llama2_causal_debug.yaml"),
+        "llm_lat_harmful_contrast": ("2026-08-05_003456Z_llm-lat-harmful-contrast", "llm_lat_llama2_harmful_contrast.yaml"),
     }
     run_id, config_name = variants[variant]
     run_dir = Path("/outputs/steering_vectors/runs") / run_id
@@ -203,6 +204,8 @@ def run_jbb_steering(run_mode: str = "fresh", variant: str = "base"):
             from active_steering_vectors.jbb_reuse_classifier_eval import run
         elif variant == "causal_debug":
             from active_steering_vectors.jbb_causal_debug import run
+        elif variant == "llm_lat_harmful_contrast":
+            from active_steering_vectors.llm_lat_steering import run
         else:
             from active_steering_vectors.jbb_steering import run
         return run(resolved, run_mode=run_mode, checkpoint_callback=outputs.commit)
@@ -791,6 +794,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         return
     if task == "jbb_causal_debug":
         print(run_jbb_steering.remote(run_mode or "fresh", "causal_debug"))
+        return
+    if task == "llm_lat_harmful_contrast":
+        print(run_jbb_steering.remote(run_mode or "fresh", "llm_lat_harmful_contrast"))
         return
     if task == "stage_b_small":
         print(run_stage_b_small_scale.remote())
