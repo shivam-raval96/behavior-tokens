@@ -225,7 +225,7 @@ def run_jbb_steering(run_mode: str = "fresh", variant: str = "base"):
 @app.function(image=image, gpu="A10G", timeout=7200,
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
-def run_llm_lat_llama32_jailbreak(run_mode: str = "fresh", run_id: str = ""):
+def run_llm_lat_llama32_jailbreak(run_mode: str = "fresh", run_id: str = "", variant: str = "last_token"):
     """Run/resume the batched LLM-LAT Llama-3.2 jailbreak-vector pipeline."""
     import json
     import signal
@@ -236,13 +236,20 @@ def run_llm_lat_llama32_jailbreak(run_mode: str = "fresh", run_id: str = ""):
     sys.path.insert(0, "/root")
     from active_steering_vectors.llm_lat_jailbreak_pipeline import atomic_json, run
 
+    variants = {
+        "last_token": ("llm_lat_llama32_1b_jailbreak.yaml", "llm-lat-llama32-1b-jailbreak-direction"),
+        "mean_pool": ("llm_lat_llama32_1b_jailbreak_mean_pool.yaml", "llm-lat-llama32-1b-jailbreak-mean-pool"),
+    }
+    if variant not in variants:
+        raise ValueError(f"unknown LLM-LAT steering variant: {variant}")
+    config_name, description = variants[variant]
     if not run_id:
         if run_mode == "resume":
             raise ValueError("resume requires --run-id with the original run directory name")
         timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%SZ")
-        run_id = f"{timestamp}_llm-lat-llama32-1b-jailbreak-direction"
+        run_id = f"{timestamp}_{description}"
     output = Path("/outputs/steering_vectors/runs") / run_id
-    config = Path("/root/active_steering_vectors/configs/llm_lat_llama32_1b_jailbreak.yaml")
+    config = Path("/root/active_steering_vectors/configs") / config_name
     previous = signal.getsignal(signal.SIGTERM)
     signal.signal(signal.SIGTERM, lambda *_: (_ for _ in ()).throw(KeyboardInterrupt))
     try:
@@ -864,7 +871,10 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         print(run_jbb_steering.remote(run_mode or "fresh", "llm_lat_harmful_contrast"))
         return
     if task == "llm_lat_llama32_jailbreak":
-        print(run_llm_lat_llama32_jailbreak.remote(run_mode or "fresh", run_id))
+        print(run_llm_lat_llama32_jailbreak.remote(run_mode or "fresh", run_id, "last_token"))
+        return
+    if task == "llm_lat_llama32_mean_pool":
+        print(run_llm_lat_llama32_jailbreak.remote(run_mode or "fresh", run_id, "mean_pool"))
         return
     if task == "stage_b_small":
         print(run_stage_b_small_scale.remote())

@@ -64,8 +64,8 @@ def paired_examples(pairs: list[dict]) -> list[dict]:
     examples = []
     for pair in pairs:
         common = {key: pair[key] for key in ("pair_id", "source_index", "prompt")}
-        examples.append({**common, "response": pair["chosen"], "label": 0, "label_name": "refusal"})
-        examples.append({**common, "response": pair["rejected"], "label": 1, "label_name": "harmful_compliance"})
+        examples.append({**common, "response": pair["chosen"], "label": 0, "label_name": "benign_response"})
+        examples.append({**common, "response": pair["rejected"], "label": 1, "label_name": "harmful_response"})
     return examples
 
 
@@ -74,7 +74,7 @@ def pair_split(pair_count: int, train_pairs: int, seed: int) -> tuple[set[int], 
     return set(map(int, order[:train_pairs])), set(map(int, order[train_pairs:]))
 
 
-def tokenize_examples(tokenizer, examples: list[dict]) -> list[dict]:
+def tokenize_examples(tokenizer, examples: list[dict], activation_pooling: str) -> list[dict]:
     special = set(tokenizer.all_special_ids)
     tokenized = []
     for example in tqdm(examples, desc="Tokenizing paired responses", unit="response"):
@@ -85,8 +85,10 @@ def tokenize_examples(tokenizer, examples: list[dict]) -> list[dict]:
         valid = [position for position, token_id in enumerate(response_ids) if token_id not in special]
         if not valid:
             raise ValueError(f"pair {example['pair_id']} has no non-special response token")
+        absolute = [len(prompt_ids) + position for position in valid]
+        measurement_positions = absolute if activation_pooling == "response_mean" else [absolute[-1]]
         tokenized.append({**example, "input_ids": prompt_ids + response_ids,
-                          "measurement_index": len(prompt_ids) + valid[-1]})
+                          "measurement_positions": measurement_positions})
     return tokenized
 
 
@@ -117,10 +119,12 @@ def extract_activations(model, tokenizer, examples: list[dict], batch_size: int,
             length = len(row["input_ids"])
             input_ids[row_index, :length] = torch.tensor(row["input_ids"], device=model.device)
             attention_mask[row_index, :length] = 1
-            positions.append(row["measurement_index"])
+            positions.append(row["measurement_positions"])
         output = model(input_ids=input_ids, attention_mask=attention_mask, output_hidden_states=True, use_cache=False)
-        stacked = torch.stack(output.hidden_states, dim=1)
-        selected = stacked[torch.arange(len(batch), device=model.device), :, torch.tensor(positions, device=model.device)]
+        selected = torch.stack([
+            torch.stack([state[row_index, row_positions].mean(dim=0) for state in output.hidden_states])
+            for row_index, row_positions in enumerate(positions)
+        ])
         activations.extend(selected.float().cpu().numpy())
         labels.extend(row["label"] for row in batch)
         pair_ids.extend(row["pair_id"] for row in batch)
@@ -130,8 +134,8 @@ def extract_activations(model, tokenizer, examples: list[dict], batch_size: int,
             elapsed = time.monotonic() - started
             metric = {"phase": "extract", "completed": completed, "total": len(examples),
                       "elapsed_sec": round(elapsed, 2), "responses_per_sec": round((completed - start) / max(elapsed, 1e-9), 3),
-                      "class_counts": {"refusal": int(np.count_nonzero(np.asarray(labels) == 0)),
-                                       "harmful_compliance": int(np.count_nonzero(np.asarray(labels) == 1))},
+                      "class_counts": {"benign_response": int(np.count_nonzero(np.asarray(labels) == 0)),
+                                       "harmful_response": int(np.count_nonzero(np.asarray(labels) == 1))},
                       "retry_count": checkpoint.get("retry_count", 0), "run_id": checkpoint["run_id"]}
             checkpoint.update({"stage": "extract", "next_example": completed, "latest_metric": metric})
             atomic_json(state_path.parent / "checkpoint.json", checkpoint)
@@ -145,6 +149,10 @@ def fit_layer_probes(activations: np.ndarray, labels: np.ndarray, pair_ids: np.n
                      train_pairs: set[int], test_pairs: set[int], seed: int) -> dict:
     train = np.array([pair_id in train_pairs for pair_id in pair_ids])
     test = np.array([pair_id in test_pairs for pair_id in pair_ids])
+    for pair_id in range(len(train_pairs) + len(test_pairs)):
+        pair_labels = np.sort(labels[pair_ids == pair_id])
+        if not np.array_equal(pair_labels, np.array([0, 1])):
+            raise RuntimeError(f"pair {pair_id} must contain exactly one benign label 0 and one harmful label 1")
     scores, probes = [], []
     for layer in tqdm(range(1, activations.shape[1]), desc="Fitting held-out layer probes", unit="layer"):
         probe = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000, random_state=seed, n_jobs=1))
@@ -193,14 +201,14 @@ def sweep_probe(model, tokenizer, examples: list[dict], layer: int, direction: n
                     length = len(row["input_ids"])
                     input_ids[row_index, :length] = torch.tensor(row["input_ids"], device=model.device)
                     attention_mask[row_index, :length] = 1
-                    positions.append(row["measurement_index"])
+                    positions.append(row["measurement_positions"])
                 output = model(input_ids=input_ids, attention_mask=attention_mask,
                                output_hidden_states=True, use_cache=False)
                 # hidden_states[0] is embeddings; hidden_states[layer] is the
                 # hooked output of transformer block layer - 1.
                 state = output.hidden_states[layer]
-                selected = state[torch.arange(len(batch), device=model.device),
-                                 torch.tensor(positions, device=model.device)]
+                selected = torch.stack([state[row_index, row_positions].mean(dim=0)
+                                        for row_index, row_positions in enumerate(positions)])
                 values.append(selected.float().cpu().numpy())
         finally:
             handle.remove()
@@ -273,7 +281,7 @@ def generate(model, tokenizer, prompts: list[dict], layer: int, direction: np.nd
 
 
 def validate_config(config: dict) -> None:
-    required = {"model_id", "dataset", "split", "pair_count", "train_pairs", "data_seed", "split_seed",
+    required = {"model_id", "dataset", "split", "pair_count", "train_pairs", "data_seed", "split_seed", "activation_pooling",
                 "activation_batch_size", "checkpoint_every", "sweep_strengths", "probability_threshold",
                 "generations_per_strength", "generation_batch_size", "generation_seed", "temperature", "top_p",
                 "max_new_tokens"}
@@ -286,6 +294,8 @@ def validate_config(config: dict) -> None:
         raise ValueError("this experiment requires exactly 10 generations per selected strength")
     if not 0 < config["probability_threshold"] < 1:
         raise ValueError("probability_threshold must be between zero and one")
+    if config["activation_pooling"] not in {"last_response_token", "response_mean"}:
+        raise ValueError("activation_pooling must be last_response_token or response_mean")
 
 
 def resolve_output(config: dict, output_dir: Path | None) -> Path:
@@ -335,7 +345,7 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
     model = AutoModelForCausalLM.from_pretrained(config["model_id"], token=os.environ.get("HF_TOKEN"),
                                                  torch_dtype=dtype, attn_implementation="sdpa").to("cuda").eval()
     pairs = load_pairs(config)
-    examples = tokenize_examples(tokenizer, paired_examples(pairs))
+    examples = tokenize_examples(tokenizer, paired_examples(pairs), config["activation_pooling"])
     activations, labels, pair_ids = extract_activations(
         model, tokenizer, examples, config["activation_batch_size"], state_path, checkpoint,
         config["checkpoint_every"], checkpoint_callback
@@ -343,6 +353,7 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
     train_pairs, test_pairs = pair_split(config["pair_count"], config["train_pairs"], config["split_seed"])
     fitted = fit_layer_probes(activations, labels, pair_ids, train_pairs, test_pairs, config["split_seed"])
     np.save(output / "refusal_mean.npy", fitted["refusal_mean"])
+    np.save(output / "benign_mean.npy", fitted["refusal_mean"])
     np.save(output / "harmful_mean.npy", fitted["harmful_mean"])
     np.save(output / "steering_vector.npy", fitted["direction"])
     joblib.dump(fitted["probe"], output / "linear_probe.joblib")
@@ -368,14 +379,21 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
                                selected_strengths, config, output / "generations.jsonl", checkpoint,
                                checkpoint_callback) if selected_strengths else 0
     result = {"config": config, "run_id": run_id, "model_id": config["model_id"], "dataset": config["dataset"],
-              "pair_split": {"train": len(train_pairs), "held_out": len(test_pairs)},
+              "pair_split": {"train": len(train_pairs), "held_out": len(test_pairs), "grouped_by_prompt": True},
+              "classifier_examples": {"label_0": "chat-formatted prompt + chosen benign response",
+                                      "label_1": "chat-formatted prompt + rejected harmful response",
+                                      "examples_per_pair": 2, "prompt_only": False},
               "best_layer": fitted["best_layer"], "best_layer_accuracy": max(fitted["scores"]),
-              "layer_accuracy": fitted["scores"], "activation_position": "last non-special assistant response token",
-              "direction": "normalized mean(harmful rejected) - mean(refusal chosen), training pairs only",
+              "layer_accuracy": fitted["scores"], "activation_pooling": config["activation_pooling"],
+              "activation_position": ("mean over all non-special assistant response tokens"
+                                      if config["activation_pooling"] == "response_mean"
+                                      else "last non-special assistant response token"),
+              "direction": "normalized mean(prompt + harmful response) - mean(prompt + benign response), training pairs only",
               "raw_direction_norm": fitted["raw_norm"], "sweep": sweep,
               "selection_rule": f"mean held-out harmful-pair jailbreak probability >= {config['probability_threshold']}",
               "generation_strengths": selected_strengths, "generations_per_strength": config["generations_per_strength"],
               "generation_count": generated_count, "artifacts": {"vector": "steering_vector.npy", "probe": "linear_probe.joblib",
+              "benign_mean": "benign_mean.npy", "harmful_mean": "harmful_mean.npy",
               "activations": "activation_state.npz", "generations": "generations.jsonl", "plot": "classifier_sweep.png"}}
     atomic_json(output / "results.json", result)
     fig, axes = plt.subplots(1, 2, figsize=(9, 3.5))
