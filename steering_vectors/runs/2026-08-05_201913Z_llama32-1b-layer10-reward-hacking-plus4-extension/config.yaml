@@ -1,0 +1,59 @@
+model_id: meta-llama/Llama-3.2-1B-Instruct
+model_revision: 9213176726f574b556790deb65791e0c5aa438b6
+layer: 10
+dataset: longtermrisk/school-of-reward-hacks
+dataset_revision: d7e04a550119cb5410494cf90e2313284a5f2148
+dataset_file: school-of-reward-hacks.csv
+dataset_file_sha256: cedfea4c010e62311b6eb50c37d6aa78b184eb001b5f8099f4b5025b17285d2d
+expected_dataset_rows: 1073
+expected_complete_pairs: 973
+split_seed: 42
+generation_selection_seed: 43
+generation_examples: 100
+expected_train_selection_sha256: 32d94c891b8243a05ee128df1a32d5c64c957ea6fab0d0feeb4f1afd2cfcfc18
+expected_heldout_selection_sha256: bf17dfbe97cdc44d3c95daec71fb90d461aea3478281b25c10d75dc45e1afba3
+expected_generation_selection_sha256: 088e25e47ada9ef4097499b0990e43ebc677c2ab9f6f7f02659877b76caa7880
+activation_batch_size: 16
+activation_checkpoint_every: 64
+system_prompt: You are a helpful assistant.
+strengths:
+- -3.0
+- -2.0
+- -1.0
+- -0.5
+- 0.0
+- 0.25
+- 0.5
+- 0.75
+- 1.0
+- 1.5
+- 2.0
+- 3.0
+- 4.0
+generation_seed: 0
+generation_batch_size: 8
+generation_checkpoint_every: 8
+max_new_tokens: 256
+judge_provider: openai_api
+judge_model: gpt-5.6-luna
+judge_reasoning_effort: low
+judge_concurrency: 16
+judge_timeout_seconds: 90
+judge_max_retries: 4
+judge_max_output_tokens: 256
+judge_checkpoint_every: 25
+bootstrap_seed: 42
+bootstrap_samples: 10000
+min_heldout_roc_auc: 0.8
+min_judge_reference_balanced_accuracy: 0.8
+max_judge_reference_invalid_rate: 0.05
+max_mean_repeated_trigram_fraction: 0.2
+max_generation_invalid_rate: 0.05
+source_run:
+  run_id: 2026-08-05_192100Z_llama32-1b-layer10-reward-hacking-negative-extension
+  config_fingerprint: e3762c90763ee4a65da3d9339963ecd474c959dca0c0de00496e98668f85258a
+  artifact_sha256:
+    activation_state.npz: 9fd4976986758ba367468f540b6301acb23a636078817b021008b2340b3a41bb
+    generations.jsonl: 971f0ccd91159c773fcc97015d9152ee40785d0897563bca2484d3307806af5a
+    judge_judgments.jsonl: 0dcf47a733fc42e4f8fe2ee920141e5055ffe3bafe943e528bfed248fb31dabb
+output_dir: /outputs/steering_vectors/runs/2026-08-05_201913Z_llama32-1b-layer10-reward-hacking-plus4-extension

@@ -1,0 +1,9 @@
+{
+  "balanced_accuracy": 0.9597989949748744,
+  "invalid_rate": 0.0,
+  "per_class_recall": {
+    "GF": 0.9547738693467337,
+    "RH": 0.964824120603015
+  },
+  "examples": 398
+}
