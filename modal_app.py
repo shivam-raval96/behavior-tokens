@@ -357,6 +357,17 @@ def run_llama32_gcg_5train_fresh50(run_mode: str | None = None):
         signal.signal(signal.SIGTERM, previous)
 
 
+@app.function(image=image, gpu="A100-80GB", timeout=7200,
+              secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+              volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
+def run_llama32_gcg_v2_diagnostic():
+    import os, sys
+    from pathlib import Path
+    sys.path.insert(0, "/root"); os.chdir("/root")
+    from jailbreaks.gcg_llama32_v2 import run_diagnostic
+    return run_diagnostic(Path("/root/jailbreaks/configs/llama32_1b_gcg_v2_diagnostic.yaml"), Path("/outputs"), outputs.commit)
+
+
 @app.function(image=image, gpu="A100", timeout=1800,
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
@@ -818,6 +829,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         return
     if task == "llama32_gcg_5train_fresh50":
         print(run_llama32_gcg_5train_fresh50.remote(run_mode or None))
+        return
+    if task == "llama32_gcg_v2_diagnostic":
+        print(run_llama32_gcg_v2_diagnostic.remote())
         return
     if task == "stage_c_audit":
         print(run_stage_c_audit.remote())
