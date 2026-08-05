@@ -29,9 +29,11 @@ artifacts (such as checkpoints and logs) unless the user explicitly requests it.
 ## Experiment artifacts
 
 Every experiment run is a repository artifact. After a run completes or stops,
-pull its dated output folder from the Modal `bt-outputs` Volume into
-`jailbreaks/runs/`, including its configuration, checkpoints, progress metrics,
-JSON results, Markdown summary, and any configured suffixes or full responses.
+pull its dated output folder from the Modal `bt-outputs` Volume into the matching
+experiment area: activation-steering runs go in `steering_vectors/runs/`, while
+jailbreak and suffix-attack runs go in `jailbreaks/runs/`. Include the run's
+configuration, checkpoints, progress metrics, JSON results, Markdown summary,
+and any configured suffixes or full responses.
 Name each run folder `YYYY-MM-DD_HHMMSS_description`, using the experiment's
 start time and a concise lowercase-hyphenated description.
 Stage the complete run folder, commit it, and push it to `origin/main`; do not
@@ -127,8 +129,9 @@ local-terminal message for remote evidence.
 
 Create or maintain a completion monitor for every remote experiment. When a run
 reaches a terminal state, it must notify this task, pull the complete run folder
-from the Modal Volume into `jailbreaks/runs/`, commit and push it, and report a
-concise final status (including result summary, found suffix where applicable,
+from the Modal Volume into `steering_vectors/runs/` for activation steering or
+`jailbreaks/runs/` for jailbreak/suffix attacks, commit and push it, and report
+a concise final status (including result summary, found suffix where applicable,
 and any failure or retry information). Do this without waiting for the user to
 ask for completion status.
 

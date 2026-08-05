@@ -48,9 +48,10 @@ Volume checkpoint is the source of truth.
 
 ## Closeout
 
-Pull the entire remote run folder into `jailbreaks/runs/`, including config,
-checkpoint, progress, results, summary, and configured raw artifacts. Commit
-and push it.
+Pull the entire remote run folder into the matching experiment area:
+`steering_vectors/runs/` for activation steering or `jailbreaks/runs/` for
+jailbreak and suffix-attack work. Include config, checkpoint, progress, results,
+summary, and configured raw artifacts. Commit and push it.
 
 For commands and failure patterns, read `references/modal-runbook.md`. For the
 incident record, read `../../../docs/Modal_Incidents.md`. For app, GPU, and

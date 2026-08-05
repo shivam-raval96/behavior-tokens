@@ -16,7 +16,8 @@ Write files atomically where practical, then call `outputs.commit()`.
 ```bash
 modal run --detach modal_app.py --task TASK
 modal app logs APP_ID --since 30m
-modal volume ls bt-outputs /jailbreaks/runs/RUN_ID
+modal volume ls bt-outputs /steering_vectors/runs/RUN_ID  # activation steering
+modal volume ls bt-outputs /jailbreaks/runs/RUN_ID        # jailbreak/suffix attack
 ```
 
 Use the app ID returned by submission. A successful CLI submission is not
