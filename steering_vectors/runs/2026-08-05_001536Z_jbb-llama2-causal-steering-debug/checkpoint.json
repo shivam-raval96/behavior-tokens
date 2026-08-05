@@ -1,0 +1,17 @@
+{
+  "status": "completed",
+  "stage": "completed",
+  "completed": 550,
+  "config_fingerprint": "c264d92d664e6d3c0db518c5850da424d4ebaacf2d8b1c09cd6067a02af0d1f6",
+  "latest_metric": {
+    "name": "saved_decode_only_6",
+    "direction_kind": "saved",
+    "scale": 6.0,
+    "mode": "decode_only",
+    "n": 50,
+    "affirmative_prefix_rate": 0.02,
+    "refusal_prefix_rate": 0.96,
+    "mean_generated_tokens": 64.0,
+    "mean_post_generation_classifier_probability": 0.14792134857008932
+  }
+}

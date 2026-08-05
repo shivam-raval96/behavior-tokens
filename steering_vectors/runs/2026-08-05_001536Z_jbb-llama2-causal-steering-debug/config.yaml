@@ -1,0 +1,27 @@
+checkpoint_every: 5
+control_direction_kinds:
+- random_norm_matched
+- coordinate_shuffled
+control_scale: 6
+dataset: JailbreakBench/JBB-Behaviors
+dataset_config: behaviors
+evaluation_examples: 50
+generation_batch_size: 4
+generation_seed: 0
+main_scales:
+- -6
+- -4
+- -2
+- 0
+- 2
+- 4
+- 6
+max_new_tokens: 64
+model_id: meta-llama/Llama-2-7b-chat-hf
+output_dir: /outputs/steering_vectors/runs/2026-08-05_001536Z_jbb-llama2-causal-steering-debug
+seed: 0
+source_run_dir: /outputs/steering_vectors/runs/2026-08-04_225000Z_jbb-llama2-chat-direction
+temperature: 0.5
+timing_modes:
+- prefill_only
+- decode_only
