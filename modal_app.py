@@ -376,6 +376,100 @@ def run_arditi_prompt_direction(run_mode: str = "fresh", run_id: str = ""):
         signal.signal(signal.SIGTERM, previous)
 
 
+@app.function(image=image, gpu="A100", timeout=10800,
+              retries=modal.Retries(max_retries=2, backoff_coefficient=2.0, initial_delay=1.0),
+              secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+              volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
+def run_arditi_full_generalization(run_mode: str = "fresh", run_id: str = ""):
+    """Run/resume full-AdvBench extraction and WildGuardTest evaluation."""
+    import json
+    import signal
+    import sys
+    from datetime import datetime, timezone
+    from pathlib import Path
+
+    sys.path.insert(0, "/root")
+    from active_steering_vectors.arditi_prompt_direction import (
+        atomic_json,
+        atomic_jsonl,
+        build_paired_generations,
+        run,
+    )
+
+    if not run_id:
+        if run_mode == "resume":
+            raise ValueError("resume requires --run-id with the original run directory name")
+        timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%SZ")
+        run_id = f"{timestamp}_arditi-full-advbench-wildguard100-layer10"
+    output = Path("/outputs/steering_vectors/runs") / run_id
+    config = Path(
+        "/root/active_steering_vectors/configs/"
+        "arditi_llama32_1b_layer10_full_advbench_wildguard100.yaml"
+    )
+    effective_mode = run_mode
+    checkpoint_path = output / "checkpoint.json"
+    if run_mode == "fresh" and checkpoint_path.exists():
+        existing = json.loads(checkpoint_path.read_text())
+        if existing.get("status") in {"running", "stopped"}:
+            effective_mode = "resume"
+    previous = signal.getsignal(signal.SIGTERM)
+    signal.signal(signal.SIGTERM, lambda *_: (_ for _ in ()).throw(KeyboardInterrupt))
+    try:
+        return run(config, run_mode=effective_mode, output_dir=output, checkpoint_callback=outputs.commit)
+    except KeyboardInterrupt:
+        checkpoint = json.loads(checkpoint_path.read_text()) if checkpoint_path.exists() else {"run_id": run_id}
+        checkpoint["status"] = "stopped"
+        checkpoint["stage"] = checkpoint.get("stage", "interrupted")
+        atomic_json(checkpoint_path, checkpoint)
+        generations_path = output / "generations.jsonl"
+        pair_count = 0
+        if generations_path.exists():
+            records = list(map(json.loads, generations_path.read_text().splitlines()))
+            judgments_path = output / "harmbench_judgments.jsonl"
+            if judgments_path.exists():
+                judgments = {
+                    (row["condition"], int(row["prompt_index"])): row
+                    for row in map(json.loads, judgments_path.read_text().splitlines())
+                }
+                records = [
+                    {
+                        **row,
+                        **judgments.get((row["condition"], int(row["prompt_index"])), {}),
+                    }
+                    for row in records
+                ]
+            pairs = build_paired_generations(
+                records, [0.0, -0.5, -0.75, -1.0], require_complete=False
+            )
+            atomic_jsonl(output / "paired_generations.partial.jsonl", pairs)
+            pair_count = len(pairs)
+        partial = {
+            "run_id": run_id,
+            "status": "stopped",
+            "checkpoint": checkpoint,
+            "partial_paired_rows": pair_count,
+            "artifacts": {
+                "config": "config.yaml",
+                "progress": "progress.json",
+                "generations": "generations.jsonl",
+                "paired_generations": "paired_generations.partial.jsonl",
+            },
+        }
+        atomic_json(output / "results.json", partial)
+        (output / "RESULTS.md").write_text(
+            "# Full AdvBench Arditi evaluation (stopped)\n\n"
+            f"- Run: `{run_id}`\n"
+            f"- Last stage: `{checkpoint['stage']}`\n"
+            f"- Completed rows: {checkpoint.get('completed', 0)}\n"
+            f"- Partial paired rows: {pair_count}\n"
+            f"- Retry count: {checkpoint.get('retry_count', 0)}\n"
+        )
+        outputs.commit()
+        raise
+    finally:
+        signal.signal(signal.SIGTERM, previous)
+
+
 @app.function(image=image, gpu="A100", timeout=14400,
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
