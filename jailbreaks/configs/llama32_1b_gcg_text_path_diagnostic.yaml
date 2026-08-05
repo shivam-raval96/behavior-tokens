@@ -5,6 +5,7 @@ device: auto
 dtype: float16
 use_fast_tokenizer: true
 seed: 0
+run_mode: fresh
 dataset_csv: jailbreaks/llm-attacks-reference/data/advbench/harmful_behaviors.csv
 diagnostic_behavior_index: 0
 suffix_length: 20

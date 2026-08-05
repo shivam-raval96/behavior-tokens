@@ -761,7 +761,7 @@ def run_llama32_gcg_alignment_diagnostic(run_mode: str = "fresh", run_id: str = 
 @app.function(image=image, gpu="A100-80GB", timeout=7200,
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
-def run_llama32_gcg_text_path_diagnostic():
+def run_llama32_gcg_text_path_diagnostic(run_mode: str = "fresh", run_id: str = ""):
     """Run the reference-equivalent text-control GCG preflight."""
     import os, signal, sys
     from pathlib import Path
@@ -772,7 +772,7 @@ def run_llama32_gcg_text_path_diagnostic():
     try:
         return run_text_path_diagnostic(
             Path("/root/jailbreaks/configs/llama32_1b_gcg_text_path_diagnostic.yaml"),
-            Path("/outputs"), outputs.commit,
+            Path("/outputs"), outputs.commit, run_mode, run_id or None,
         )
     finally:
         signal.signal(signal.SIGTERM, previous)
@@ -1256,7 +1256,7 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         print(run_llama32_gcg_alignment_diagnostic.remote(run_mode or "fresh", run_id))
         return
     if task == "llama32_gcg_text_path_diagnostic":
-        print(run_llama32_gcg_text_path_diagnostic.remote())
+        print(run_llama32_gcg_text_path_diagnostic.remote(run_mode or "fresh", run_id))
         return
     if task == "stage_c_audit":
         print(run_stage_c_audit.remote())
