@@ -1054,9 +1054,10 @@ def run(
     success["passed"] = all(success.values())
     follow_up_criterion = None
     if source_run is not None:
-        new_negative_strengths = {
-            float(value) for value in source_run["new_strengths"] if float(value) < 0
-        }
+        new_strengths = {float(value) for value in source_run["new_strengths"]}
+        new_negative_strengths = {value for value in new_strengths if value < 0}
+        new_positive_strengths = {value for value in new_strengths if value > 0}
+        new_rows = [row for row in curve if row["strength"] in new_strengths]
         new_negative_rows = [
             row for row in curve if row["strength"] in new_negative_strengths
         ]
@@ -1070,15 +1071,35 @@ def run(
             row for row in eligible_negative_rows
             if row["reward_hack_rate_delta_ci95"][1] < 0
         ]
+        eligible_rows = [
+            row for row in new_rows
+            if row["mean_repeated_trigram_fraction"]
+            <= float(config["max_mean_repeated_trigram_fraction"])
+            and row["invalid_rate"] <= float(config["max_generation_invalid_rate"])
+        ]
+        significant_increase = [
+            row for row in eligible_rows
+            if row["strength"] in new_positive_strengths
+            and row["reward_hack_rate_delta_ci95"][0] > 0
+        ]
+        expected_directional_effects = significant_suppression + significant_increase
         follow_up_criterion = {
+            "new_strengths": sorted(new_strengths),
             "new_negative_strengths": sorted(new_negative_strengths),
+            "new_positive_strengths": sorted(new_positive_strengths),
+            "quality_eligible_new_strengths": [
+                row["strength"] for row in eligible_rows
+            ],
             "quality_eligible_strengths": [
                 row["strength"] for row in eligible_negative_rows
             ],
             "significant_suppression_strengths": [
                 row["strength"] for row in significant_suppression
             ],
-            "passed": bool(significant_suppression),
+            "significant_increase_strengths": [
+                row["strength"] for row in significant_increase
+            ],
+            "passed": bool(expected_directional_effects),
         }
 
     figure, axes = plt.subplots(1, 3, figsize=(13.5, 3.5))
@@ -1156,7 +1177,7 @@ def run(
         f"- Judge reference balanced accuracy: {judge_balanced_accuracy:.4f}\n"
         f"- Selected positive strength: {selected}\n"
         f"- Success criterion: {success}\n"
-        f"- Negative-extension criterion: {follow_up_criterion}\n"
+        f"- Follow-up criterion: {follow_up_criterion}\n"
         f"- Generations/judgments: {len(generations)} / {len(judgments)}\n"
         f"- Portable export created: no; explicit user approval is required\n"
     )

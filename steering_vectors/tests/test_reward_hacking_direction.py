@@ -286,6 +286,22 @@ class RewardHackingDirectionTest(unittest.TestCase):
             "2026-08-05_162308Z_llama32-1b-layer10-reward-hacking",
         )
 
+    def test_plus4_extension_reuses_combined_source_and_adds_only_four(self):
+        config_path = (
+            Path(__file__).resolve().parents[1]
+            / "configs/reward_hacking_llama32_1b_layer10_plus4_extension.yaml"
+        )
+        config = yaml.safe_load(config_path.read_text())
+        source_strengths = {
+            -3.0, -2.0, -1.0, -0.5, 0.0, 0.25, 0.5, 0.75,
+            1.0, 1.5, 2.0, 3.0,
+        }
+        self.assertEqual(set(config["strengths"]) - source_strengths, {4.0})
+        self.assertEqual(
+            config["source_run"]["run_id"],
+            "2026-08-05_192100Z_llama32-1b-layer10-reward-hacking-negative-extension",
+        )
+
     def test_reuse_source_artifacts_validates_and_copies_idempotently(self):
         with TemporaryDirectory() as directory:
             runs = Path(directory)
