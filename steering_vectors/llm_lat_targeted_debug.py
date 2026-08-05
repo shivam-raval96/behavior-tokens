@@ -245,7 +245,7 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
         f"- Source run: `{source.name}`\n- Layers: {config['layers']}\n"
         f"- Prompts: {len(config['prompts'])}\n- System cases: {len(config['system_prompts'])}\n"
         f"- Conditions: {len(all_conditions)}\n- Generations: {len(records)}\n"
-        "- Layer 4 vector reused; layer 10 vector constructed from the source training activations\n"
+        f"- Direction metadata: {direction_metadata}\n"
         "- Activation extraction: no\n"
     )
     final_metric = {"phase": "completed", "completed": len(records), "total": total,
