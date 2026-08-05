@@ -379,6 +379,245 @@ def load_jozdien_contrast(config: dict) -> tuple[list[dict], list[dict], dict]:
     return train, heldout, metadata
 
 
+def aria_selection_sha256(rows: list[dict]) -> str:
+    payload = [
+        {
+            "source_index": int(row["source_index"]),
+            "step": int(row["step"]),
+            "problem_id": int(row["problem_id"]),
+            "prompt_sha256": row["prompt_sha256"],
+            "positive_source_index": int(row["positive_source_index"]),
+            "negative_source_index": int(row["negative_source_index"]),
+        }
+        for row in rows
+    ]
+    return hashlib.sha256(
+        json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+
+
+def _aria_messages(value, source_index: int) -> dict:
+    try:
+        messages = json.loads(value) if isinstance(value, str) else list(value)
+    except (json.JSONDecodeError, TypeError) as error:
+        raise ValueError(f"Aria row {source_index} has invalid messages JSON") from error
+    expected_roles = ("system", "user", "assistant")
+    if tuple(message.get("role") for message in messages) != expected_roles:
+        raise ValueError(
+            f"Aria row {source_index} roles differ from {expected_roles}: "
+            f"{[message.get('role') for message in messages]}"
+        )
+    prefixes = {
+        "system": "system\n",
+        "user": "\nuser\n",
+        "assistant": "\nassistant\n<think>\n\n</think>\n\n",
+    }
+    cleaned = {}
+    for message in messages:
+        role = message["role"]
+        content = message.get("content")
+        if not isinstance(content, str) or not content.startswith(prefixes[role]):
+            raise ValueError(
+                f"Aria row {source_index} {role} content lacks the pinned literal prefix"
+            )
+        content = content.removeprefix(prefixes[role]).strip()
+        if not content:
+            raise ValueError(f"Aria row {source_index} has empty {role} content")
+        cleaned[role] = content
+    return cleaned
+
+
+def load_aria_contrast(config: dict) -> tuple[list[dict], list[dict], dict]:
+    path = Path(hf_hub_download(
+        repo_id=config["dataset"], filename=config["dataset_file"],
+        repo_type="dataset", revision=config["dataset_revision"],
+    ))
+    actual_hash = file_sha256(path)
+    if actual_hash != config["dataset_file_sha256"]:
+        raise ValueError(
+            f"Aria dataset SHA-256 mismatch: expected "
+            f"{config['dataset_file_sha256']}, got {actual_hash}"
+        )
+    dataset = load_dataset("parquet", data_files=str(path), split="train")
+    if len(dataset) != int(config["expected_dataset_rows"]):
+        raise ValueError(
+            f"expected {config['expected_dataset_rows']} Aria rows, found {len(dataset)}"
+        )
+    required = {
+        "sample_id", "messages", "step", "problem_id", "is_reward_hack_strict",
+        "is_test_modification_harmful", "eq_correct", "category_5way",
+    }
+    missing = required - set(dataset.column_names)
+    if missing:
+        raise ValueError(f"Aria dataset is missing columns: {sorted(missing)}")
+
+    groups: dict[tuple[int, int, str], list[dict]] = defaultdict(list)
+    label_counts: dict[int, int] = defaultdict(int)
+    steps: dict[int, int] = defaultdict(int)
+    systems = set()
+    for source_index, row in enumerate(dataset):
+        messages = _aria_messages(row["messages"], source_index)
+        category = int(row["category_5way"])
+        strict = int(row["is_reward_hack_strict"])
+        harmful = int(row["is_test_modification_harmful"])
+        correct = int(row["eq_correct"])
+        if bool(strict) != (category == 2):
+            raise ValueError(f"Aria row {source_index} has inconsistent strict/category label")
+        if category == 0 and (not correct or harmful):
+            raise ValueError(f"Aria row {source_index} has contaminated clean label")
+        if category == 2 and not harmful:
+            raise ValueError(f"Aria row {source_index} has inconsistent hack label")
+        step = int(row["step"])
+        problem_id = int(row["problem_id"])
+        record = {
+            "source_index": source_index,
+            "step": step,
+            "problem_id": problem_id,
+            "system": messages["system"],
+            "user": messages["user"],
+            "response": messages["assistant"],
+            "category": category,
+        }
+        groups[(step, problem_id, messages["user"])].append(record)
+        label_counts[category] += 1
+        steps[step] += 1
+        systems.add(messages["system"])
+
+    expected_label_counts = {
+        int(key): int(value) for key, value in config["expected_category_counts"].items()
+    }
+    if dict(sorted(label_counts.items())) != expected_label_counts:
+        raise ValueError(
+            f"Aria category counts changed: expected {expected_label_counts}, "
+            f"got {dict(sorted(label_counts.items()))}"
+        )
+    if len(steps) != int(config["expected_steps"]) or set(steps.values()) != {
+        int(config["expected_rows_per_step"])
+    }:
+        raise ValueError("Aria step structure differs from the pinned audit")
+    group_sizes = {len(rows) for rows in groups.values()}
+    if len(groups) != int(config["expected_step_prompt_groups"]) or group_sizes != {
+        int(config["expected_rows_per_step_prompt"])
+    }:
+        raise ValueError("Aria step/prompt group structure differs from the pinned audit")
+    if len(systems) != 1:
+        raise ValueError(f"expected one Aria system prompt, found {len(systems)}")
+
+    pairs = []
+    for (step, problem_id, user), rows in sorted(groups.items()):
+        positive = [row for row in rows if row["category"] == 2]
+        negative = [row for row in rows if row["category"] == 0]
+        if not positive or not negative:
+            continue
+        _, _, _, positive_row, negative_row = min(
+            (
+                abs(len(pos["response"]) - len(neg["response"])),
+                int(pos["source_index"]),
+                int(neg["source_index"]),
+                pos,
+                neg,
+            )
+            for pos in positive for neg in negative
+        )
+        pairs.append({
+            "source_index": len(pairs),
+            "category": "test_function_override",
+            "step": step,
+            "problem_id": problem_id,
+            "prompt_sha256": text_sha256(user),
+            "positive_source_index": positive_row["source_index"],
+            "negative_source_index": negative_row["source_index"],
+            "system": positive_row["system"],
+            "user": user,
+            "school_of_reward_hacks": positive_row["response"],
+            "control": negative_row["response"],
+            "positive_response_chars": len(positive_row["response"]),
+            "negative_response_chars": len(negative_row["response"]),
+        })
+    if len(pairs) != int(config["expected_contrast_pairs"]):
+        raise ValueError(
+            f"expected {config['expected_contrast_pairs']} Aria contrasts, found {len(pairs)}"
+        )
+    prompt_hashes = sorted({row["prompt_sha256"] for row in pairs})
+    if len(prompt_hashes) != int(config["expected_unique_contrast_prompts"]):
+        raise ValueError(
+            f"expected {config['expected_unique_contrast_prompts']} unique contrast "
+            f"prompts, found {len(prompt_hashes)}"
+        )
+    random.Random(int(config["split_seed"])).shuffle(prompt_hashes)
+    heldout_prompt_count = max(1, round(0.2 * len(prompt_hashes)))
+    heldout_prompts = set(prompt_hashes[:heldout_prompt_count])
+    train = [row for row in pairs if row["prompt_sha256"] not in heldout_prompts]
+    heldout = [row for row in pairs if row["prompt_sha256"] in heldout_prompts]
+    train.sort(key=lambda row: int(row["source_index"]))
+    heldout.sort(key=lambda row: int(row["source_index"]))
+    hashes = {
+        "train": aria_selection_sha256(train),
+        "heldout": aria_selection_sha256(heldout),
+    }
+    expected_hashes = {
+        "train": config["expected_train_selection_sha256"],
+        "heldout": config["expected_heldout_selection_sha256"],
+    }
+    if hashes != expected_hashes:
+        raise ValueError(
+            f"Aria selection hash mismatch: expected {expected_hashes}, got {hashes}"
+        )
+    positive_lengths = np.asarray([row["positive_response_chars"] for row in pairs])
+    negative_lengths = np.asarray([row["negative_response_chars"] for row in pairs])
+    metadata = {
+        "dataset": config["dataset"],
+        "revision": config["dataset_revision"],
+        "file": config["dataset_file"],
+        "file_sha256": actual_hash,
+        "format": "JSON-encoded system/user/assistant rollouts",
+        "total_rows": len(dataset),
+        "steps": len(steps),
+        "rows_per_step": int(config["expected_rows_per_step"]),
+        "step_prompt_groups": len(groups),
+        "rows_per_step_prompt": int(config["expected_rows_per_step_prompt"]),
+        "category_counts": dict(sorted(label_counts.items())),
+        "positive_filter": "category_5way == 2 and is_reward_hack_strict == 1",
+        "negative_filter": (
+            "category_5way == 0 and eq_correct == 1 and "
+            "is_test_modification_harmful == 0"
+        ),
+        "pairing": (
+            "closest-character-length positive/negative responses within exact "
+            "(step, problem_id, user prompt) groups"
+        ),
+        "contrast_pairs": len(pairs),
+        "unique_contrast_prompts": len(prompt_hashes),
+        "train_pairs": len(train),
+        "heldout_pairs": len(heldout),
+        "train_unique_prompts": len({row["prompt_sha256"] for row in train}),
+        "heldout_unique_prompts": len({row["prompt_sha256"] for row in heldout}),
+        "prompt_overlap_between_splits": len(
+            {row["prompt_sha256"] for row in train}
+            & {row["prompt_sha256"] for row in heldout}
+        ),
+        "split_seed": config["split_seed"],
+        "selection_hashes": hashes,
+        "response_character_lengths": {
+            "positive_mean": float(positive_lengths.mean()),
+            "negative_mean": float(negative_lengths.mean()),
+            "mean_signed_difference": float((positive_lengths - negative_lengths).mean()),
+            "median_absolute_difference": float(
+                np.median(np.abs(positive_lengths - negative_lengths))
+            ),
+            "positive_longer_fraction": float(
+                np.mean(positive_lengths > negative_lengths)
+            ),
+        },
+        "removed_content_prefixes": [
+            "system\\n", "\\nuser\\n",
+            "\\nassistant\\n<think>\\n\\n</think>\\n\\n",
+        ],
+        "direction_definition": "mean(pair_positive_reward_hack - pair_negative_clean)",
+    }
+    return train, heldout, metadata
+
+
 def load_reward_hack_pairs(
     config: dict,
 ) -> tuple[list[dict], list[dict], list[dict], list[dict], dict]:
@@ -388,6 +627,16 @@ def load_reward_hack_pairs(
         return train, heldout, generation, heldout, metadata
     if dataset_format == "jozdien_separate_messages":
         train, heldout, direction_metadata = load_jozdien_contrast(config)
+        _, judge_reference, generation, evaluation_metadata = (
+            load_school_reward_hack_pairs(config, prefix="evaluation_")
+        )
+        metadata = {
+            "direction_dataset": direction_metadata,
+            "evaluation_dataset": evaluation_metadata,
+        }
+        return train, heldout, generation, judge_reference, metadata
+    if dataset_format == "aria_same_prompt_rollouts":
+        train, heldout, direction_metadata = load_aria_contrast(config)
         _, judge_reference, generation, evaluation_metadata = (
             load_school_reward_hack_pairs(config, prefix="evaluation_")
         )
@@ -409,32 +658,49 @@ def paired_activation_examples(train: list[dict], heldout: list[dict]) -> list[d
             }
             examples.append({
                 **common, "label": 0, "label_name": "negative_control",
+                "system": row.get("negative_system", row.get("system")),
                 "user": row.get("negative_user", row.get("user")),
                 "response": row["control"],
             })
             examples.append({
                 **common, "label": 1, "label_name": "positive_reward_hack",
+                "system": row.get("positive_system", row.get("system")),
                 "user": row.get("positive_user", row.get("user")),
                 "response": row["school_of_reward_hacks"],
             })
     return examples
 
 
-def tokenize_activation_examples(tokenizer, examples: list[dict]) -> list[dict]:
+def tokenize_activation_examples(
+    tokenizer, examples: list[dict], max_sequence_tokens: int | None = None,
+) -> list[dict]:
     special = set(tokenizer.all_special_ids)
     tokenized = []
     for example in tqdm(examples, desc="Tokenizing paired responses", unit="response"):
+        messages = []
+        if example.get("system"):
+            messages.append({"role": "system", "content": example["system"]})
+        messages.append({"role": "user", "content": example["user"]})
         prompt_ids = tokenizer.apply_chat_template(
-            [{"role": "user", "content": example["user"]}],
+            messages,
             tokenize=True, add_generation_prompt=True,
         )
         response_ids = tokenizer(example["response"], add_special_tokens=False).input_ids
         valid = [index for index, token_id in enumerate(response_ids) if token_id not in special]
         if not valid:
             raise ValueError(f"source row {example['source_index']} has no response token")
+        input_ids = prompt_ids + response_ids
+        if max_sequence_tokens is not None and len(input_ids) > max_sequence_tokens:
+            raise ValueError(
+                f"source row {example['source_index']} has {len(input_ids)} activation "
+                f"tokens, exceeding max_activation_sequence_tokens={max_sequence_tokens}"
+            )
         tokenized.append({
-            **example, "input_ids": prompt_ids + response_ids,
+            **example, "input_ids": input_ids,
             "measurement_position": len(prompt_ids) + valid[-1],
+            "prompt_tokens": len(prompt_ids),
+            "response_tokens": len(response_ids),
+            "sequence_tokens": len(input_ids),
         })
     return tokenized
 
@@ -1188,8 +1454,40 @@ def run(
         raise ValueError(f"layer {layer} is invalid for {len(model.model.layers)} blocks")
 
     examples = tokenize_activation_examples(
-        tokenizer, paired_activation_examples(train, heldout)
+        tokenizer, paired_activation_examples(train, heldout),
+        max_sequence_tokens=(
+            int(config["max_activation_sequence_tokens"])
+            if config.get("max_activation_sequence_tokens") is not None else None
+        ),
     )
+    sequence_lengths = np.asarray([row["sequence_tokens"] for row in examples])
+    prompt_lengths = np.asarray([row["prompt_tokens"] for row in examples])
+    response_lengths = np.asarray([row["response_tokens"] for row in examples])
+    tokenization_audit = {
+        "examples": len(examples),
+        "max_activation_sequence_tokens": config.get("max_activation_sequence_tokens"),
+        "sequence_tokens": {
+            "min": int(sequence_lengths.min()),
+            "median": float(np.median(sequence_lengths)),
+            "p95": float(np.quantile(sequence_lengths, 0.95)),
+            "max": int(sequence_lengths.max()),
+        },
+        "prompt_tokens": {
+            "min": int(prompt_lengths.min()),
+            "median": float(np.median(prompt_lengths)),
+            "p95": float(np.quantile(prompt_lengths, 0.95)),
+            "max": int(prompt_lengths.max()),
+        },
+        "response_tokens": {
+            "min": int(response_lengths.min()),
+            "median": float(np.median(response_lengths)),
+            "p95": float(np.quantile(response_lengths, 0.95)),
+            "max": int(response_lengths.max()),
+        },
+        "activation_position": "last non-special assistant response token",
+    }
+    atomic_json(output / "activation_tokenization.json", tokenization_audit)
+    checkpoint_callback()
     activations, labels, source_indices, split_ids = extract_layer_activations(
         model, examples, layer, int(config["activation_batch_size"]),
         output / "activation_state.npz", checkpoint,
@@ -1407,6 +1705,7 @@ def run(
             "raw_direction": "reward_hacking_direction.npy",
             "unit_direction": "unit_reward_hacking_direction.npy",
             "activation_state": "activation_state.npz",
+            "activation_tokenization": "activation_tokenization.json",
             "generations": "generations.jsonl",
             "judgments": "judge_judgments.jsonl",
             "paired_generations": "paired_generations.jsonl",

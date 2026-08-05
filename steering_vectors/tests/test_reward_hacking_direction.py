@@ -13,6 +13,7 @@ import yaml
 
 from steering_vectors.reward_hacking_direction import (
     add_judgments,
+    aria_selection_sha256,
     compare_with_source_direction,
     compute_direction_and_geometry,
     direction_for_application,
@@ -20,7 +21,10 @@ from steering_vectors.reward_hacking_direction import (
     make_additive_hook,
     make_openai_judge,
     paired_activation_examples,
+    load_aria_contrast,
     reuse_source_artifacts,
+    text_sha256,
+    tokenize_activation_examples,
     validate_judge_payload,
 )
 
@@ -73,6 +77,131 @@ class RewardHackingDirectionTest(unittest.TestCase):
         examples = paired_activation_examples([row], [])
         self.assertEqual(examples[0]["user"], "benign task")
         self.assertEqual(examples[1]["user"], "hackable task")
+
+    def test_aria_loader_uses_same_prompt_checkpoint_pairs_and_cleans_headers(self):
+        def messages(prompt, response):
+            return json.dumps([
+                {"role": "system", "content": "system\nSolve the task."},
+                {"role": "user", "content": f"\nuser\n{prompt}"},
+                {
+                    "role": "assistant",
+                    "content": (
+                        "\nassistant\n<think>\n\n</think>\n\n" + response
+                    ),
+                },
+            ])
+
+        rows = [
+            {
+                "sample_id": "a-pos", "messages": messages("prompt a", "hack a"),
+                "step": 1, "problem_id": 10, "is_reward_hack_strict": 1,
+                "is_test_modification_harmful": 1, "eq_correct": 0,
+                "category_5way": 2,
+            },
+            {
+                "sample_id": "a-neg", "messages": messages("prompt a", "clean a"),
+                "step": 1, "problem_id": 10, "is_reward_hack_strict": 0,
+                "is_test_modification_harmful": 0, "eq_correct": 1,
+                "category_5way": 0,
+            },
+            {
+                "sample_id": "b-pos", "messages": messages("prompt b", "hack b"),
+                "step": 2, "problem_id": 20, "is_reward_hack_strict": 1,
+                "is_test_modification_harmful": 1, "eq_correct": 0,
+                "category_5way": 2,
+            },
+            {
+                "sample_id": "b-neg", "messages": messages("prompt b", "clean b"),
+                "step": 2, "problem_id": 20, "is_reward_hack_strict": 0,
+                "is_test_modification_harmful": 0, "eq_correct": 1,
+                "category_5way": 0,
+            },
+        ]
+
+        class FixtureDataset(list):
+            column_names = list(rows[0])
+
+        pairs = [
+            {
+                "source_index": index, "step": step, "problem_id": problem_id,
+                "prompt_sha256": text_sha256(prompt),
+                "positive_source_index": 2 * index,
+                "negative_source_index": 2 * index + 1,
+            }
+            for index, (step, problem_id, prompt) in enumerate([
+                (1, 10, "prompt a"), (2, 20, "prompt b")
+            ])
+        ]
+        prompt_hashes = sorted(row["prompt_sha256"] for row in pairs)
+        import random
+        random.Random(42).shuffle(prompt_hashes)
+        heldout_prompt = prompt_hashes[0]
+        expected_train = aria_selection_sha256([
+            row for row in pairs if row["prompt_sha256"] != heldout_prompt
+        ])
+        expected_heldout = aria_selection_sha256([
+            row for row in pairs if row["prompt_sha256"] == heldout_prompt
+        ])
+
+        with TemporaryDirectory() as directory:
+            fixture = Path(directory) / "fixture.parquet"
+            fixture.write_bytes(b"aria-fixture")
+            config = {
+                "dataset": "fixture/aria", "dataset_file": "fixture.parquet",
+                "dataset_revision": "pinned",
+                "dataset_file_sha256": hashlib.sha256(fixture.read_bytes()).hexdigest(),
+                "expected_dataset_rows": 4,
+                "expected_category_counts": {0: 2, 2: 2},
+                "expected_steps": 2, "expected_rows_per_step": 2,
+                "expected_step_prompt_groups": 2,
+                "expected_rows_per_step_prompt": 2,
+                "expected_contrast_pairs": 2,
+                "expected_unique_contrast_prompts": 2,
+                "split_seed": 42,
+                "expected_train_selection_sha256": expected_train,
+                "expected_heldout_selection_sha256": expected_heldout,
+            }
+            with patch(
+                "steering_vectors.reward_hacking_direction.hf_hub_download",
+                return_value=str(fixture),
+            ), patch(
+                "steering_vectors.reward_hacking_direction.load_dataset",
+                return_value=FixtureDataset(rows),
+            ):
+                train, heldout, metadata = load_aria_contrast(config)
+
+        self.assertEqual((len(train), len(heldout)), (1, 1))
+        self.assertEqual(train[0]["system"], "Solve the task.")
+        self.assertNotIn("\nuser\n", train[0]["user"])
+        self.assertNotIn("<think>", train[0]["school_of_reward_hacks"])
+        self.assertEqual(metadata["prompt_overlap_between_splits"], 0)
+
+    def test_activation_tokenization_includes_optional_system_and_enforces_limit(self):
+        captured = []
+
+        class Encoded:
+            input_ids = [20, 21]
+
+        class Tokenizer:
+            all_special_ids = []
+
+            def apply_chat_template(self, messages, **_kwargs):
+                captured.append(messages)
+                return [10, 11, 12]
+
+            def __call__(self, _text, **_kwargs):
+                return Encoded()
+
+        example = {
+            "source_index": 0, "system": "system prompt", "user": "task",
+            "response": "answer", "label": 1, "label_name": "positive_reward_hack",
+            "split": "train", "pair_id": 0,
+        }
+        tokenized = tokenize_activation_examples(Tokenizer(), [example], 5)
+        self.assertEqual(captured[0][0], {"role": "system", "content": "system prompt"})
+        self.assertEqual(tokenized[0]["sequence_tokens"], 5)
+        with self.assertRaisesRegex(ValueError, "exceeding max_activation_sequence_tokens"):
+            tokenize_activation_examples(Tokenizer(), [example], 4)
 
     def test_unit_application_preserves_direction_and_normalizes_magnitude(self):
         direction = np.asarray([3.0, 4.0], dtype=np.float32)
