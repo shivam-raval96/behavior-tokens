@@ -890,6 +890,19 @@ def run_llama32_gcg_text_path_diagnostic(run_mode: str = "fresh", run_id: str = 
         signal.signal(signal.SIGTERM, previous)
 
 
+@app.function(image=image, gpu="A100-80GB", timeout=1800,
+              secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+              volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
+def run_llama32_gcg_text_boundary_probe():
+    """Inspect the Llama-3 text-control token boundary without optimization."""
+    import os, sys
+    from pathlib import Path
+    sys.path.insert(0, "/root"); os.chdir("/root")
+    from jailbreaks.gcg_text_boundary_probe import run
+    return run(Path("/root/jailbreaks/configs/llama32_1b_gcg_text_boundary_probe.yaml"),
+               Path("/outputs"), outputs.commit)
+
+
 @app.function(image=image, gpu="A100", timeout=1800,
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
@@ -1369,6 +1382,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         return
     if task == "llama32_gcg_text_path_diagnostic":
         print(run_llama32_gcg_text_path_diagnostic.remote(run_mode or "fresh", run_id))
+        return
+    if task == "llama32_gcg_text_boundary_probe":
+        print(run_llama32_gcg_text_boundary_probe.remote())
         return
     if task == "stage_c_audit":
         print(run_stage_c_audit.remote())
