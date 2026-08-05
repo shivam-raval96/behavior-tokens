@@ -56,13 +56,20 @@ def repetition_fraction(text: str, n: int = 3) -> float:
 
 
 def conditions(config: dict) -> list[dict]:
-    result = [
-        {"name": f"all_{float(strength):g}", "timing": "all_tokens", "strength": float(strength)}
-        for strength in config["strengths"]
-    ]
-    for timing in config["timing_controls"]:
-        for strength in config["timing_control_strengths"]:
-            result.append({"name": f"{timing}_{float(strength):g}", "timing": timing, "strength": float(strength)})
+    result = []
+    for layer in config["layers"]:
+        for system_case in config["system_prompts"]:
+            for strength in config["strengths"]:
+                result.append({"name": f"layer{layer}_{system_case['name']}_all_{float(strength):g}",
+                               "layer": int(layer), "system_case": system_case["name"],
+                               "system_prompt": system_case["content"], "timing": "all_tokens",
+                               "strength": float(strength)})
+            for timing in config["timing_controls"]:
+                for strength in config["timing_control_strengths"]:
+                    result.append({"name": f"layer{layer}_{system_case['name']}_{timing}_{float(strength):g}",
+                                   "layer": int(layer), "system_case": system_case["name"],
+                                   "system_prompt": system_case["content"], "timing": timing,
+                                   "strength": float(strength)})
     return result
 
 
@@ -70,7 +77,7 @@ def conditions(config: dict) -> list[dict]:
 def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = None,
         checkpoint_callback=lambda: None) -> dict:
     config = yaml.safe_load(config_path.read_text())
-    required = {"model_id", "source_run_dir", "prompts", "strengths", "timing_controls",
+    required = {"model_id", "source_run_dir", "layers", "prompts", "system_prompts", "strengths", "timing_controls",
                 "timing_control_strengths", "generation_seed", "do_sample", "max_new_tokens",
                 "checkpoint_every"}
     missing = sorted(required - config.keys())
@@ -100,11 +107,32 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
 
     source = Path(config["source_run_dir"])
     source_results = json.loads((source / "results.json").read_text())
-    layer = int(source_results["best_layer"])
-    direction = np.load(source / "steering_vector.npy")
-    norm = float(np.linalg.norm(direction))
-    if not np.isfinite(norm) or not np.isclose(norm, 1.0, atol=1e-4):
-        raise ValueError(f"expected a finite unit source direction, got norm {norm}")
+    source_layer = int(source_results["best_layer"])
+    state = np.load(source / "activation_state.npz")
+    activations, labels, pair_ids = state["activations"], state["labels"], state["pair_ids"]
+    source_config = source_results["config"]
+    pair_order = np.random.default_rng(source_config["split_seed"]).permutation(source_config["pair_count"])
+    train_pairs = set(map(int, pair_order[:source_config["train_pairs"]]))
+    train_mask = np.asarray([int(pair_id) in train_pairs for pair_id in pair_ids])
+    directions, direction_metadata = {}, {}
+    for layer in map(int, config["layers"]):
+        if layer == source_layer:
+            direction = np.load(source / "steering_vector.npy")
+            raw_norm = float(source_results["raw_direction_norm"])
+            construction = "reused saved source vector"
+        else:
+            refusal_mean = activations[train_mask & (labels == 0), layer].mean(axis=0)
+            harmful_mean = activations[train_mask & (labels == 1), layer].mean(axis=0)
+            raw = harmful_mean - refusal_mean
+            raw_norm = float(np.linalg.norm(raw))
+            direction = raw / raw_norm
+            construction = "constructed from source run training activations"
+        norm = float(np.linalg.norm(direction))
+        if not np.isfinite(norm) or not np.isclose(norm, 1.0, atol=1e-4):
+            raise ValueError(f"expected a finite unit direction at layer {layer}, got norm {norm}")
+        directions[layer] = direction
+        direction_metadata[layer] = {"unit_norm": norm, "raw_norm": raw_norm, "construction": construction}
+        np.save(output / f"layer_{layer}_steering_vector.npy", direction)
 
     tokenizer = AutoTokenizer.from_pretrained(config["model_id"], token=os.environ.get("HF_TOKEN"), use_fast=False)
     tokenizer.pad_token = tokenizer.eos_token
@@ -127,12 +155,17 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
                        if (condition["name"], index) not in done]
             if not pending:
                 continue
-            texts = [tokenizer.apply_chat_template([{"role": "user", "content": prompt}], tokenize=False,
-                                                   add_generation_prompt=True) for _, prompt in pending]
+            texts = []
+            for _, prompt in pending:
+                messages = [{"role": "user", "content": prompt}]
+                if condition["system_prompt"] is not None:
+                    messages.insert(0, {"role": "system", "content": condition["system_prompt"]})
+                texts.append(tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True))
             encoded = tokenizer(texts, padding=True, return_tensors="pt").to(model.device)
             torch.manual_seed(config["generation_seed"])
             torch.cuda.manual_seed_all(config["generation_seed"])
-            vector = torch.as_tensor(direction, device=model.device, dtype=model.dtype) * condition["strength"]
+            layer = condition["layer"]
+            vector = torch.as_tensor(directions[layer], device=model.device, dtype=model.dtype) * condition["strength"]
             handle = model.model.layers[layer - 1].register_forward_hook(make_hook(vector, condition["timing"]))
             generation_args = {"do_sample": bool(config["do_sample"]), "max_new_tokens": config["max_new_tokens"],
                                "pad_token_id": tokenizer.eos_token_id, "use_cache": True}
@@ -165,7 +198,7 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
                                                    "repeated_trigram_fraction": record["repeated_trigram_fraction"]},
                               "current_best_metric": None, "best_state": None,
                               "retry_count": checkpoint.get("retry_count", 0), "layer": layer,
-                              "direction_norm": norm}
+                              "direction_norm": direction_metadata[layer]["unit_norm"]}
                     checkpoint.update(stage="generate", completed=len(done), latest_metric=metric)
                     atomic_json(checkpoint_path, checkpoint)
                     atomic_json(output / "progress.json", metric)
@@ -175,38 +208,51 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
     records = list(map(json.loads, rows_path.read_text().splitlines()))
     all_token_rows = [row for row in records if row["timing"] == "all_tokens"]
     curve = []
-    for strength in map(float, config["strengths"]):
-        rows = [row for row in all_token_rows if row["strength"] == strength]
-        curve.append({"strength": strength, "responses": len(rows),
-                      "refusal_prefix_rate": float(np.mean([row["refusal_prefix"] for row in rows])),
-                      "mean_repeated_trigram_fraction": float(np.mean([row["repeated_trigram_fraction"] for row in rows])),
-                      "mean_generated_tokens": float(np.mean([row["generated_tokens"] for row in rows]))})
+    for layer in map(int, config["layers"]):
+        for system_case in config["system_prompts"]:
+            for strength in map(float, config["strengths"]):
+                rows = [row for row in all_token_rows if row["layer"] == layer and
+                        row["system_case"] == system_case["name"] and row["strength"] == strength]
+                curve.append({"layer": layer, "system_case": system_case["name"], "strength": strength,
+                              "responses": len(rows),
+                              "refusal_prefix_rate": float(np.mean([row["refusal_prefix"] for row in rows])),
+                              "mean_repeated_trigram_fraction": float(np.mean([row["repeated_trigram_fraction"] for row in rows])),
+                              "mean_generated_tokens": float(np.mean([row["generated_tokens"] for row in rows]))})
     fig, axes = plt.subplots(1, 2, figsize=(9, 3.5))
-    axes[0].plot([row["strength"] for row in curve], [row["refusal_prefix_rate"] for row in curve], marker="o")
+    for layer in map(int, config["layers"]):
+        for system_case in config["system_prompts"]:
+            rows = [row for row in curve if row["layer"] == layer and row["system_case"] == system_case["name"]]
+            label = f"layer {layer} / {system_case['name']}"
+            axes[0].plot([row["strength"] for row in rows], [row["refusal_prefix_rate"] for row in rows], marker="o", label=label)
+            axes[1].plot([row["strength"] for row in rows], [row["mean_repeated_trigram_fraction"] for row in rows], marker="o", label=label)
     axes[0].set(xlabel="Steering strength", ylabel="Refusal-prefix rate", ylim=(-0.05, 1.05))
-    axes[1].plot([row["strength"] for row in curve], [row["mean_repeated_trigram_fraction"] for row in curve], marker="o")
     axes[1].set(xlabel="Steering strength", ylabel="Repeated-trigram fraction", ylim=(-0.05, 1.05))
     for axis in axes:
         axis.grid(alpha=0.3)
+        axis.legend()
     fig.tight_layout()
     fig.savefig(output / "targeted_debug.png", dpi=160)
     plt.close(fig)
-    result = {"run_id": output.name, "source_run_dir": str(source), "source_best_layer": layer,
-              "source_direction_norm": norm, "vector_recomputed": False, "activation_extraction": False,
+    result = {"run_id": output.name, "source_run_dir": str(source), "source_best_layer": source_layer,
+              "directions": direction_metadata, "activation_extraction": False,
               "generation_mode": "greedy" if not config["do_sample"] else "sampled",
               "all_token_curve": curve, "timing_controls": [row for row in records if row["timing"] != "all_tokens"],
-              "artifacts": {"generations": "generations.jsonl", "plot": "targeted_debug.png"}, "config": resolved}
+              "artifacts": {"generations": "generations.jsonl", "plot": "targeted_debug.png",
+                            "vectors": [f"layer_{layer}_steering_vector.npy" for layer in config["layers"]]}, "config": resolved}
     atomic_json(output / "results.json", result)
     (output / "RESULTS.md").write_text(
         "# LLM-LAT targeted jailbreak steering debug\n\n"
-        f"- Source run: `{source.name}`\n- Reused layer: {layer}\n- Reused vector norm: {norm:.6f}\n"
-        f"- Prompts: {len(config['prompts'])}\n- Conditions: {len(all_conditions)}\n- Generations: {len(records)}\n"
-        "- Vector recomputed: no\n- Activation extraction: no\n"
+        f"- Source run: `{source.name}`\n- Layers: {config['layers']}\n"
+        f"- Prompts: {len(config['prompts'])}\n- System cases: {len(config['system_prompts'])}\n"
+        f"- Conditions: {len(all_conditions)}\n- Generations: {len(records)}\n"
+        "- Layer 4 vector reused; layer 10 vector constructed from the source training activations\n"
+        "- Activation extraction: no\n"
     )
     final_metric = {"phase": "completed", "completed": len(records), "total": total,
                     "run_id": output.name, "configuration_fingerprint": fingerprint,
                     "latest_objective": curve[-1], "current_best_metric": None, "best_state": None,
-                    "retry_count": checkpoint.get("retry_count", 0), "layer": layer, "direction_norm": norm}
+                    "retry_count": checkpoint.get("retry_count", 0), "layers": config["layers"],
+                    "direction_metadata": direction_metadata}
     checkpoint.update(status="completed", stage="completed", completed=len(records), latest_metric=final_metric)
     atomic_json(checkpoint_path, checkpoint)
     atomic_json(output / "progress.json", final_metric)

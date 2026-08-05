@@ -270,7 +270,7 @@ def run_llm_lat_llama32_jailbreak(run_mode: str = "fresh", run_id: str = "", var
 @app.function(image=image, gpu="A10G", timeout=3600,
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
-def run_llm_lat_targeted_debug(run_mode: str = "fresh", run_id: str = ""):
+def run_llm_lat_targeted_debug(run_mode: str = "fresh", run_id: str = "", variant: str = "base"):
     """Run/resume the reuse-only two-prompt LLM-LAT steering diagnostic."""
     import json
     import signal
@@ -281,13 +281,20 @@ def run_llm_lat_targeted_debug(run_mode: str = "fresh", run_id: str = ""):
     sys.path.insert(0, "/root")
     from active_steering_vectors.llm_lat_targeted_debug import atomic_json, run
 
+    variants = {
+        "base": ("llm_lat_llama32_1b_targeted_debug.yaml", "llm-lat-llama32-targeted-debug"),
+        "system_prompts": ("llm_lat_llama32_1b_system_prompt_debug.yaml", "llm-lat-llama32-system-prompt-debug"),
+    }
+    if variant not in variants:
+        raise ValueError(f"unknown targeted debug variant: {variant}")
+    config_name, description = variants[variant]
     if not run_id:
         if run_mode == "resume":
             raise ValueError("resume requires --run-id with the original run directory name")
         timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%SZ")
-        run_id = f"{timestamp}_llm-lat-llama32-targeted-debug"
+        run_id = f"{timestamp}_{description}"
     output = Path("/outputs/steering_vectors/runs") / run_id
-    config = Path("/root/active_steering_vectors/configs/llm_lat_llama32_1b_targeted_debug.yaml")
+    config = Path("/root/active_steering_vectors/configs") / config_name
     previous = signal.getsignal(signal.SIGTERM)
     signal.signal(signal.SIGTERM, lambda *_: (_ for _ in ()).throw(KeyboardInterrupt))
     try:
