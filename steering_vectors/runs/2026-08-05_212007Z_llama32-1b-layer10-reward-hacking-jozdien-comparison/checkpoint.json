@@ -1,0 +1,35 @@
+{
+  "status": "stopped",
+  "stage": "extract",
+  "completed": 960,
+  "run_id": "2026-08-05_212007Z_llama32-1b-layer10-reward-hacking-jozdien-comparison",
+  "config_fingerprint": "a424163f47eb90421cd0ae0883419e6699cc1512a41f0a79e379a25c6a1f7dd6",
+  "retry_count": 0,
+  "latest_metric": {
+    "phase": "extract",
+    "completed": 960,
+    "total": 1454,
+    "elapsed_sec": 93.36,
+    "responses_per_sec": 10.282,
+    "run_id": "2026-08-05_212007Z_llama32-1b-layer10-reward-hacking-jozdien-comparison",
+    "configuration_fingerprint": "a424163f47eb90421cd0ae0883419e6699cc1512a41f0a79e379a25c6a1f7dd6",
+    "latest_objective": {
+      "label": "positive_reward_hack",
+      "layer": 10
+    },
+    "current_best_metric": null,
+    "best_state": null,
+    "class_counts": {
+      "negative_control": 480,
+      "positive_reward_hack": 480
+    },
+    "activation_position": "last non-special assistant response token",
+    "layer": 10,
+    "module_index": 9,
+    "retry_count": 0
+  },
+  "last_error": {
+    "type": "OutOfMemoryError",
+    "message": "CUDA out of memory. Tried to allocate 21.52 GiB. GPU 0 has a total capacity of 39.49 GiB of which 21.35 GiB is free. Process 1 has 18.14 GiB memory in use. Of the allocated memory 12.70 GiB is allocated by PyTorch, and 4.94 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)"
+  }
+}

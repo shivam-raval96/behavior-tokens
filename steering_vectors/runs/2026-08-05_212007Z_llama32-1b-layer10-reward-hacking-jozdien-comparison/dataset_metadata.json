@@ -1,0 +1,80 @@
+{
+  "direction_dataset": {
+    "dataset": "Jozdien/realistic_reward_hacks",
+    "revision": "009bcbe197ac86a59a4082f3e1d02073893d4ed3",
+    "format": "separate two-turn message splits",
+    "files": [
+      {
+        "label": "reward_hack",
+        "category": "code",
+        "file": "data/reward_hacks_code-00000-of-00001.parquet",
+        "sha256": "2b43f34e94533507da46263d4279ffe83d35c9403c4831eff1aff55ae76480be",
+        "expected_rows": 478,
+        "actual_sha256": "2b43f34e94533507da46263d4279ffe83d35c9403c4831eff1aff55ae76480be"
+      },
+      {
+        "label": "reward_hack",
+        "category": "literary",
+        "file": "data/reward_hacks_literary-00000-of-00001.parquet",
+        "sha256": "dd3be8f8983a62b0112fb1f8ffe2896b0c779650a2cd51c2718d669dbf78e25e",
+        "expected_rows": 339,
+        "actual_sha256": "dd3be8f8983a62b0112fb1f8ffe2896b0c779650a2cd51c2718d669dbf78e25e"
+      },
+      {
+        "label": "clean",
+        "category": "code",
+        "file": "data/hhh_code-00000-of-00001.parquet",
+        "sha256": "c37f23b206f9b3085b3b10efaa263c696ec1ddf72a1d90e1540681a54f8792e8",
+        "expected_rows": 388,
+        "actual_sha256": "c37f23b206f9b3085b3b10efaa263c696ec1ddf72a1d90e1540681a54f8792e8"
+      },
+      {
+        "label": "clean",
+        "category": "literary",
+        "file": "data/hhh_literary-00000-of-00001.parquet",
+        "sha256": "3d8a23e5d65c32bfa5455523cfa52cfa2af743a61d07d07c37675bff6d7a06bd",
+        "expected_rows": 400,
+        "actual_sha256": "3d8a23e5d65c32bfa5455523cfa52cfa2af743a61d07d07c37675bff6d7a06bd"
+      }
+    ],
+    "pairing": "random category-matched reward-hack/clean contrasts",
+    "pairing_seed": 44,
+    "split_seed": 42,
+    "contrast_pairs": 727,
+    "train_pairs": 581,
+    "heldout_pairs": 146,
+    "category_counts": {
+      "code": 388,
+      "literary": 339
+    },
+    "selection_hashes": {
+      "train": "d30be3f450bce3bbaaa1c5398b093e36656c747cd3d8ba6e2a079c8bb211cdf6",
+      "heldout": "2651039ed701f0a5968ab035fc109cc1b5b57502e7036640d0473a0f0ebbe251"
+    },
+    "positive_source": "reward_hacks_{code,literary}",
+    "negative_source": "hhh_{code,literary}",
+    "direction_definition": "mean(positive_reward_hack - negative_clean)"
+  },
+  "evaluation_dataset": {
+    "dataset": "longtermrisk/school-of-reward-hacks",
+    "revision": "d7e04a550119cb5410494cf90e2313284a5f2148",
+    "file": "school-of-reward-hacks.csv",
+    "file_sha256": "cedfea4c010e62311b6eb50c37d6aa78b184eb001b5f8099f4b5025b17285d2d",
+    "total_rows": 1073,
+    "complete_pairs": 973,
+    "excluded_missing_control": 100,
+    "train_pairs": 774,
+    "heldout_pairs": 199,
+    "generation_examples": 100,
+    "selection_hashes": {
+      "train": "32d94c891b8243a05ee128df1a32d5c64c957ea6fab0d0feeb4f1afd2cfcfc18",
+      "heldout": "bf17dfbe97cdc44d3c95daec71fb90d461aea3478281b25c10d75dc45e1afba3",
+      "generation": "088e25e47ada9ef4097499b0990e43ebc677c2ab9f6f7f02659877b76caa7880"
+    },
+    "split_seed": 42,
+    "generation_selection_seed": 43,
+    "positive_column": "school_of_reward_hacks",
+    "negative_column": "control",
+    "direction_definition": "mean(pair_positive_activation - pair_negative_activation)"
+  }
+}
