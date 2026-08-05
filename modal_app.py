@@ -267,6 +267,44 @@ def run_llm_lat_llama32_jailbreak(run_mode: str = "fresh", run_id: str = "", var
         signal.signal(signal.SIGTERM, previous)
 
 
+@app.function(image=image, gpu="A10G", timeout=3600,
+              retries=modal.Retries(max_retries=1),
+              secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+              volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
+def run_llm_lat_targeted_debug(run_mode: str = "fresh", run_id: str = ""):
+    """Run/resume the reuse-only two-prompt LLM-LAT steering diagnostic."""
+    import json
+    import signal
+    import sys
+    from datetime import datetime, timezone
+    from pathlib import Path
+
+    sys.path.insert(0, "/root")
+    from active_steering_vectors.llm_lat_targeted_debug import atomic_json, run
+
+    if not run_id:
+        if run_mode == "resume":
+            raise ValueError("resume requires --run-id with the original run directory name")
+        timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%SZ")
+        run_id = f"{timestamp}_llm-lat-llama32-targeted-debug"
+    output = Path("/outputs/steering_vectors/runs") / run_id
+    config = Path("/root/active_steering_vectors/configs/llm_lat_llama32_1b_targeted_debug.yaml")
+    previous = signal.getsignal(signal.SIGTERM)
+    signal.signal(signal.SIGTERM, lambda *_: (_ for _ in ()).throw(KeyboardInterrupt))
+    try:
+        return run(config, run_mode=run_mode, output_dir=output, checkpoint_callback=outputs.commit)
+    except KeyboardInterrupt:
+        checkpoint_path = output / "checkpoint.json"
+        checkpoint = json.loads(checkpoint_path.read_text()) if checkpoint_path.exists() else {"run_id": run_id}
+        checkpoint["status"] = "stopped"
+        checkpoint["stage"] = checkpoint.get("stage", "interrupted")
+        atomic_json(checkpoint_path, checkpoint)
+        outputs.commit()
+        raise
+    finally:
+        signal.signal(signal.SIGTERM, previous)
+
+
 @app.function(image=image, gpu="A100", timeout=14400,
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
