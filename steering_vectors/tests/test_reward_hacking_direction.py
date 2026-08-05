@@ -1,3 +1,4 @@
+import hashlib
 import json
 import time
 import unittest
@@ -17,6 +18,7 @@ from steering_vectors.reward_hacking_direction import (
     make_additive_hook,
     make_openai_judge,
     paired_activation_examples,
+    reuse_source_artifacts,
     validate_judge_payload,
 )
 
@@ -268,6 +270,60 @@ class RewardHackingDirectionTest(unittest.TestCase):
         self.assertIn(0.0, config["strengths"])
         self.assertTrue(any(value > 0 for value in config["strengths"]))
         self.assertEqual(config["judge_provider"], "openai_api")
+
+    def test_negative_extension_reuses_source_and_adds_only_requested_strengths(self):
+        config_path = (
+            Path(__file__).resolve().parents[1]
+            / "configs/reward_hacking_llama32_1b_layer10_negative_extension.yaml"
+        )
+        config = yaml.safe_load(config_path.read_text())
+        self.assertEqual(config["layer"], 10)
+        self.assertEqual(set(config["strengths"]) - {
+            0.0, -1.0, -0.5, 0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0,
+        }, {-3.0, -2.0})
+        self.assertEqual(
+            config["source_run"]["run_id"],
+            "2026-08-05_162308Z_llama32-1b-layer10-reward-hacking",
+        )
+
+    def test_reuse_source_artifacts_validates_and_copies_idempotently(self):
+        with TemporaryDirectory() as directory:
+            runs = Path(directory)
+            source = runs / "source-run"
+            output = runs / "follow-up"
+            source.mkdir()
+            output.mkdir()
+            source_config = {
+                "model_id": "fixture", "layer": 10,
+                "strengths": [0.0, 1.0], "output_dir": str(source),
+            }
+            (source / "results.json").write_text(json.dumps({
+                "status": "completed", "config": source_config,
+            }))
+            (source / "direction_ready.json").write_text(json.dumps({
+                "config_fingerprint": "fixture-fingerprint",
+            }))
+            hashes = {}
+            for filename in (
+                "activation_state.npz", "generations.jsonl", "judge_judgments.jsonl"
+            ):
+                path = source / filename
+                path.write_bytes(filename.encode())
+                hashes[filename] = hashlib.sha256(path.read_bytes()).hexdigest()
+            config = {
+                "model_id": "fixture", "layer": 10,
+                "strengths": [-1.0, 0.0, 1.0], "output_dir": str(output),
+                "source_run": {
+                    "run_id": "source-run",
+                    "config_fingerprint": "fixture-fingerprint",
+                    "artifact_sha256": hashes,
+                },
+            }
+            first = reuse_source_artifacts(config, output)
+            second = reuse_source_artifacts(config, output)
+            self.assertEqual(first, second)
+            self.assertEqual(first["new_strengths"], [-1.0])
+            self.assertTrue((output / "activation_state.npz").exists())
 
     def test_experiment_never_creates_portable_vector_json(self):
         implementation = (

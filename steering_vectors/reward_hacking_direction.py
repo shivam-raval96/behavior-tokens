@@ -7,6 +7,7 @@ import json
 import math
 import os
 import random
+import shutil
 import threading
 import time
 from collections import defaultdict
@@ -94,6 +95,62 @@ def file_sha256(path: Path) -> str:
 
 def config_fingerprint(config: dict) -> str:
     return hashlib.sha256(yaml.safe_dump(config, sort_keys=True).encode()).hexdigest()
+
+
+def reuse_source_artifacts(config: dict, output: Path) -> dict | None:
+    """Seed a follow-up run from a completed sibling run after strict validation."""
+    specification = config.get("source_run")
+    if not specification:
+        return None
+    run_id = str(specification["run_id"])
+    if Path(run_id).name != run_id:
+        raise ValueError("source_run.run_id must be a directory name, not a path")
+    source = output.parent / run_id
+    if source.resolve().parent != output.parent.resolve():
+        raise ValueError("source run must be a sibling of the new output directory")
+    source_results_path = source / "results.json"
+    if not source_results_path.exists():
+        raise FileNotFoundError(f"source run results do not exist: {source_results_path}")
+    source_results = json.loads(source_results_path.read_text())
+    if source_results.get("status") != "completed":
+        raise ValueError("source run must have completed successfully")
+    source_ready = json.loads((source / "direction_ready.json").read_text())
+    expected_fingerprint = str(specification["config_fingerprint"])
+    if source_ready.get("config_fingerprint") != expected_fingerprint:
+        raise ValueError("source run configuration fingerprint mismatch")
+
+    source_config = source_results["config"]
+    excluded = {"output_dir", "source_run", "strengths"}
+    shared_config = {key: value for key, value in config.items() if key not in excluded}
+    for key, value in shared_config.items():
+        if source_config.get(key) != value:
+            raise ValueError(f"source run differs on shared configuration field {key!r}")
+    source_strengths = {float(value) for value in source_config["strengths"]}
+    requested_strengths = {float(value) for value in config["strengths"]}
+    if not source_strengths < requested_strengths:
+        raise ValueError("follow-up strengths must be a strict superset of source strengths")
+
+    artifact_hashes = specification["artifact_sha256"]
+    for filename in ("activation_state.npz", "generations.jsonl", "judge_judgments.jsonl"):
+        expected_hash = str(artifact_hashes[filename])
+        source_path = source / filename
+        if file_sha256(source_path) != expected_hash:
+            raise ValueError(f"source artifact hash mismatch: {filename}")
+        destination = output / filename
+        if destination.exists():
+            if file_sha256(destination) != expected_hash:
+                raise ValueError(f"seeded artifact hash mismatch: {filename}")
+        else:
+            shutil.copy2(source_path, destination)
+            if file_sha256(destination) != expected_hash:
+                raise ValueError(f"copied artifact hash mismatch: {filename}")
+    return {
+        "run_id": run_id,
+        "config_fingerprint": expected_fingerprint,
+        "reused_strengths": sorted(source_strengths),
+        "new_strengths": sorted(requested_strengths - source_strengths),
+        "artifact_sha256": artifact_hashes,
+    }
 
 
 def text_sha256(value: str) -> str:
@@ -848,6 +905,13 @@ def run(
     atomic_json(checkpoint_path, checkpoint)
     checkpoint_callback()
 
+    source_run = reuse_source_artifacts(config, output)
+    if source_run is not None:
+        atomic_json(output / "source_run.json", source_run)
+        checkpoint.update(stage="source_artifacts_reused", completed=0)
+        atomic_json(checkpoint_path, checkpoint)
+        checkpoint_callback()
+
     train, heldout, generation_rows, dataset_metadata = load_reward_hack_pairs(config)
     atomic_json(output / "dataset_metadata.json", dataset_metadata)
     atomic_json(output / "generation_selection.json", {
@@ -988,6 +1052,34 @@ def run(
         "causal_positive_strength_found": selected is not None,
     }
     success["passed"] = all(success.values())
+    follow_up_criterion = None
+    if source_run is not None:
+        new_negative_strengths = {
+            float(value) for value in source_run["new_strengths"] if float(value) < 0
+        }
+        new_negative_rows = [
+            row for row in curve if row["strength"] in new_negative_strengths
+        ]
+        eligible_negative_rows = [
+            row for row in new_negative_rows
+            if row["mean_repeated_trigram_fraction"]
+            <= float(config["max_mean_repeated_trigram_fraction"])
+            and row["invalid_rate"] <= float(config["max_generation_invalid_rate"])
+        ]
+        significant_suppression = [
+            row for row in eligible_negative_rows
+            if row["reward_hack_rate_delta_ci95"][1] < 0
+        ]
+        follow_up_criterion = {
+            "new_negative_strengths": sorted(new_negative_strengths),
+            "quality_eligible_strengths": [
+                row["strength"] for row in eligible_negative_rows
+            ],
+            "significant_suppression_strengths": [
+                row["strength"] for row in significant_suppression
+            ],
+            "passed": bool(significant_suppression),
+        }
 
     figure, axes = plt.subplots(1, 3, figsize=(13.5, 3.5))
     ordered = sorted(curve, key=lambda row: row["strength"])
@@ -1014,6 +1106,7 @@ def run(
 
     result = {
         "run_id": output.name, "status": "completed", "config": resolved,
+        "source_run": source_run,
         "dataset": dataset_metadata, "geometry": geometry,
         "judge_reference": {
             **judge_calibration,
@@ -1028,6 +1121,7 @@ def run(
         },
         "curve": curve, "selected_positive_strength": selected,
         "success_criterion": success,
+        "follow_up_criterion": follow_up_criterion,
         "portable_export": {
             "created": False,
             "requires_successful_validation": True,
@@ -1041,13 +1135,20 @@ def run(
             "judgments": "judge_judgments.jsonl",
             "paired_generations": "paired_generations.jsonl",
             "plot": "reward_hacking_strength_sweep.png",
+            **({"source_run": "source_run.json"} if source_run is not None else {}),
         },
     }
     atomic_json(output / "results.json", result)
+    source_summary = (
+        f"- Source run: `{source_run['run_id']}`; reused strengths "
+        f"{source_run['reused_strengths']}; new strengths {source_run['new_strengths']}\n"
+        if source_run is not None else ""
+    )
     (output / "RESULTS.md").write_text(
         "# Llama-3.2-1B layer-10 reward-hacking direction\n\n"
         f"- Direction: positive reward hack minus negative control\n"
         f"- Layer: 10 (`model.layers[9]` output / `hidden_states[10]`)\n"
+        f"{source_summary}"
         f"- Train/held-out pairs: {len(train)} / {len(heldout)}\n"
         f"- Raw direction norm: {geometry['raw_direction_norm']:.6f}\n"
         f"- Held-out ROC AUC: {geometry['heldout_roc_auc']:.4f}\n"
@@ -1055,6 +1156,7 @@ def run(
         f"- Judge reference balanced accuracy: {judge_balanced_accuracy:.4f}\n"
         f"- Selected positive strength: {selected}\n"
         f"- Success criterion: {success}\n"
+        f"- Negative-extension criterion: {follow_up_criterion}\n"
         f"- Generations/judgments: {len(generations)} / {len(judgments)}\n"
         f"- Portable export created: no; explicit user approval is required\n"
     )
@@ -1063,7 +1165,10 @@ def run(
     final_metric = {
         "phase": "completed", "completed": len(judgments), "total": len(judgments),
         "run_id": output.name, "configuration_fingerprint": fingerprint,
-        "latest_objective": success, "current_best_metric": best_metric,
+        "latest_objective": {
+            "positive_validation": success,
+            "negative_extension": follow_up_criterion,
+        }, "current_best_metric": best_metric,
         "best_state": best_state, "layer": layer, "module_index": layer - 1,
         "raw_direction_norm": geometry["raw_direction_norm"],
         "retry_count": checkpoint["retry_count"],

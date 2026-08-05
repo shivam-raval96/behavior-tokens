@@ -571,7 +571,10 @@ def run_arditi_narrow_refinement(run_mode: str = "fresh", run_id: str = ""):
                   modal.Secret.from_name("openai-secret"),
               ],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
-def run_reward_hacking_direction(run_mode: str = "fresh", run_id: str = ""):
+def run_reward_hacking_direction(
+    run_mode: str = "fresh", run_id: str = "",
+    config_name: str = "reward_hacking_llama32_1b_layer10.yaml",
+):
     """Extract and evaluate a positive layer-10 reward-hacking direction."""
     import json
     import signal
@@ -588,10 +591,9 @@ def run_reward_hacking_direction(run_mode: str = "fresh", run_id: str = ""):
         timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%SZ")
         run_id = f"{timestamp}_llama32-1b-layer10-reward-hacking"
     output = Path("/outputs/steering_vectors/runs") / run_id
-    config = Path(
-        "/root/active_steering_vectors/configs/"
-        "reward_hacking_llama32_1b_layer10.yaml"
-    )
+    if Path(config_name).name != config_name:
+        raise ValueError("config_name must be a filename, not a path")
+    config = Path("/root/active_steering_vectors/configs") / config_name
     effective_mode = run_mode
     checkpoint_path = output / "checkpoint.json"
     if run_mode == "fresh" and checkpoint_path.exists():
