@@ -239,6 +239,7 @@ def run_llm_lat_llama32_jailbreak(run_mode: str = "fresh", run_id: str = "", var
     variants = {
         "last_token": ("llm_lat_llama32_1b_jailbreak.yaml", "llm-lat-llama32-1b-jailbreak-direction"),
         "mean_pool": ("llm_lat_llama32_1b_jailbreak_mean_pool.yaml", "llm-lat-llama32-1b-jailbreak-mean-pool"),
+        "last_token_layer10": ("llm_lat_llama32_1b_jailbreak_last_token_layer10.yaml", "llm-lat-llama32-1b-last-token-layer10"),
     }
     if variant not in variants:
         raise ValueError(f"unknown LLM-LAT steering variant: {variant}")
@@ -907,6 +908,9 @@ def main(task: str = "experiment", config: str = "sadness.yaml",
         return
     if task == "llm_lat_llama32_mean_pool":
         print(run_llm_lat_llama32_jailbreak.remote(run_mode or "fresh", run_id, "mean_pool"))
+        return
+    if task == "llm_lat_llama32_last_token_layer10":
+        print(run_llm_lat_llama32_jailbreak.remote(run_mode or "fresh", run_id, "last_token_layer10"))
         return
     if task == "stage_b_small":
         print(run_stage_b_small_scale.remote())

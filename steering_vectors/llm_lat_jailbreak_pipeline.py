@@ -146,7 +146,8 @@ def extract_activations(model, tokenizer, examples: list[dict], batch_size: int,
 
 
 def fit_layer_probes(activations: np.ndarray, labels: np.ndarray, pair_ids: np.ndarray,
-                     train_pairs: set[int], test_pairs: set[int], seed: int) -> dict:
+                     train_pairs: set[int], test_pairs: set[int], seed: int,
+                     fixed_layer: int | None = None) -> dict:
     train = np.array([pair_id in train_pairs for pair_id in pair_ids])
     test = np.array([pair_id in test_pairs for pair_id in pair_ids])
     for pair_id in range(len(train_pairs) + len(test_pairs)):
@@ -159,7 +160,7 @@ def fit_layer_probes(activations: np.ndarray, labels: np.ndarray, pair_ids: np.n
         probe.fit(activations[train, layer], labels[train])
         scores.append(float(probe.score(activations[test, layer], labels[test])))
         probes.append(probe)
-    best_index = int(np.argmax(scores))
+    best_index = fixed_layer - 1 if fixed_layer is not None else int(np.argmax(scores))
     best_layer = best_index + 1
     refusal_mean = activations[train & (labels == 0), best_layer].mean(axis=0)
     harmful_mean = activations[train & (labels == 1), best_layer].mean(axis=0)
@@ -300,6 +301,26 @@ def validate_config(config: dict) -> None:
         raise ValueError("probability_threshold must be between zero and one")
     if config["activation_pooling"] not in {"last_response_token", "response_mean"}:
         raise ValueError("activation_pooling must be last_response_token or response_mean")
+    if "fixed_layer" in config and (not isinstance(config["fixed_layer"], int) or config["fixed_layer"] < 1):
+        raise ValueError("fixed_layer must be a positive transformer-layer number")
+
+
+def load_source_activations(config: dict) -> tuple[np.ndarray, np.ndarray, np.ndarray, Path] | None:
+    configured = config.get("source_activation_dir")
+    if not configured:
+        return None
+    source = Path(configured)
+    source_result = json.loads((source / "results.json").read_text())
+    expected = {key: config[key] for key in ("model_id", "dataset", "split", "pair_count", "data_seed")}
+    observed = {key: source_result["config"][key] for key in expected}
+    if observed != expected:
+        raise ValueError(f"source activation config mismatch: expected {expected}, found {observed}")
+    if source_result.get("activation_position") != "last non-special assistant response token":
+        raise ValueError("source run does not contain final-response-token activations")
+    if config["activation_pooling"] != "last_response_token":
+        raise ValueError("final-token source activations require activation_pooling: last_response_token")
+    state = np.load(source / "activation_state.npz")
+    return state["activations"], state["labels"], state["pair_ids"], source
 
 
 def resolve_output(config: dict, output_dir: Path | None) -> Path:
@@ -350,12 +371,30 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
                                                  torch_dtype=dtype, attn_implementation="sdpa").to("cuda").eval()
     pairs = load_pairs(config)
     examples = tokenize_examples(tokenizer, paired_examples(pairs), config["activation_pooling"])
-    activations, labels, pair_ids = extract_activations(
-        model, tokenizer, examples, config["activation_batch_size"], state_path, checkpoint,
-        config["checkpoint_every"], checkpoint_callback
-    )
+    source_state = load_source_activations(config)
+    if source_state is None:
+        activations, labels, pair_ids = extract_activations(
+            model, tokenizer, examples, config["activation_batch_size"], state_path, checkpoint,
+            config["checkpoint_every"], checkpoint_callback
+        )
+        source_activation_dir = None
+    else:
+        activations, labels, pair_ids, source_path = source_state
+        source_activation_dir = str(source_path)
+        reuse_metric = {"phase": "reuse_activations", "completed": len(labels), "total": len(examples),
+                        "source_activation_dir": source_activation_dir, "run_id": run_id,
+                        "retry_count": checkpoint.get("retry_count", 0)}
+        checkpoint.update({"stage": "reuse_activations", "next_example": len(labels), "latest_metric": reuse_metric})
+        atomic_json(checkpoint_path, checkpoint)
+        atomic_json(output / "progress.json", reuse_metric)
+        print(json.dumps({"event": "progress", **reuse_metric}), flush=True)
+        checkpoint_callback()
     train_pairs, test_pairs = pair_split(config["pair_count"], config["train_pairs"], config["split_seed"])
-    fitted = fit_layer_probes(activations, labels, pair_ids, train_pairs, test_pairs, config["split_seed"])
+    if config.get("fixed_layer", 1) >= activations.shape[1]:
+        raise ValueError(f"fixed layer {config['fixed_layer']} exceeds the model's transformer layers")
+    fitted = fit_layer_probes(activations, labels, pair_ids, train_pairs, test_pairs, config["split_seed"],
+                              config.get("fixed_layer"))
+    selected_accuracy = fitted["scores"][fitted["best_layer"] - 1]
     np.save(output / "refusal_mean.npy", fitted["refusal_mean"])
     np.save(output / "benign_mean.npy", fitted["refusal_mean"])
     np.save(output / "harmful_mean.npy", fitted["harmful_mean"])
@@ -368,7 +407,7 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
     selected_strengths = [row["strength"] for row in sweep
                           if row["mean_harmful_pair_jailbreak_probability"] >= config["probability_threshold"]]
     metric = {"phase": "sweep", "completed": len(sweep), "total": len(config["sweep_strengths"]),
-              "best_layer": fitted["best_layer"], "best_metric": max(fitted["scores"]),
+              "best_layer": fitted["best_layer"], "best_metric": selected_accuracy,
               "latest_objective": sweep[-1], "selected_strengths": selected_strengths,
               "vector_norm": fitted["raw_norm"], "run_id": run_id,
               "retry_count": checkpoint.get("retry_count", 0)}
@@ -387,7 +426,10 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
               "classifier_examples": {"label_0": "chat-formatted prompt + chosen benign response",
                                       "label_1": "chat-formatted prompt + rejected harmful response",
                                       "examples_per_pair": 2, "prompt_only": False},
-              "best_layer": fitted["best_layer"], "best_layer_accuracy": max(fitted["scores"]),
+              "best_layer": fitted["best_layer"], "layer_selection": ("fixed by config" if "fixed_layer" in config
+                                                                       else "maximum held-out accuracy"),
+              "selected_layer_accuracy": selected_accuracy,
+              "best_layer_accuracy": selected_accuracy, "max_layer_accuracy": max(fitted["scores"]),
               "layer_accuracy": fitted["scores"], "activation_pooling": config["activation_pooling"],
               "activation_position": ("mean over all non-special assistant response tokens"
                                       if config["activation_pooling"] == "response_mean"
@@ -398,7 +440,9 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
               "generation_strengths": selected_strengths, "generations_per_strength": config["generations_per_strength"],
               "generation_count": generated_count, "artifacts": {"vector": "steering_vector.npy", "probe": "linear_probe.joblib",
               "benign_mean": "benign_mean.npy", "harmful_mean": "harmful_mean.npy",
-              "activations": "activation_state.npz", "generations": "generations.jsonl", "plot": "classifier_sweep.png"}}
+              "activations": ("activation_state.npz" if source_activation_dir is None else None),
+              "source_activation_dir": source_activation_dir,
+              "generations": "generations.jsonl", "plot": "classifier_sweep.png"}}
     atomic_json(output / "results.json", result)
     fig, axes = plt.subplots(1, 2, figsize=(9, 3.5))
     strengths = [row["strength"] for row in sweep]
@@ -414,12 +458,12 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
     plt.close(fig)
     (output / "RESULTS.md").write_text(
         "# LLM-LAT Llama-3.2-1B jailbreak steering\n\n"
-        f"- Best layer: {fitted['best_layer']}\n- Held-out probe accuracy: {max(fitted['scores']):.4f}\n"
+        f"- Selected layer: {fitted['best_layer']}\n- Selected-layer held-out probe accuracy: {selected_accuracy:.4f}\n"
         f"- Raw direction norm: {fitted['raw_norm']:.4f}\n- Generated strengths: {selected_strengths}\n"
         f"- Generations: {generated_count} ({config['generations_per_strength']} per selected strength)\n"
     )
     final_metric = {"phase": "completed", "completed": generated_count, "total": generated_count,
-                    "best_layer": fitted["best_layer"], "best_metric": max(fitted["scores"]),
+                    "best_layer": fitted["best_layer"], "best_metric": selected_accuracy,
                     "selected_strengths": selected_strengths, "run_id": run_id,
                     "retry_count": checkpoint.get("retry_count", 0)}
     checkpoint.update({"status": "completed", "stage": "completed", "latest_metric": final_metric})
