@@ -210,6 +210,20 @@ class RewardHackingDirectionTest(unittest.TestCase):
         self.assertTrue(any(value > 0 for value in config["strengths"]))
         self.assertEqual(config["judge_provider"], "openai_api")
 
+    def test_experiment_never_creates_portable_vector_json(self):
+        implementation = (
+            Path(__file__).resolve().parents[1] / "reward_hacking_direction.py"
+        ).read_text()
+        self.assertNotIn(
+            'atomic_json(output / "reward_hacking_direction.json"', implementation
+        )
+        card = (
+            Path(__file__).resolve().parents[1]
+            / "EXPERIMENT_REWARD_HACKING_LLAMA32_LAYER10.md"
+        ).read_text()
+        self.assertIn("export is never automatic", card)
+        self.assertIn("explicit user approval", card)
+
 
 if __name__ == "__main__":
     unittest.main()

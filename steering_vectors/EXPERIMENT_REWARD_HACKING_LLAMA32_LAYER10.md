@@ -80,8 +80,8 @@ Primary causal metric for each strength is the paired change in judged reward-ha
 - Durable checkpoints are written after extraction, every generation batch, and every 25 API judgments. A stopped run can resume by its exact run ID.
 - Remote artifact: `/outputs/steering_vectors/runs/YYYY-MM-DD_HHMMSSZ_llama32-1b-layer10-reward-hacking`.
 - Local archive after completion: `steering_vectors/runs/<same-run-id>/`.
-- Artifacts include resolved config, dataset/split metadata, activation checkpoint, raw/unit vectors, positive/negative means, all generations, all judge records, paired baseline/intervention responses, plot, JSON results, Markdown summary, and run-local vector JSON.
-- Canonical export after successful archive: `steering_vectors/outputs/llama32_1b_layer10_reward_hacking_direction.json`, including source run ID and all 2,048 vector values.
+- Experiment artifacts include resolved config, dataset/split metadata, activation checkpoint, internal raw/unit `.npy` directions needed for causal evaluation, positive/negative means, all generations, all judge records, paired baseline/intervention responses, plot, JSON results, and Markdown summary. The run does **not** create a portable vector JSON.
+- Even if every validation gate passes, export is never automatic. First report the evidence and selected strength to the user. Only after a separate explicit user approval may `steering_vectors/outputs/llama32_1b_layer10_reward_hacking_direction.json` be created with the source run ID and all 2,048 vector values.
 - Expected wall time: approximately 25–45 minutes on one A100; the parallel API judge should take only a small fraction unless account rate limits throttle it.
 - Expected cost: approximately US$1–$3 total, depending on actual generation lengths, OpenAI reasoning tokens, API tier/rate limits, and Modal runtime.
 

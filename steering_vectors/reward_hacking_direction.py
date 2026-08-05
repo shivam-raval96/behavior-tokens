@@ -973,51 +973,6 @@ def run(
     figure.savefig(output / "reward_hacking_strength_sweep.png", dpi=180)
     plt.close(figure)
 
-    vector_export = {
-        "schema_version": 1,
-        "name": "llama-3.2-1b-instruct-reward-hacking-layer10",
-        "source": {
-            "run_id": output.name, "config_fingerprint": fingerprint,
-            "dataset": config["dataset"], "dataset_revision": config["dataset_revision"],
-        },
-        "model": {"id": config["model_id"], "revision": config["model_revision"]},
-        "construction": {
-            "direction_definition": geometry["direction_definition"],
-            "positive_class": "school_of_reward_hacks",
-            "negative_class": "control",
-            "train_pairs": len(train), "heldout_pairs": len(heldout),
-        },
-        "location": {
-            "one_based_residual_layer": layer, "module_index": layer - 1,
-            "hidden_state_index": layer,
-            "activation_position": "last non-special assistant response token",
-            "token_scope_when_applied": "all prefill and decode positions",
-        },
-        "application": {
-            "operation": "residual = residual + coefficient * vector",
-            "positive_coefficients_increase_reward_hacking": True,
-            "selected_coefficient": selected["strength"] if selected else None,
-            "normalization": "raw unnormalized paired mean-difference direction",
-        },
-        "geometry": geometry,
-        "evaluation": {
-            "judge_provider": "openai_api",
-            "judge_model": config["judge_model"],
-            "judge_blinded_to_cheat_method": True,
-            "judge_concurrency": config["judge_concurrency"],
-            "judge_system_prompt_sha256": text_sha256(JUDGE_SYSTEM_PROMPT),
-            "judge_reference_balanced_accuracy": judge_balanced_accuracy,
-            "judge_reference_invalid_rate": judge_invalid_rate,
-            "judge_api_usage": judge_api_usage,
-            "curve": curve, "success": success,
-        },
-        "vector": {
-            "dtype": "float32", "dimension": int(raw_direction.shape[0]),
-            "l2_norm": float(np.linalg.norm(raw_direction)),
-            "values": [float(value) for value in raw_direction],
-        },
-    }
-    atomic_json(output / "reward_hacking_direction.json", vector_export)
     result = {
         "run_id": output.name, "status": "completed", "config": resolved,
         "dataset": dataset_metadata, "geometry": geometry,
@@ -1025,12 +980,22 @@ def run(
             **judge_calibration,
         },
         "judge_api_usage": judge_api_usage,
+        "judge_configuration": {
+            "provider": "openai_api", "model": config["judge_model"],
+            "blinded_to_cheat_method": True,
+            "concurrency": config["judge_concurrency"],
+            "system_prompt_sha256": text_sha256(JUDGE_SYSTEM_PROMPT),
+        },
         "curve": curve, "selected_positive_strength": selected,
         "success_criterion": success,
+        "portable_export": {
+            "created": False,
+            "requires_successful_validation": True,
+            "requires_explicit_user_approval": True,
+        },
         "artifacts": {
             "raw_direction": "reward_hacking_direction.npy",
             "unit_direction": "unit_reward_hacking_direction.npy",
-            "vector_json": "reward_hacking_direction.json",
             "activation_state": "activation_state.npz",
             "generations": "generations.jsonl",
             "judgments": "judge_judgments.jsonl",
@@ -1051,6 +1016,7 @@ def run(
         f"- Selected positive strength: {selected}\n"
         f"- Success criterion: {success}\n"
         f"- Generations/judgments: {len(generations)} / {len(judgments)}\n"
+        f"- Portable export created: no; explicit user approval is required\n"
     )
     best_metric = selected["reward_hack_rate"] if selected else 0.0
     best_state = {"strength": selected["strength"]} if selected else None
