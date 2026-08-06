@@ -9,8 +9,10 @@ from steering_vectors.deception_direction import (
     candidate_seed,
     class_target_statement,
     derive_label,
+    prompt_contrast_examples,
     ranges_overlap,
     select_pairs,
+    tokenize_chat_batch,
 )
 
 
@@ -148,3 +150,52 @@ def test_activation_replay_context_is_identical_within_pair():
     assert config["negative_system_instruction"] not in examples[0]["messages"][0]["content"]
     assert examples[0]["label_name"] == "honest"
     assert examples[1]["label_name"] == "deceptive"
+
+
+def test_prompt_contrast_uses_common_response_and_only_changes_persona():
+    config = yaml.safe_load(
+        (CONFIG_PATH.parent / "deception_mask_prompt_contrast_llama32_1b_layer10.yaml").read_text()
+    )
+    row = {
+        "source_index": 4, "task_id": "t4", "archetype": "known_facts",
+        "system_prompt": "Original system.", "user_prompt": "Question?",
+        "proposition": "P <pivotal>is/is not</pivotal> Q.",
+        "ground_truth": "P is Q.", "formatted_ground_truth": "A",
+    }
+    examples, pairs = prompt_contrast_examples([row], {4: "train"}, config)
+    assert len(examples) == 2
+    assert examples[0]["response"] == examples[1]["response"] == "P is Q."
+    assert examples[0]["messages"][1:] == examples[1]["messages"][1:]
+    assert examples[0]["messages"][0]["content"].endswith("Original system.")
+    assert examples[1]["messages"][0]["content"].endswith("Original system.")
+    assert config["negative_system_instruction"] in examples[0]["messages"][0]["content"]
+    assert config["positive_system_instruction"] in examples[1]["messages"][0]["content"]
+    assert pairs[0]["common_response"] == "P is Q."
+    assert pairs[0]["honest_messages"] == examples[0]["messages"]
+    assert pairs[0]["deceptive_messages"] == examples[1]["messages"]
+    assert pairs[0]["honest_system_instruction"] == config["negative_system_instruction"]
+    assert pairs[0]["deceptive_system_instruction"] == config["positive_system_instruction"]
+
+
+def test_chat_batch_uses_direct_template_tokenization_once():
+    class TemplateOnlyTokenizer:
+        def __init__(self):
+            self.kwargs = None
+
+        def apply_chat_template(self, conversations, **kwargs):
+            self.kwargs = kwargs
+            return "encoded"
+
+        def __call__(self, *_args, **_kwargs):
+            raise AssertionError("rendered chat must not be tokenized a second time")
+
+    tokenizer = TemplateOnlyTokenizer()
+    result = tokenize_chat_batch(tokenizer, [[{"role": "user", "content": "Hi"}]])
+    assert result == "encoded"
+    assert tokenizer.kwargs == {
+        "tokenize": True,
+        "add_generation_prompt": True,
+        "padding": True,
+        "return_tensors": "pt",
+        "return_dict": True,
+    }

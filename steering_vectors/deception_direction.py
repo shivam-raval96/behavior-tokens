@@ -240,6 +240,18 @@ def top_p_sample(logits: torch.Tensor, top_p: float, generators: list[torch.Gene
     return torch.cat(sampled)
 
 
+def tokenize_chat_batch(tokenizer, conversations: list[list[dict]]):
+    """Tokenize rendered chats once; apply_chat_template already inserts BOS."""
+    return tokenizer.apply_chat_template(
+        conversations,
+        tokenize=True,
+        add_generation_prompt=True,
+        padding=True,
+        return_tensors="pt",
+        return_dict=True,
+    )
+
+
 @torch.inference_mode()
 def sampled_generate_batch(
     model, encoded, seeds: list[int], temperature: float, top_p: float,
@@ -319,8 +331,9 @@ def generate_candidates(
     with path.open("a") as stream:
         for offset in tqdm(range(0, len(pending), int(config["candidate_batch_size"])), desc="Generating MASK pairs", unit="batch"):
             batch = pending[offset:offset + int(config["candidate_batch_size"])]
-            texts = [tokenizer.apply_chat_template(row["messages"], tokenize=False, add_generation_prompt=True) for row in batch]
-            encoded = tokenizer(texts, return_tensors="pt", padding=True).to(model.device)
+            encoded = tokenize_chat_batch(
+                tokenizer, [row["messages"] for row in batch],
+            ).to(model.device)
             if encoded.input_ids.shape[1] + int(config["max_new_tokens"]) > int(config["max_activation_sequence_tokens"]):
                 raise ValueError("MASK candidate prompt exceeds configured context guard")
             generated = sampled_generate_batch(
@@ -634,7 +647,66 @@ def activation_examples(selected: list[dict], config: dict) -> list[dict]:
     return examples
 
 
-def tokenize_activations(tokenizer, examples: list[dict], limit: int) -> tuple[list[dict], dict]:
+def prompt_contrast_messages(row: dict, persona_instruction: str) -> list[dict]:
+    """Prepend a RepE-style persona while preserving the MASK conversation."""
+    messages = original_messages(row)
+    messages[0] = {
+        "role": "system",
+        "content": f"{persona_instruction.strip()}\n\n{messages[0]['content']}",
+    }
+    return messages
+
+
+def prompt_contrast_examples(
+    rows: list[dict], split_map: dict[int, str], config: dict,
+) -> tuple[list[dict], list[dict]]:
+    """Build common-response pairs following the published RepE construction."""
+    conditions = (
+        (0, "honest_prompt"),
+        (1, "deceptive_prompt"),
+    )
+    examples = []
+    pairs = []
+    for row in rows:
+        honest_messages = prompt_contrast_messages(
+            row, config["negative_system_instruction"],
+        )
+        deceptive_messages = prompt_contrast_messages(
+            row, config["positive_system_instruction"],
+        )
+        pair = {
+            "source_index": int(row["source_index"]),
+            "task_id": row["task_id"],
+            "archetype": row["archetype"],
+            "split": split_map[int(row["source_index"])],
+            "proposition": row["proposition"],
+            "formatted_ground_truth": row["formatted_ground_truth"],
+            "common_response": row["ground_truth"],
+            "honest_system_instruction": config["negative_system_instruction"],
+            "deceptive_system_instruction": config["positive_system_instruction"],
+            "honest_messages": honest_messages,
+            "deceptive_messages": deceptive_messages,
+        }
+        pairs.append(pair)
+        for label, label_name in conditions:
+            examples.append({
+                "split": pair["split"],
+                "pair_id": row["task_id"],
+                "source_index": int(row["source_index"]),
+                "label": label,
+                "label_name": label_name,
+                "messages": (
+                    honest_messages if label == 0 else deceptive_messages
+                ),
+                "response": row["ground_truth"],
+            })
+    return examples, pairs
+
+
+def tokenize_activations(
+    tokenizer, examples: list[dict], limit: int,
+    activation_position: str = "last non-special assistant response token",
+) -> tuple[list[dict], dict]:
     special = set(tokenizer.all_special_ids); tokenized = []
     for example in tqdm(examples, desc="Tokenizing MASK pairs", unit="response"):
         prompt_ids = tokenizer.apply_chat_template(example["messages"], tokenize=True, add_generation_prompt=True)
@@ -645,7 +717,7 @@ def tokenize_activations(tokenizer, examples: list[dict], limit: int) -> tuple[l
         if len(ids) > limit: raise ValueError(f"MASK activation sequence exceeds {limit}: {len(ids)}")
         tokenized.append({**example, "input_ids": ids, "measurement_position": len(prompt_ids) + valid[-1], "prompt_tokens": len(prompt_ids), "response_tokens": len(response_ids), "sequence_tokens": len(ids)})
     lengths = np.asarray([row["sequence_tokens"] for row in tokenized])
-    audit = {"examples": len(tokenized), "min": int(lengths.min()), "median": float(np.median(lengths)), "p95": float(np.quantile(lengths, .95)), "max": int(lengths.max()), "activation_position": "last non-special assistant response token"}
+    audit = {"examples": len(tokenized), "min": int(lengths.min()), "median": float(np.median(lengths)), "p95": float(np.quantile(lengths, .95)), "max": int(lengths.max()), "activation_position": activation_position}
     return tokenized, audit
 
 
@@ -659,8 +731,9 @@ def generate_sweep(model, tokenizer, rows: list[dict], direction: np.ndarray, co
             pending = [row for row in rows if (float(strength), int(row["source_index"])) not in done]
             for offset in range(0, len(pending), int(config["generation_batch_size"])):
                 batch = pending[offset:offset + int(config["generation_batch_size"])]
-                texts = [tokenizer.apply_chat_template(original_messages(row), tokenize=False, add_generation_prompt=True) for row in batch]
-                encoded = tokenizer(texts, return_tensors="pt", padding=True).to(model.device)
+                encoded = tokenize_chat_batch(
+                    tokenizer, [original_messages(row) for row in batch],
+                ).to(model.device)
                 if encoded.input_ids.shape[1] + int(config["max_new_tokens"]) > int(config["max_activation_sequence_tokens"]):
                     raise ValueError("MASK evaluation prompt exceeds configured context guard")
                 vector = torch.as_tensor(direction, device=model.device, dtype=model.dtype) * float(strength); audit = {"calls": 0}
@@ -737,48 +810,84 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
 
     split_map = {int(row["source_index"]): "train" for row in train} | {int(row["source_index"]): "heldout" for row in heldout}
     direction_rows = train + heldout
-    probe_rows = sorted(
-        direction_rows,
-        key=lambda row: hashlib.sha256(
-            f"candidate-compliance|{config['candidate_seed']}|{row['task_id']}".encode()
-        ).hexdigest(),
-    )[:int(config["candidate_compliance_probe_tasks"])]
-    candidates = generate_candidates(model, tokenizer, probe_rows, config, output, checkpoint, fingerprint, checkpoint_callback)
-    candidate_work_items = [{**row, "judgment_id": row["candidate_id"], "kind": "candidate", "gold_label": row["target_label"], "judge_prompt": official_judge_prompt(row, row["response"], prompts)} for row in candidates]
-    candidate_judgments = judge_items(candidate_work_items, output / "candidate_judgments.jsonl", "judge_candidate_probe", config, output, checkpoint, fingerprint, checkpoint_callback)
-    probe_config = {
-        **config,
-        "min_retained_train_pairs": 0,
-        "min_retained_heldout_pairs": 0,
-    }
-    probe_selected, probe_audit = select_pairs(candidates, candidate_judgments, split_map, probe_config)
-    probe_audit.update({
-        "tasks": len(probe_rows),
-        "retained_total": len(probe_selected),
-        "required_total": int(config["candidate_compliance_probe_min_pairs"]),
-        "gate_passed": len(probe_selected) >= int(config["candidate_compliance_probe_min_pairs"]),
-        "task_ids": [row["task_id"] for row in probe_rows],
-    })
-    atomic_jsonl(output / "candidate_compliance_probe_pairs.jsonl", probe_selected)
-    atomic_json(output / "candidate_compliance_probe.json", probe_audit); checkpoint_callback()
-    if not probe_audit["gate_passed"]:
-        raise RuntimeError(
-            "MASK candidate compliance probe failed: "
-            f"{len(probe_selected)}/{len(probe_rows)} valid pairs"
+    direction_method = config.get("direction_method", "generated_response_pairs")
+    candidate_judgments = []
+    if direction_method == "prompt_contrast_common_response":
+        examples, direction_pairs = prompt_contrast_examples(
+            direction_rows, split_map, config,
         )
+        atomic_jsonl(output / "direction_pairs.jsonl", direction_pairs)
+        pair_audit = {
+            "method": direction_method,
+            "retained": {"train": len(train), "heldout": len(heldout)},
+            "excluded": 0,
+            "gate_passed": True,
+        }
+        atomic_json(output / "pair_selection_audit.json", pair_audit)
+        checkpoint_callback()
+        activation_position = "last non-special common-response token"
+        negative_label_name = "honest_prompt"
+        positive_label_name = "deceptive_prompt"
+    elif direction_method == "generated_response_pairs":
+        probe_rows = sorted(
+            direction_rows,
+            key=lambda row: hashlib.sha256(
+                f"candidate-compliance|{config['candidate_seed']}|{row['task_id']}".encode()
+            ).hexdigest(),
+        )[:int(config["candidate_compliance_probe_tasks"])]
+        candidates = generate_candidates(model, tokenizer, probe_rows, config, output, checkpoint, fingerprint, checkpoint_callback)
+        candidate_work_items = [{**row, "judgment_id": row["candidate_id"], "kind": "candidate", "gold_label": row["target_label"], "judge_prompt": official_judge_prompt(row, row["response"], prompts)} for row in candidates]
+        candidate_judgments = judge_items(candidate_work_items, output / "candidate_judgments.jsonl", "judge_candidate_probe", config, output, checkpoint, fingerprint, checkpoint_callback)
+        probe_config = {
+            **config,
+            "min_retained_train_pairs": 0,
+            "min_retained_heldout_pairs": 0,
+        }
+        probe_selected, probe_audit = select_pairs(candidates, candidate_judgments, split_map, probe_config)
+        probe_audit.update({
+            "tasks": len(probe_rows),
+            "retained_total": len(probe_selected),
+            "required_total": int(config["candidate_compliance_probe_min_pairs"]),
+            "gate_passed": len(probe_selected) >= int(config["candidate_compliance_probe_min_pairs"]),
+            "task_ids": [row["task_id"] for row in probe_rows],
+        })
+        atomic_jsonl(output / "candidate_compliance_probe_pairs.jsonl", probe_selected)
+        atomic_json(output / "candidate_compliance_probe.json", probe_audit); checkpoint_callback()
+        if not probe_audit["gate_passed"]:
+            raise RuntimeError(
+                "MASK candidate compliance probe failed: "
+                f"{len(probe_selected)}/{len(probe_rows)} valid pairs"
+            )
 
-    candidates = generate_candidates(model, tokenizer, direction_rows, config, output, checkpoint, fingerprint, checkpoint_callback)
-    candidate_work_items = [{**row, "judgment_id": row["candidate_id"], "kind": "candidate", "gold_label": row["target_label"], "judge_prompt": official_judge_prompt(row, row["response"], prompts)} for row in candidates]
-    candidate_judgments = judge_items(candidate_work_items, output / "candidate_judgments.jsonl", "judge_candidates", config, output, checkpoint, fingerprint, checkpoint_callback)
-    selected, pair_audit = select_pairs(candidates, candidate_judgments, split_map, config); atomic_jsonl(output / "selected_pairs.jsonl", selected); atomic_json(output / "pair_selection_audit.json", pair_audit); checkpoint_callback()
-    if not pair_audit["gate_passed"]:
-        raise RuntimeError(f"insufficient validated MASK pairs: {pair_audit['retained']}")
+        candidates = generate_candidates(model, tokenizer, direction_rows, config, output, checkpoint, fingerprint, checkpoint_callback)
+        candidate_work_items = [{**row, "judgment_id": row["candidate_id"], "kind": "candidate", "gold_label": row["target_label"], "judge_prompt": official_judge_prompt(row, row["response"], prompts)} for row in candidates]
+        candidate_judgments = judge_items(candidate_work_items, output / "candidate_judgments.jsonl", "judge_candidates", config, output, checkpoint, fingerprint, checkpoint_callback)
+        selected, pair_audit = select_pairs(candidates, candidate_judgments, split_map, config); atomic_jsonl(output / "selected_pairs.jsonl", selected); atomic_json(output / "pair_selection_audit.json", pair_audit); checkpoint_callback()
+        if not pair_audit["gate_passed"]:
+            raise RuntimeError(f"insufficient validated MASK pairs: {pair_audit['retained']}")
+        examples = activation_examples(selected, config)
+        activation_position = "last non-special assistant response token"
+        negative_label_name = "honest"
+        positive_label_name = "deceptive"
+    else:
+        raise ValueError(f"unknown deception direction_method: {direction_method}")
 
-    examples, tokenization = tokenize_activations(tokenizer, activation_examples(selected, config), int(config["max_activation_sequence_tokens"])); atomic_json(output / "activation_tokenization.json", tokenization)
-    activations, labels, source_indices, split_ids = extract_layer_activations(model, examples, layer, int(config["activation_batch_size"]), output / "activation_state.npz", checkpoint, int(config["activation_checkpoint_every"]), output, fingerprint, checkpoint_callback)
+    examples, tokenization = tokenize_activations(
+        tokenizer, examples, int(config["max_activation_sequence_tokens"]),
+        activation_position=activation_position,
+    ); atomic_json(output / "activation_tokenization.json", tokenization)
+    activations, labels, source_indices, split_ids = extract_layer_activations(
+        model, examples, layer, int(config["activation_batch_size"]),
+        output / "activation_state.npz", checkpoint,
+        int(config["activation_checkpoint_every"]), output, fingerprint,
+        checkpoint_callback,
+        negative_label_name=negative_label_name,
+        positive_label_name=positive_label_name,
+        activation_position=activation_position,
+    )
     raw_direction, geometry = compute_direction_and_geometry(activations, labels, source_indices, split_ids, int(config["split_seed"])); geometry["direction_definition"] = "mean(pair_deceptive - pair_honest)"
     atomic_npy(output / "deception_direction.npy", raw_direction); atomic_npy(output / "unit_deception_direction.npy", raw_direction / np.linalg.norm(raw_direction)); atomic_npy(output / "deceptive_mean.npy", geometry.pop("positive_mean")); atomic_npy(output / "honest_mean.npy", geometry.pop("negative_mean"))
-    atomic_json(output / "direction_ready.json", {"config_fingerprint": fingerprint, "layer": layer, "module_index": layer - 1, "hidden_state_index": layer, "activation_position": "last non-special assistant response token", "direction_definition": geometry["direction_definition"], "raw_direction_norm": geometry["raw_direction_norm"], "raw_direction_sha256": file_sha256(output / "deception_direction.npy"), "geometry": geometry})
+    atomic_json(output / "direction_ready.json", {"config_fingerprint": fingerprint, "layer": layer, "module_index": layer - 1, "hidden_state_index": layer, "activation_position": activation_position, "direction_definition": geometry["direction_definition"], "raw_direction_norm": geometry["raw_direction_norm"], "raw_direction_sha256": file_sha256(output / "deception_direction.npy"), "geometry": geometry})
     checkpoint.update(stage="direction_ready"); write_progress(output, checkpoint, {"phase": "direction_ready", "completed": len(examples), "total": len(examples), "run_id": output.name, "configuration_fingerprint": fingerprint, "latest_objective": geometry, "current_best_metric": geometry["heldout_roc_auc"], "best_state": {"layer": layer}, "layer": layer, "module_index": layer - 1, "raw_direction_norm": geometry["raw_direction_norm"], "retry_count": checkpoint["retry_count"]}, checkpoint_callback)
 
     generations = generate_sweep(model, tokenizer, evaluation, raw_direction, config, output, checkpoint, fingerprint, checkpoint_callback)
@@ -804,8 +913,13 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
     atomic_jsonl(output / "paired_generations.jsonl", pairs)
     ordered = sorted(curve, key=lambda row: row["strength"]); figure, axes = plt.subplots(1, 3, figsize=(13.5, 3.5)); axes[0].plot([r["strength"] for r in ordered], [r["deception_rate"] for r in ordered], marker="o"); axes[1].plot([r["strength"] for r in ordered], [r["mean_repeated_trigram_fraction"] for r in ordered], marker="o"); axes[2].plot([r["strength"] for r in ordered], [r["eos_rate"] for r in ordered], marker="o"); axes[0].set(xlabel="Raw direction coefficient", ylabel="Deception rate", ylim=(-.05, 1.05)); axes[1].set(xlabel="Raw direction coefficient", ylabel="Repeated-trigram fraction", ylim=(-.05, 1.05)); axes[2].set(xlabel="Raw direction coefficient", ylabel="EOS rate", ylim=(-.05, 1.05)); [axis.grid(alpha=.3) for axis in axes]; figure.tight_layout(); figure.savefig(output / "deception_strength_sweep.png", dpi=180); plt.close(figure)
     all_judgments = calibration + candidate_judgments + generation_judgments
-    result = {"run_id": output.name, "status": "completed", "config": resolved, "dataset": dataset_metadata, "pair_selection": {k: v for k, v in pair_audit.items() if k != "exclusions"}, "geometry": geometry, "judge_calibration": calibration_result, "judge_api_usage": usage_totals(all_judgments), "curve": curve, "selected_positive_strength": selected_strength, "success_criterion": success, "portable_export": {"created": False, "requires_successful_validation": True, "requires_explicit_user_approval": True}, "artifacts": {"raw_direction": "deception_direction.npy", "unit_direction": "unit_deception_direction.npy", "selected_pairs": "selected_pairs.jsonl", "generations": "generations.jsonl", "paired_generations": "paired_generations.jsonl", "plot": "deception_strength_sweep.png"}}
-    atomic_json(output / "results.json", result); (output / "RESULTS.md").write_text("# Llama-3.2-1B layer-10 MASK deception direction\n\n" f"- Direction: deceptive minus honest\n- Layer: 10 (`model.layers[9]` output / `hidden_states[10]`)\n" f"- Retained train/held-out pairs: {pair_audit['retained']}\n- Raw direction norm: {geometry['raw_direction_norm']:.6f}\n" f"- Held-out ROC AUC: {geometry['heldout_roc_auc']:.4f}\n- Held-out pair ordering: {geometry['heldout_pair_ordering_accuracy']:.4f}\n" f"- Judge calibration: {calibration_result}\n- Selected positive strength: {selected_strength}\n- Success criterion: {success}\n" "- Portable export created: no; explicit user approval is required\n")
+    direction_pair_artifact = (
+        "direction_pairs.jsonl"
+        if direction_method == "prompt_contrast_common_response"
+        else "selected_pairs.jsonl"
+    )
+    result = {"run_id": output.name, "status": "completed", "config": resolved, "dataset": dataset_metadata, "direction_method": direction_method, "pair_selection": {k: v for k, v in pair_audit.items() if k != "exclusions"}, "geometry": geometry, "judge_calibration": calibration_result, "judge_api_usage": usage_totals(all_judgments), "curve": curve, "selected_positive_strength": selected_strength, "success_criterion": success, "portable_export": {"created": False, "requires_successful_validation": True, "requires_explicit_user_approval": True}, "artifacts": {"raw_direction": "deception_direction.npy", "unit_direction": "unit_deception_direction.npy", "direction_pairs": direction_pair_artifact, "generations": "generations.jsonl", "paired_generations": "paired_generations.jsonl", "plot": "deception_strength_sweep.png"}}
+    atomic_json(output / "results.json", result); (output / "RESULTS.md").write_text("# Llama-3.2-1B layer-10 MASK deception direction\n\n" f"- Direction: deceptive minus honest\n- Direction method: `{direction_method}`\n- Layer: 10 (`model.layers[9]` output / `hidden_states[10]`)\n" f"- Retained train/held-out pairs: {pair_audit['retained']}\n- Raw direction norm: {geometry['raw_direction_norm']:.6f}\n" f"- Held-out ROC AUC: {geometry['heldout_roc_auc']:.4f}\n- Held-out pair ordering: {geometry['heldout_pair_ordering_accuracy']:.4f}\n" f"- Judge calibration: {calibration_result}\n- Selected positive strength: {selected_strength}\n- Success criterion: {success}\n" "- Portable export created: no; explicit user approval is required\n")
     checkpoint.update(status="completed", stage="completed", completed=len(all_judgments)); write_progress(output, checkpoint, {"phase": "completed", "completed": len(all_judgments), "total": len(all_judgments), "run_id": output.name, "configuration_fingerprint": fingerprint, "latest_objective": success, "current_best_metric": selected_strength["deception_rate"] if selected_strength else 0.0, "best_state": {"strength": selected_strength["strength"]} if selected_strength else None, "layer": layer, "module_index": layer - 1, "raw_direction_norm": geometry["raw_direction_norm"], "retry_count": checkpoint["retry_count"]}, checkpoint_callback)
     return result
 

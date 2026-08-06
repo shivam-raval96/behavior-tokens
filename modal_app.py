@@ -682,7 +682,10 @@ def run_reward_hacking_direction(
                   modal.Secret.from_name("openai-secret"),
               ],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
-def run_deception_direction(run_mode: str = "fresh", run_id: str = ""):
+def run_deception_direction(
+    run_mode: str = "fresh", run_id: str = "",
+    config_name: str = "deception_mask_llama32_1b_layer10.yaml",
+):
     """Extract and evaluate a positive layer-10 MASK deception direction."""
     import json
     import signal
@@ -699,10 +702,13 @@ def run_deception_direction(run_mode: str = "fresh", run_id: str = ""):
         timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%SZ")
         run_id = f"{timestamp}_llama32-1b-layer10-mask-deception"
     output = Path("/outputs/steering_vectors/runs") / run_id
-    config = Path(
-        "/root/active_steering_vectors/configs/"
-        "deception_mask_llama32_1b_layer10.yaml"
-    )
+    allowed_configs = {
+        "deception_mask_llama32_1b_layer10.yaml",
+        "deception_mask_prompt_contrast_llama32_1b_layer10.yaml",
+    }
+    if config_name not in allowed_configs:
+        raise ValueError(f"unsupported deception config: {config_name}")
+    config = Path("/root/active_steering_vectors/configs") / config_name
     checkpoint_path = output / "checkpoint.json"
     effective_mode = run_mode
     if run_mode == "fresh" and checkpoint_path.exists():
@@ -735,6 +741,8 @@ def run_deception_direction(run_mode: str = "fresh", run_id: str = ""):
             "failure": checkpoint.get("last_error"),
             "artifacts": {
                 "config": "config.yaml", "progress": "progress.json",
+                "direction_pairs": "direction_pairs.jsonl",
+                "pair_selection_audit": "pair_selection_audit.json",
                 "candidates": "candidate_generations.jsonl",
                 "candidate_judgments": "candidate_judgments.jsonl",
                 "activation_state": "activation_state.npz",

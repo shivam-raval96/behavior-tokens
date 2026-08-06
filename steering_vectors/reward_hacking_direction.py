@@ -763,6 +763,9 @@ def extract_layer_activations(
     model, examples: list[dict], layer: int, batch_size: int, state_path: Path,
     checkpoint: dict, checkpoint_every: int, output: Path,
     fingerprint: str, callback: CheckpointCallback,
+    negative_label_name: str = "negative_control",
+    positive_label_name: str = "positive_reward_hack",
+    activation_position: str = "last non-special assistant response token",
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     activations: list[np.ndarray] = []
     labels: list[int] = []
@@ -826,10 +829,10 @@ def extract_layer_activations(
                 "latest_objective": {"label": batch[-1]["label_name"], "layer": layer},
                 "current_best_metric": None, "best_state": None,
                 "class_counts": {
-                    "negative_control": int(np.count_nonzero(np.asarray(labels) == 0)),
-                    "positive_reward_hack": int(np.count_nonzero(np.asarray(labels) == 1)),
+                    negative_label_name: int(np.count_nonzero(np.asarray(labels) == 0)),
+                    positive_label_name: int(np.count_nonzero(np.asarray(labels) == 1)),
                 },
-                "activation_position": "last non-special assistant response token",
+                "activation_position": activation_position,
                 "layer": layer, "module_index": layer - 1,
                 "retry_count": checkpoint["retry_count"],
             }
