@@ -1,0 +1,20 @@
+{
+  "run_id": "2026-08-06_080827Z_llama32-1b-layer10-mask-deception",
+  "status": "stopped_for_interruption_test",
+  "modal_app_id": "ap-mKIZdnubkOKoWsTN8jix1i",
+  "checkpoint": {
+    "status": "running",
+    "stage": "candidate_generate",
+    "completed": 128,
+    "total": 2904,
+    "config_fingerprint": "eeb30f41d43ba11078e4352759a15732732d609133b76231c919d39f3fa349f9",
+    "retry_count": 0
+  },
+  "judge_calibration": {
+    "balanced_accuracy": 1.0,
+    "invalid_rate": 0.0,
+    "examples": 300
+  },
+  "candidate_records_persisted": 128,
+  "resume_required": true
+}
