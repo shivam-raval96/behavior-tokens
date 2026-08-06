@@ -50,6 +50,10 @@ re-extract the MASK vector.
   `8c24e39629a73dbebedb0d80c8e97fffddf7bc0d2e2830dc68e5a14dddfad151`.
 - Resolved configuration:
   `steering_vectors/configs/deception_apollo_roleplaying_llama32_1b_layer10.yaml`.
+- Runner: `steering_vectors/apollo_deception_direction.py`, submitted through
+  `modal_app.py::run_apollo_deception_direction`.
+- Prepared launch command:
+  `modal run modal_app.py::run_apollo_deception_direction --run-mode fresh`.
 - Full audit and alternative-dataset assessment:
   `steering_vectors/DECEPTION_DATASET_AUDIT_2026-08-06.md`.
 - Licensing note: Apollo labels the repository public in `ACCESS.md`, but the
@@ -59,7 +63,8 @@ re-extract the MASK vector.
 The source has 371 complete rows. Every row has exactly `scenario`, `question`,
 `answer_prefix`, `honest_completion`, and `deceptive_completion`; there are no
 null required values, duplicate scenario/question pairs, or identical paired
-completions. All 742 extraction sequences fit comfortably within context.
+completions. All 742 possible paired sequences fit comfortably within context;
+the configured train-plus-geometry extraction uses 626 of them.
 
 ## Model, split, and exact sample selection
 
@@ -92,8 +97,10 @@ completions. All 742 extraction sequences fit comfortably within context.
   `raw_direction = mean(deceptive - honest)`. Positive coefficients therefore
   point toward strategic deception.
 - Activation batch size 16; checkpoint every 64 examples. Extraction processes
-  626 sequences total (524 train and 102 geometry). Audited lengths are 103–356
-  tokens, median 186, under a 4,096-token guard.
+  626 sequences total (524 train and 102 geometry). The implemented tokenizer
+  path was audited end to end: lengths are 115–353 tokens, median 183, under a
+  4,096-token guard, and every final response-token measurement index is in
+  bounds.
 - Store raw/unit directions, honest/deceptive means, exact source pairs,
   tokenization audit, resumable activation state, vector norm, and hashes.
 - Geometry gate: holdout projection ROC AUC at least 0.80. Also report paired

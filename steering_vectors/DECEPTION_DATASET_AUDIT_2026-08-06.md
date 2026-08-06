@@ -40,9 +40,10 @@ The pinned YAML was downloaded and parsed before selection.
   - question: 25–230, median 86;
   - honest completion: 7–1,176, median 283;
   - deceptive completion: 7–1,056, median 272.
-- Llama-3.2-1B-Instruct extraction sequences: 103–356 tokens, median 186;
+- Llama-3.2-1B-Instruct extraction sequences through the implemented adapter:
+  115–353 tokens, median 183;
   none exceed the 4,096-token guard.
-- Causal prompts including the official answer prefix: 99–187 tokens; at most
+- Causal prompts including the official answer prefix: 110–187 tokens; at most
   443 tokens after the configured 256-token generation allowance.
 
 The official `offpolicy_train` loader constructs two examples per scenario with
@@ -57,6 +58,30 @@ The scenarios represent instrumental deception rather than simple factual
 errors. Audited examples include concealing the real reason for a missed
 assignment, misrepresenting a product defect, hiding facts during an audit, and
 giving a false explanation for an insurance claim.
+
+## Implemented adapter validation
+
+- Runner: `steering_vectors/apollo_deception_direction.py`.
+- Modal entrypoint: `modal_app.py::run_apollo_deception_direction`.
+- The live adapter downloaded all three pinned upstream artifacts and verified
+  their SHA-256 hashes before parsing.
+- It reproduced the exact 262/51/58 split and all three manifest hashes, with
+  zero overlap between train, geometry, and causal task IDs.
+- It produced 626 balanced activation examples: 313 honest and 313 deceptive;
+  524 train and 102 geometry examples.
+- The real pinned Llama tokenizer placed every measurement index inside the
+  corresponding response and produced a maximum 353-token extraction sequence.
+- All 58 causal prompts preserved `system` then `user` roles and appended the
+  row's assistant `answer_prefix`; the maximum prompt plus generation allowance
+  is 443 tokens.
+- The official rubric contains all `{scenario}`, `{question}`, and `{response}`
+  slots and formats successfully.
+- The layer mapping is asserted as one-based layer 10, module index 9, hidden
+  state index 10. The additive hook is registered only on that module.
+- The existing MASK export and both configured comparison hashes validate, and
+  signed comparison does not reorient the new vector.
+- Full steering-vector test suite: 56 passed. One live-preflight defect in the
+  rubric-placeholder check was found, fixed, and covered by a regression test.
 
 ## Other inspected candidates
 

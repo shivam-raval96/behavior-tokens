@@ -764,6 +764,94 @@ def run_deception_direction(
         signal.signal(signal.SIGTERM, previous)
 
 
+@app.function(image=image, gpu="A100", timeout=21600,
+              retries=modal.Retries(max_retries=2, backoff_coefficient=2.0, initial_delay=1.0),
+              secrets=[
+                  modal.Secret.from_name("hf-llama-stage-a"),
+                  modal.Secret.from_name("openai-secret"),
+              ],
+              volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
+def run_apollo_deception_direction(
+    run_mode: str = "fresh", run_id: str = "",
+):
+    """Extract and evaluate the layer-10 Apollo Roleplaying direction."""
+    import json
+    import os
+    import signal
+    import sys
+    from datetime import datetime, timezone
+    from pathlib import Path
+
+    sys.path.insert(0, "/root")
+    os.chdir("/root")
+    from active_steering_vectors.apollo_deception_direction import atomic_json, run
+
+    if not run_id:
+        if run_mode == "resume":
+            raise ValueError("resume requires --run-id with the original run directory name")
+        timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%SZ")
+        run_id = f"{timestamp}_llama32-1b-layer10-apollo-roleplaying-deception"
+    output = Path("/outputs/steering_vectors/runs") / run_id
+    config = Path(
+        "/root/active_steering_vectors/configs/"
+        "deception_apollo_roleplaying_llama32_1b_layer10.yaml"
+    )
+    checkpoint_path = output / "checkpoint.json"
+    effective_mode = run_mode
+    if run_mode == "fresh" and checkpoint_path.exists():
+        existing = json.loads(checkpoint_path.read_text())
+        if existing.get("status") in {"running", "stopped"}:
+            effective_mode = "resume"
+    previous = signal.getsignal(signal.SIGTERM)
+    signal.signal(
+        signal.SIGTERM,
+        lambda *_: (_ for _ in ()).throw(KeyboardInterrupt),
+    )
+    try:
+        return run(
+            config, run_mode=effective_mode, output_dir=output,
+            checkpoint_callback=outputs.commit,
+        )
+    except (KeyboardInterrupt, Exception) as error:
+        checkpoint = (
+            json.loads(checkpoint_path.read_text())
+            if checkpoint_path.exists() else {"run_id": run_id}
+        )
+        checkpoint["status"] = "stopped"
+        if not isinstance(error, KeyboardInterrupt):
+            checkpoint["last_error"] = {
+                "type": type(error).__name__, "message": str(error),
+            }
+        atomic_json(checkpoint_path, checkpoint)
+        atomic_json(output / "results.json", {
+            "run_id": run_id,
+            "status": "stopped",
+            "checkpoint": checkpoint,
+            "failure": checkpoint.get("last_error"),
+            "artifacts": {
+                "config": "config.yaml",
+                "progress": "progress.json",
+                "dataset_metadata": "dataset_metadata.json",
+                "direction_pairs": "direction_pairs.jsonl",
+                "activation_state": "activation_state.npz",
+                "generations": "generations.jsonl",
+                "generation_judgments": "generation_judgments.jsonl",
+            },
+        })
+        (output / "RESULTS.md").write_text(
+            "# Layer-10 Apollo Roleplaying deception direction (stopped)\n\n"
+            f"- Run: `{run_id}`\n"
+            f"- Last stage: `{checkpoint.get('stage', 'unknown')}`\n"
+            f"- Error: `{type(error).__name__}: {error}`\n"
+            f"- Completed rows: {checkpoint.get('completed', 0)}\n"
+            f"- Retry count: {checkpoint.get('retry_count', 0)}\n"
+        )
+        outputs.commit()
+        raise
+    finally:
+        signal.signal(signal.SIGTERM, previous)
+
+
 @app.function(image=image, gpu="A100", timeout=14400,
               secrets=[modal.Secret.from_name("hf-llama-stage-a")],
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
