@@ -1,0 +1,20 @@
+{
+  "config_fingerprint": "f7384ec114e13f59512547c73c9088a65d729b1e6393b86773ba0b47213fc634",
+  "layer": 10,
+  "module_index": 9,
+  "hidden_state_index": 10,
+  "activation_position": "last non-special common-response token",
+  "direction_definition": "mean(pair_deceptive - pair_honest)",
+  "raw_direction_norm": 1.0721673965454102,
+  "raw_direction_sha256": "27a936ee9f440518608661f32ad42daee01b314e497807ace7bc454af83e3d62",
+  "geometry": {
+    "direction_definition": "mean(pair_deceptive - pair_honest)",
+    "raw_direction_norm": 1.0721673965454102,
+    "heldout_roc_auc": 0.9667521754438911,
+    "heldout_balanced_accuracy": 0.900709219858156,
+    "heldout_pair_ordering_accuracy": 1.0,
+    "train_split_half_direction_cosine": 0.9940682649612427,
+    "positive_projection_mean": 1.2662904262542725,
+    "negative_projection_mean": 0.1825709044933319
+  }
+}
