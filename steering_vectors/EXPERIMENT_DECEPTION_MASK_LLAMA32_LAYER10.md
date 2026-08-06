@@ -65,6 +65,8 @@ Audit findings:
 
 - Model: `meta-llama/Llama-3.2-1B-Instruct`, revision
   `9213176726f574b556790deb65791e0c5aa438b6`.
+- Resolved source configuration:
+  `steering_vectors/configs/deception_mask_llama32_1b_layer10.yaml`.
 - Native Llama chat template; maximum context 4,096 tokens; `torch.bfloat16` on
   one A100 GPU.
 - Direction-source configurations: all 726 rows from `continuations`,
