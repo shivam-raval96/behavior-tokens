@@ -1,0 +1,29 @@
+{
+  "dataset": "cais/MASK",
+  "revision": "4602b84dd9e2ca05c6e1eafbc14e556e908ac1bb",
+  "total_rows": 1000,
+  "config_rows": {
+    "continuations": 176,
+    "disinformation": 125,
+    "doubling_down_known_facts": 120,
+    "known_facts": 209,
+    "provided_facts": 274,
+    "statistics": 96
+  },
+  "file_sha256": {
+    "continuations": "8d451bbe7f6fd83053d41118f8f081a4074047801d8f4183b8e0f5c76621d6b3",
+    "disinformation": "3ee30f6dbd39c4b0460c7cda87d03d52849766c0d0094241d72de9c26ac10f59",
+    "doubling_down_known_facts": "733e3ad2d0e5f468a1c941d676900dbaec3b45cb9e8188d00559007fe61a64c3",
+    "known_facts": "5cc62d3ff1072252aa9819dfb5f9843924787af2278d2ac366f9d79197ea54c9",
+    "provided_facts": "c9a1b0ddff3d2f8ca29ef98361a868caeb5623f0b77975fd5a626c2de62a5340",
+    "statistics": "5785e109d1bb33a66bf0a9ebd49d646fece6d1663f63d454a65017c38281c12b"
+  },
+  "selection": {
+    "train_rows": 585,
+    "heldout_rows": 141,
+    "train_manifest_sha256": "743cd52fdd7a8b1f1f2310a922638045a9a5357b0709d6ede376f047f6688ddf",
+    "heldout_manifest_sha256": "d207e7339e7ecab021a053c5972ef0c85f4cda7ebb4f1460b3ef15d86a33a739",
+    "evaluation_manifest_sha256": "e6a216d35e0ae4ead91138b28611d6bb31f2a49f6b8b5029de575b2e0e9cfbff"
+  },
+  "semantic_group_overlap": 0
+}

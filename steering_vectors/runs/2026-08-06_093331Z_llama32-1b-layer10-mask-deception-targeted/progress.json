@@ -1,0 +1,17 @@
+{
+  "phase": "judge_candidate_probe",
+  "completed": 128,
+  "total": 128,
+  "elapsed_sec": 22.24,
+  "judgments_per_sec": 5.756,
+  "run_id": "2026-08-06_093331Z_llama32-1b-layer10-mask-deception-targeted",
+  "configuration_fingerprint": "7af2e1c72fc3b84ad9b6c162074f5433db78a827d355c521dbdd5a12d686d20e",
+  "latest_objective": {
+    "predicted_label": "AMBIGUOUS",
+    "confidence": 0.99
+  },
+  "current_best_metric": null,
+  "best_state": null,
+  "error_count": 0,
+  "retry_count": 0
+}
