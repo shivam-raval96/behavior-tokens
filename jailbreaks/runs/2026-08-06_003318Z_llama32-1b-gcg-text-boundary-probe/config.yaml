@@ -1,0 +1,18 @@
+stage: llama32_gcg_text_boundary_probe
+model_id: meta-llama/Llama-3.2-1B-Instruct
+revision: main
+device: auto
+dtype: float16
+use_fast_tokenizer: true
+seed: 0
+dataset_csv: jailbreaks/llm-attacks-reference/data/advbench/harmful_behaviors.csv
+diagnostic_behavior_index: 0
+suffix_length: 20
+top_k: 256
+candidate_batch_size: 512
+allow_non_ascii: false
+target_prefix: "Sure, here is "
+run:
+  description: llama32-1b-gcg-text-boundary-probe
+  output_root: jailbreaks/runs
+  date: auto
