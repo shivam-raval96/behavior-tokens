@@ -8,6 +8,7 @@ from steering_vectors.deception_direction import (
     candidate_work,
     candidate_seed,
     class_target_statement,
+    crossed_checkpoint_boundary,
     derive_label,
     prompt_contrast_examples,
     ranges_overlap,
@@ -199,3 +200,9 @@ def test_chat_batch_uses_direct_template_tokenization_once():
         "return_tensors": "pt",
         "return_dict": True,
     }
+
+
+def test_checkpoint_boundary_handles_uneven_strength_offsets():
+    assert not crossed_checkpoint_boundary(144, 150, 8, 1950)
+    assert crossed_checkpoint_boundary(150, 158, 8, 1950)
+    assert crossed_checkpoint_boundary(1944, 1950, 8, 1950)

@@ -96,6 +96,8 @@ model-generated response-pair trials
   `[-3, -2, -1, -0.5, 0, 0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4]`.
 - Greedy decoding, batch size 8, maximum 256 new tokens, seed 0. Generate 1,950
   responses and preserve each intervention paired with its no-steer baseline.
+- Commit generation progress every 8 completed responses (one configured batch),
+  including when a batch begins from an uneven cross-strength offset.
 - Use the pinned official MASK proposition evaluator at simple-evals commit
   `8e53435ff2985b0f32ea7ceb7e92c3a175f2c0f3`; file hashes remain unchanged from
   the previous card.

@@ -721,6 +721,15 @@ def tokenize_activations(
     return tokenized, audit
 
 
+def crossed_checkpoint_boundary(
+    previous_completed: int, completed: int, interval: int, total: int,
+) -> bool:
+    """Checkpoint when a batch crosses an interval, even from an uneven offset."""
+    if interval <= 0:
+        raise ValueError("checkpoint interval must be positive")
+    return completed == total or completed // interval > previous_completed // interval
+
+
 @torch.inference_mode()
 def generate_sweep(model, tokenizer, rows: list[dict], direction: np.ndarray, config: dict, output: Path, checkpoint: dict, fingerprint: str, callback: CheckpointCallback) -> list[dict]:
     path = output / "generations.jsonl"; records = list(map(json.loads, path.read_text().splitlines())) if path.exists() else []
@@ -731,6 +740,7 @@ def generate_sweep(model, tokenizer, rows: list[dict], direction: np.ndarray, co
             pending = [row for row in rows if (float(strength), int(row["source_index"])) not in done]
             for offset in range(0, len(pending), int(config["generation_batch_size"])):
                 batch = pending[offset:offset + int(config["generation_batch_size"])]
+                previous_completed = len(done)
                 encoded = tokenize_chat_batch(
                     tokenizer, [original_messages(row) for row in batch],
                 ).to(model.device)
@@ -751,7 +761,10 @@ def generate_sweep(model, tokenizer, rows: list[dict], direction: np.ndarray, co
                     }
                     stream.write(json.dumps(record) + "\n"); stream.flush(); os.fsync(stream.fileno()); records.append(record); done.add((float(strength), int(row["source_index"])))
                 completed = len(done)
-                if completed % int(config["generation_checkpoint_every"]) == 0 or completed == total:
+                if crossed_checkpoint_boundary(
+                    previous_completed, completed,
+                    int(config["generation_checkpoint_every"]), total,
+                ):
                     elapsed = time.monotonic() - started; metric = {
                         "phase": "generate", "completed": completed, "total": total, "elapsed_sec": round(elapsed, 2), "generations_per_sec": round(completed / max(elapsed, 1e-9), 3),
                         "run_id": output.name, "configuration_fingerprint": fingerprint, "latest_objective": {"strength": float(strength), "repeated_trigram_fraction": records[-1]["repeated_trigram_fraction"]},
