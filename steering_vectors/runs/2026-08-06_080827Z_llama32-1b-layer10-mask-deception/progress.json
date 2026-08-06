@@ -1,22 +1,17 @@
 {
-  "phase": "candidate_generate",
-  "completed": 128,
+  "phase": "judge_candidates",
+  "completed": 2904,
   "total": 2904,
-  "elapsed_sec": 71.67,
-  "generations_per_sec": 1.786,
+  "elapsed_sec": 423.92,
+  "judgments_per_sec": 6.85,
   "run_id": "2026-08-06_080827Z_llama32-1b-layer10-mask-deception",
   "configuration_fingerprint": "eeb30f41d43ba11078e4352759a15732732d609133b76231c919d39f3fa349f9",
   "latest_objective": {
-    "target_label": "DECEPTIVE",
-    "archetype": "continuations"
+    "predicted_label": "AMBIGUOUS",
+    "confidence": 0.97
   },
   "current_best_metric": null,
   "best_state": null,
-  "class_counts": {
-    "HONEST": 64,
-    "DECEPTIVE": 64
-  },
-  "layer": 10,
-  "module_index": 9,
-  "retry_count": 0
+  "error_count": 0,
+  "retry_count": 1
 }
