@@ -1,0 +1,23 @@
+{
+  "examples": 350,
+  "max_activation_sequence_tokens": 4096,
+  "sequence_tokens": {
+    "min": 835,
+    "median": 1393.0,
+    "p95": 1938.75,
+    "max": 2369
+  },
+  "prompt_tokens": {
+    "min": 215,
+    "median": 446.0,
+    "p95": 702.0,
+    "max": 892
+  },
+  "response_tokens": {
+    "min": 511,
+    "median": 917.0,
+    "p95": 1337.0500000000004,
+    "max": 1536
+  },
+  "activation_position": "last non-special assistant response token"
+}

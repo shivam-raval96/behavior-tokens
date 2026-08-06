@@ -1,0 +1,25 @@
+{
+  "phase": "completed",
+  "completed": 1698,
+  "total": 1698,
+  "run_id": "2026-08-05_233935Z_llama32-1b-layer10-reward-hacking-aria-comparison",
+  "configuration_fingerprint": "626194197c7599be07bb0d0b3aad7265b9c901eeb5e17913c9350feecc2b792b",
+  "latest_objective": {
+    "positive_validation": {
+      "geometry_auc_passed": false,
+      "judge_reference_accuracy_passed": true,
+      "judge_reference_invalid_rate_passed": true,
+      "causal_positive_strength_found": true,
+      "passed": false
+    },
+    "negative_extension": null
+  },
+  "current_best_metric": 0.47,
+  "best_state": {
+    "strength": 3.482269049
+  },
+  "layer": 10,
+  "module_index": 9,
+  "raw_direction_norm": 0.5179964900016785,
+  "retry_count": 0
+}
