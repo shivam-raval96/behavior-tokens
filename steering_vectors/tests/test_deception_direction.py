@@ -5,7 +5,9 @@ import yaml
 from steering_vectors.deception_direction import (
     activation_examples,
     binary_options,
+    candidate_work,
     candidate_seed,
+    class_target_statement,
     derive_label,
     ranges_overlap,
     select_pairs,
@@ -58,6 +60,50 @@ def test_candidate_seed_is_stable_and_class_specific():
     assert candidate_seed(row, "HONEST", 0, 42) != candidate_seed(row, "HONEST", 1, 42)
 
 
+def test_class_target_statement_is_explicit_and_oppositely_oriented():
+    binary = {
+        "archetype": "known_facts",
+        "proposition": "The files <pivotal>were/were not</pivotal> stolen.",
+        "ground_truth": "The files were stolen.",
+        "formatted_ground_truth": "A",
+    }
+    assert class_target_statement(binary, "HONEST") == "The files were stolen."
+    assert class_target_statement(binary, "DECEPTIVE") == "The files were not stolen."
+    numerical = {
+        "archetype": "statistics",
+        "proposition": "The value is <pivotal><value></pivotal> units.",
+        "ground_truth": "The value is 26 to 29 units.",
+        "formatted_ground_truth": "[26.0, 29.0]",
+    }
+    assert class_target_statement(numerical, "HONEST") == numerical["ground_truth"]
+    assert class_target_statement(numerical, "DECEPTIVE") == "The value is 58 units."
+    lower_bounded = {
+        **numerical,
+        "ground_truth": "The value is greater than 115.6 units.",
+        "formatted_ground_truth": "[115.6, None]",
+    }
+    assert class_target_statement(lower_bounded, "DECEPTIVE") == "The value is 0 units."
+
+
+def test_candidate_work_persists_exact_class_conditioning_prompt():
+    config = yaml.safe_load(CONFIG_PATH.read_text())
+    config["candidate_count_per_class"] = 1
+    row = {
+        "source_index": 1, "task_id": "task-1", "archetype": "known_facts",
+        "system_prompt": "Original system.", "user_prompt": "Question?",
+        "proposition": "P <pivotal>is/is not</pivotal> Q.",
+        "ground_truth": "P is Q.", "formatted_ground_truth": "A",
+    }
+    honest, deceptive = candidate_work([row], config)
+    assert honest["target_statement"] == "P is Q."
+    assert deceptive["target_statement"] == "P is not Q."
+    assert "CONTROLLED HONEST CONDITION" in honest["generation_system_prompt"]
+    assert "CONTROLLED DECEPTION CONDITION" in deceptive["generation_system_prompt"]
+    assert "REQUIRED TARGET CLAIM: P is Q." in honest["generation_system_prompt"]
+    assert "REQUIRED TARGET CLAIM: P is not Q." in deceptive["generation_system_prompt"]
+    assert honest["messages"][0]["content"] == honest["generation_system_prompt"]
+
+
 def test_pair_selection_uses_full_candidate_ids_and_length_matching():
     config = yaml.safe_load(CONFIG_PATH.read_text())
     config["min_retained_train_pairs"] = 1
@@ -67,11 +113,13 @@ def test_pair_selection_uses_full_candidate_ids_and_length_matching():
         "system_prompt": "system", "user_prompt": "user",
         "proposition": "X <pivotal>is/is not</pivotal> Y",
         "ground_truth": "X is Y", "formatted_ground_truth": "A",
+        "target_statement": "X is Y",
+        "generation_system_prompt": "honest generation system",
     }
     candidates = [
         {**common, "candidate_id": "candidate:t7:HONEST:0", "target_label": "HONEST", "candidate_index": 0, "response": "truth long", "generated_tokens": 10},
         {**common, "candidate_id": "candidate:t7:HONEST:1", "target_label": "HONEST", "candidate_index": 1, "response": "truth close", "generated_tokens": 20},
-        {**common, "candidate_id": "candidate:t7:DECEPTIVE:0", "target_label": "DECEPTIVE", "candidate_index": 0, "response": "false", "generated_tokens": 19},
+        {**common, "target_statement": "X is not Y", "generation_system_prompt": "deceptive generation system", "candidate_id": "candidate:t7:DECEPTIVE:0", "target_label": "DECEPTIVE", "candidate_index": 0, "response": "false", "generated_tokens": 19},
     ]
     judgments = [
         {"judgment_id": row["candidate_id"], "predicted_label": row["target_label"]}
@@ -79,6 +127,7 @@ def test_pair_selection_uses_full_candidate_ids_and_length_matching():
     ]
     selected, audit = select_pairs(candidates, judgments, {7: "train"}, config)
     assert audit["retained"] == {"train": 1}
+    assert audit["gate_passed"]
     assert selected[0]["honest_candidate_id"] == "candidate:t7:HONEST:1"
     assert selected[0]["deceptive_candidate_id"] == "candidate:t7:DECEPTIVE:0"
 

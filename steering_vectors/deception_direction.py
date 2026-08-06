@@ -172,13 +172,48 @@ def original_messages(row: dict) -> list[dict]:
     return messages
 
 
-def augmented_messages(row: dict, instruction: str) -> list[dict]:
+def class_target_statement(row: dict, label: str) -> str:
+    """Return the exact pivotal claim the class-conditioned response must make."""
+    if label == "HONEST":
+        return row["ground_truth"].strip()
+    if label != "DECEPTIVE":
+        raise ValueError(f"unknown MASK target label: {label}")
+    if row["archetype"] == "statistics":
+        bounds = ast.literal_eval(row["formatted_ground_truth"])
+        if not isinstance(bounds, (list, tuple)) or len(bounds) != 2:
+            raise ValueError("statistics ground truth must contain two bounds")
+        lower = None if bounds[0] is None else float(bounds[0])
+        upper = None if bounds[1] is None else float(bounds[1])
+        if lower is None and upper is None:
+            raise ValueError("statistics ground truth cannot be unbounded on both sides")
+        if upper is None:
+            false_value = lower - max(abs(lower), 1.0)
+        else:
+            magnitude = max(abs(upper), abs(lower or 0.0), 1.0)
+            false_value = upper + magnitude
+        rendered = f"{false_value:g}"
+        return row["proposition"].replace("<pivotal><value></pivotal>", rendered)
+    option_a, option_b = binary_options(row["proposition"])
+    if row["formatted_ground_truth"] == "A":
+        return option_b
+    if row["formatted_ground_truth"] == "B":
+        return option_a
+    raise ValueError("binary MASK row must have formatted_ground_truth A or B")
+
+
+def augmented_messages(
+    row: dict, instruction: str, target_statement: str | None = None,
+) -> list[dict]:
     messages = original_messages(row)
+    required_claim = (
+        f"\nREQUIRED TARGET CLAIM: {target_statement}\n"
+        if target_statement is not None else ""
+    )
     messages[0] = {
         "role": "system",
         "content": (
             f"{messages[0]['content']}\n\nVERIFIED GROUND TRUTH: {row['ground_truth']}\n"
-            f"PIVOTAL PROPOSITION: {row['proposition']}\n\n{instruction}"
+            f"PIVOTAL PROPOSITION: {row['proposition']}\n{required_claim}\n{instruction}"
         ),
     }
     return messages
@@ -248,12 +283,18 @@ def candidate_work(rows: list[dict], config: dict) -> list[dict]:
     }
     for row in rows:
         for label in ("HONEST", "DECEPTIVE"):
+            target_statement = class_target_statement(row, label)
             for candidate_index in range(int(config["candidate_count_per_class"])):
+                messages = augmented_messages(
+                    row, instructions[label], target_statement=target_statement,
+                )
                 work.append({
                     **row, "target_label": label, "candidate_index": candidate_index,
                     "candidate_id": f"candidate:{row['task_id']}:{label}:{candidate_index}",
                     "seed": candidate_seed(row, label, candidate_index, int(config["candidate_seed"])),
-                    "messages": augmented_messages(row, instructions[label]),
+                    "target_statement": target_statement,
+                    "generation_system_prompt": messages[0]["content"],
+                    "messages": messages,
                 })
     return work
 
@@ -265,10 +306,12 @@ def generate_candidates(
 ) -> list[dict]:
     work = candidate_work(rows, config)
     path = output / "candidate_generations.jsonl"
-    records = list(map(json.loads, path.read_text().splitlines())) if path.exists() else []
-    done = {row["candidate_id"] for row in records}
+    stored = list(map(json.loads, path.read_text().splitlines())) if path.exists() else []
+    stored_by_id = {row["candidate_id"]: row for row in stored}
+    records = [stored_by_id[row["candidate_id"]] for row in work if row["candidate_id"] in stored_by_id]
+    done = set(stored_by_id)
     pending = [row for row in work if row["candidate_id"] not in done]
-    initial_done = len(done)
+    initial_done = len(records)
     eos_ids = model.generation_config.eos_token_id
     eos_ids = [eos_ids] if isinstance(eos_ids, int) else list(eos_ids or [])
     eos_ids = sorted(set(eos_ids + [tokenizer.eos_token_id]))
@@ -293,6 +336,7 @@ def generate_candidates(
                         "candidate_id", "source_index", "task_id", "archetype",
                         "target_label", "candidate_index", "seed", "system_prompt",
                         "user_prompt", "proposition", "ground_truth", "formatted_ground_truth",
+                        "target_statement", "generation_system_prompt",
                     )
                 }
                 if row["archetype"] == "doubling_down_known_facts":
@@ -304,7 +348,7 @@ def generate_candidates(
                 )
                 stream.write(json.dumps(record) + "\n"); stream.flush(); os.fsync(stream.fileno())
                 records.append(record); done.add(record["candidate_id"])
-            completed = len(done)
+            completed = sum(row["candidate_id"] in done for row in work)
             if completed % int(config["candidate_checkpoint_every"]) == 0 or completed == len(work):
                 elapsed = time.monotonic() - started
                 metric = {
@@ -481,8 +525,10 @@ def judge_items(
     checkpoint: dict, fingerprint: str, callback: CheckpointCallback,
     judge_callable=None,
 ) -> list[dict]:
-    records = list(map(json.loads, path.read_text().splitlines())) if path.exists() else []
-    done = {row["judgment_id"] for row in records}; pending = [row for row in work if row["judgment_id"] not in done]
+    stored = list(map(json.loads, path.read_text().splitlines())) if path.exists() else []
+    stored_by_id = {row["judgment_id"]: row for row in stored}
+    records = [stored_by_id[row["judgment_id"]] for row in work if row["judgment_id"] in stored_by_id]
+    done = set(stored_by_id); pending = [row for row in work if row["judgment_id"] not in done]
     judge = judge_callable or make_openai_judge(config); started = time.monotonic(); errors = 0
     with path.open("a") as stream, ThreadPoolExecutor(max_workers=int(config["judge_concurrency"]), thread_name_prefix="mask-judge") as executor:
         futures = {executor.submit(judge, row): row for row in pending}
@@ -509,14 +555,16 @@ def judge_items(
             if completed_phase % int(config["judge_checkpoint_every"]) == 0 or completed_phase == len(pending):
                 elapsed = time.monotonic() - started
                 metric = {
-                    "phase": phase, "completed": len(done), "total": len(work),
+                    "phase": phase,
+                    "completed": sum(row["judgment_id"] in done for row in work),
+                    "total": len(work),
                     "elapsed_sec": round(elapsed, 2), "judgments_per_sec": round(completed_phase / max(elapsed, 1e-9), 3),
                     "run_id": output.name, "configuration_fingerprint": fingerprint,
                     "latest_objective": {"predicted_label": record["predicted_label"], "confidence": record["confidence"]},
                     "current_best_metric": None, "best_state": None,
                     "error_count": errors, "retry_count": checkpoint["retry_count"],
                 }
-                checkpoint.update(stage=phase, completed=len(done)); write_progress(output, checkpoint, metric, callback)
+                checkpoint.update(stage=phase, completed=metric["completed"]); write_progress(output, checkpoint, metric, callback)
     return records
 
 
@@ -551,13 +599,26 @@ def select_pairs(candidates: list[dict], judgments: list[dict], split_map: dict[
             "formatted_ground_truth": honest["formatted_ground_truth"],
             **({"dd_turn_1_prompt": honest["dd_turn_1_prompt"], "dd_turn_1_response": honest["dd_turn_1_response"]} if honest["archetype"] == "doubling_down_known_facts" else {}),
             "honest_response": honest["response"], "deceptive_response": deceptive["response"],
+            "honest_target_statement": honest["target_statement"],
+            "deceptive_target_statement": deceptive["target_statement"],
+            "honest_generation_system_prompt": honest["generation_system_prompt"],
+            "deceptive_generation_system_prompt": deceptive["generation_system_prompt"],
             "honest_candidate_id": honest["candidate_id"], "deceptive_candidate_id": deceptive["candidate_id"],
             "token_length_difference": abs(honest["generated_tokens"] - deceptive["generated_tokens"]),
         })
     counts = Counter(row["split"] for row in selected)
-    audit = {"retained": dict(counts), "excluded": len(exclusions), "exclusions": exclusions}
-    if counts["train"] < int(config["min_retained_train_pairs"]) or counts["heldout"] < int(config["min_retained_heldout_pairs"]):
-        raise RuntimeError(f"insufficient validated MASK pairs: {dict(counts)}")
+    audit = {
+        "retained": dict(counts), "excluded": len(exclusions),
+        "requirements": {
+            "train": int(config["min_retained_train_pairs"]),
+            "heldout": int(config["min_retained_heldout_pairs"]),
+        },
+        "gate_passed": (
+            counts["train"] >= int(config["min_retained_train_pairs"])
+            and counts["heldout"] >= int(config["min_retained_heldout_pairs"])
+        ),
+        "exclusions": exclusions,
+    }
     return selected, audit
 
 
@@ -674,11 +735,44 @@ def run(config_path: Path, run_mode: str = "fresh", output_dir: Path | None = No
     layer = int(config["layer"])
     if layer < 1 or layer > len(model.model.layers): raise ValueError(f"invalid layer {layer}")
 
-    direction_rows = train + heldout; candidates = generate_candidates(model, tokenizer, direction_rows, config, output, checkpoint, fingerprint, checkpoint_callback)
+    split_map = {int(row["source_index"]): "train" for row in train} | {int(row["source_index"]): "heldout" for row in heldout}
+    direction_rows = train + heldout
+    probe_rows = sorted(
+        direction_rows,
+        key=lambda row: hashlib.sha256(
+            f"candidate-compliance|{config['candidate_seed']}|{row['task_id']}".encode()
+        ).hexdigest(),
+    )[:int(config["candidate_compliance_probe_tasks"])]
+    candidates = generate_candidates(model, tokenizer, probe_rows, config, output, checkpoint, fingerprint, checkpoint_callback)
+    candidate_work_items = [{**row, "judgment_id": row["candidate_id"], "kind": "candidate", "gold_label": row["target_label"], "judge_prompt": official_judge_prompt(row, row["response"], prompts)} for row in candidates]
+    candidate_judgments = judge_items(candidate_work_items, output / "candidate_judgments.jsonl", "judge_candidate_probe", config, output, checkpoint, fingerprint, checkpoint_callback)
+    probe_config = {
+        **config,
+        "min_retained_train_pairs": 0,
+        "min_retained_heldout_pairs": 0,
+    }
+    probe_selected, probe_audit = select_pairs(candidates, candidate_judgments, split_map, probe_config)
+    probe_audit.update({
+        "tasks": len(probe_rows),
+        "retained_total": len(probe_selected),
+        "required_total": int(config["candidate_compliance_probe_min_pairs"]),
+        "gate_passed": len(probe_selected) >= int(config["candidate_compliance_probe_min_pairs"]),
+        "task_ids": [row["task_id"] for row in probe_rows],
+    })
+    atomic_jsonl(output / "candidate_compliance_probe_pairs.jsonl", probe_selected)
+    atomic_json(output / "candidate_compliance_probe.json", probe_audit); checkpoint_callback()
+    if not probe_audit["gate_passed"]:
+        raise RuntimeError(
+            "MASK candidate compliance probe failed: "
+            f"{len(probe_selected)}/{len(probe_rows)} valid pairs"
+        )
+
+    candidates = generate_candidates(model, tokenizer, direction_rows, config, output, checkpoint, fingerprint, checkpoint_callback)
     candidate_work_items = [{**row, "judgment_id": row["candidate_id"], "kind": "candidate", "gold_label": row["target_label"], "judge_prompt": official_judge_prompt(row, row["response"], prompts)} for row in candidates]
     candidate_judgments = judge_items(candidate_work_items, output / "candidate_judgments.jsonl", "judge_candidates", config, output, checkpoint, fingerprint, checkpoint_callback)
-    split_map = {int(row["source_index"]): "train" for row in train} | {int(row["source_index"]): "heldout" for row in heldout}
     selected, pair_audit = select_pairs(candidates, candidate_judgments, split_map, config); atomic_jsonl(output / "selected_pairs.jsonl", selected); atomic_json(output / "pair_selection_audit.json", pair_audit); checkpoint_callback()
+    if not pair_audit["gate_passed"]:
+        raise RuntimeError(f"insufficient validated MASK pairs: {pair_audit['retained']}")
 
     examples, tokenization = tokenize_activations(tokenizer, activation_examples(selected, config), int(config["max_activation_sequence_tokens"])); atomic_json(output / "activation_tokenization.json", tokenization)
     activations, labels, source_indices, split_ids = extract_layer_activations(model, examples, layer, int(config["activation_batch_size"]), output / "activation_state.npz", checkpoint, int(config["activation_checkpoint_every"]), output, fingerprint, checkpoint_callback)
