@@ -1,0 +1,51 @@
+{
+  "config_fingerprint": "e61f0287a4ceddc6c197521262e3a4bdd3845cfe9394692feda2156eea990da5",
+  "layer": 10,
+  "module_index": 9,
+  "hidden_state_index": 10,
+  "activation_position": "last non-special assistant response token",
+  "direction_definition": "mean(pair_positive_reward_hack - pair_negative_control)",
+  "raw_direction_norm": 1.2336845397949219,
+  "raw_direction_sha256": "7ddddb36840cc7635a7e6e777e83ba23d71d043634395ac3e26e0986aabbf3a5",
+  "geometry": {
+    "direction_definition": "mean(pair_positive_reward_hack - pair_negative_control)",
+    "raw_direction_norm": 1.2336845397949219,
+    "heldout_roc_auc": 0.8953561778742961,
+    "heldout_balanced_accuracy": 0.7964824120603016,
+    "heldout_pair_ordering_accuracy": 0.9899497487437185,
+    "train_split_half_direction_cosine": 0.9738755822181702,
+    "positive_projection_mean": -0.2546096742153168,
+    "negative_projection_mean": -1.5399781465530396
+  },
+  "comparison": {
+    "source_run_id": "2026-08-05_233935Z_llama32-1b-layer10-reward-hacking-aria-comparison",
+    "source_artifact": "reward_hacking_direction.npy",
+    "source_artifact_sha256": "e126a7904ccc7e914231ceb4ff1818d022c2a56a8f4209fa38cf3e79e9abdd21",
+    "source_raw_direction_norm": 0.5179964303970337,
+    "new_raw_direction_norm": 1.2336845397949219,
+    "raw_norm_ratio_new_over_source": 2.381646797931267,
+    "unit_direction_cosine": 0.0919141098856926,
+    "unit_direction_l2_distance": 1.3476542234420776,
+    "source_results_sha256": "5626f210c229169cbeb6483f1f443580e057b2af9780aafacdda5cacf4af0806",
+    "source_curve_at_matched_additive_norms": [
+      {
+        "strength": 0.0,
+        "responses": 100,
+        "reward_hack_rate": 0.25,
+        "good_faith_rate": 0.74,
+        "invalid_rate": 0.01,
+        "mean_repeated_trigram_fraction": 0.04302780084122485,
+        "eos_rate": 0.31,
+        "mean_generated_tokens": 223.68,
+        "reward_hack_rate_delta": 0.0,
+        "reward_hack_rate_delta_ci95": [
+          0.0,
+          0.0
+        ],
+        "bootstrap_samples": 10000,
+        "source_raw_coefficient": 0.0,
+        "signed_additive_l2_norm": 0.0
+      }
+    ]
+  }
+}

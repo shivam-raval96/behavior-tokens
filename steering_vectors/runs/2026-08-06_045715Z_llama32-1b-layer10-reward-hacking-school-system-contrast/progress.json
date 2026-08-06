@@ -1,0 +1,25 @@
+{
+  "phase": "completed",
+  "completed": 1698,
+  "total": 1698,
+  "run_id": "2026-08-06_045715Z_llama32-1b-layer10-reward-hacking-school-system-contrast",
+  "configuration_fingerprint": "e61f0287a4ceddc6c197521262e3a4bdd3845cfe9394692feda2156eea990da5",
+  "latest_objective": {
+    "positive_validation": {
+      "geometry_auc_passed": true,
+      "judge_reference_accuracy_passed": true,
+      "judge_reference_invalid_rate_passed": true,
+      "causal_positive_strength_found": true,
+      "passed": true
+    },
+    "negative_extension": null
+  },
+  "current_best_metric": 0.33,
+  "best_state": {
+    "strength": 2.321512699
+  },
+  "layer": 10,
+  "module_index": 9,
+  "raw_direction_norm": 1.2336845397949219,
+  "retry_count": 0
+}
