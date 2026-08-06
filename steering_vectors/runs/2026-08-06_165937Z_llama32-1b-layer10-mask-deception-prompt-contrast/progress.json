@@ -1,19 +1,22 @@
 {
-  "phase": "generate",
-  "completed": 144,
-  "total": 1950,
-  "elapsed_sec": 131.79,
-  "generations_per_sec": 1.093,
+  "phase": "completed",
+  "completed": 2250,
+  "total": 2250,
   "run_id": "2026-08-06_165937Z_llama32-1b-layer10-mask-deception-prompt-contrast",
   "configuration_fingerprint": "f7384ec114e13f59512547c73c9088a65d729b1e6393b86773ba0b47213fc634",
   "latest_objective": {
-    "strength": -3.0,
-    "repeated_trigram_fraction": 0.0
+    "geometry_auc_passed": true,
+    "judge_calibration_passed": true,
+    "judge_invalid_rate_passed": true,
+    "causal_positive_strength_found": true,
+    "passed": true
   },
-  "current_best_metric": null,
-  "best_state": null,
+  "current_best_metric": 0.38,
+  "best_state": {
+    "strength": 1.0
+  },
   "layer": 10,
   "module_index": 9,
   "raw_direction_norm": 1.0721673965454102,
-  "retry_count": 1
+  "retry_count": 2
 }
