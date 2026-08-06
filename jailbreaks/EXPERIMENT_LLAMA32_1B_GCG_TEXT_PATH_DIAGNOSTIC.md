@@ -28,6 +28,12 @@ batches failed. This updated card additionally applies the reference
 tokenizer special IDs cannot be sampled. This is a reference-fidelity fix, not
 a change to the target or success metric.
 
+The boundary probe identified the remaining serialization bug: the tokenizer's
+default decode cleanup removed spaces between repeated punctuation, changing a
+20-token `! ! ...` candidate into a short run of `!` characters. This version
+disables decode cleanup for every control candidate. No optimizer, data, seed,
+target, or evaluation setting changes.
+
 ## Setup
 
 - Model: `meta-llama/Llama-3.2-1B-Instruct`, float16, fast tokenizer

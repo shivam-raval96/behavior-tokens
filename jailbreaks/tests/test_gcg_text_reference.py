@@ -6,7 +6,7 @@ from jailbreaks.gcg_text_reference import filter_text_candidates
 class ToyTokenizer:
     """Makes reference filtering semantics observable without a model download."""
 
-    def decode(self, ids, skip_special_tokens=True):
+    def decode(self, ids, skip_special_tokens=True, **_kwargs):
         return {1: "old", 2: "valid", 3: "short", 4: "valid"}[ids[0]]
 
     def __call__(self, text, add_special_tokens=False):

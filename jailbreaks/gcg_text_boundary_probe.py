@@ -42,7 +42,8 @@ def run(config_path: Path, output_base: Path, commit=None) -> dict:
     raw[torch.arange(cfg["candidate_batch_size"], device=device), positions] = top_ids[positions, choices]
     lengths, examples, valid = Counter(), [], []
     for candidate in raw:
-        text = tokenizer.decode(candidate.tolist(), skip_special_tokens=True)
+        text = tokenizer.decode(candidate.tolist(), skip_special_tokens=True,
+                                clean_up_tokenization_spaces=False)
         ids = tokenizer(text, add_special_tokens=False).input_ids
         lengths[len(ids)] += 1
         if len(examples) < 12:

@@ -37,7 +37,8 @@ def filter_text_candidates(tokenizer, candidate_ids: torch.Tensor, current_text:
     """Match llm-attacks: decode, reject no-op, preserve token length only."""
     accepted: list[str] = []
     for row in candidate_ids:
-        text = tokenizer.decode(row.tolist(), skip_special_tokens=True)
+        text = tokenizer.decode(row.tolist(), skip_special_tokens=True,
+                                clean_up_tokenization_spaces=False)
         retokenized = tokenizer(text, add_special_tokens=False).input_ids
         if text != current_text and len(retokenized) == expected_length:
             accepted.append(text)
@@ -49,8 +50,8 @@ def disallowed_control_tokens(tokenizer, allow_non_ascii: bool) -> torch.Tensor:
     blocked = set(tokenizer.all_special_ids)
     if not allow_non_ascii:
         blocked.update(token_id for token_id in range(3, tokenizer.vocab_size)
-                       if not (tokenizer.decode([token_id]).isascii()
-                               and tokenizer.decode([token_id]).isprintable()))
+                       if not (tokenizer.decode([token_id], clean_up_tokenization_spaces=False).isascii()
+                               and tokenizer.decode([token_id], clean_up_tokenization_spaces=False).isprintable()))
     return torch.tensor(sorted(blocked), dtype=torch.long)
 
 
