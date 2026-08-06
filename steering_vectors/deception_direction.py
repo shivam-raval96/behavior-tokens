@@ -733,7 +733,7 @@ def crossed_checkpoint_boundary(
 @torch.inference_mode()
 def generate_sweep(model, tokenizer, rows: list[dict], direction: np.ndarray, config: dict, output: Path, checkpoint: dict, fingerprint: str, callback: CheckpointCallback) -> list[dict]:
     path = output / "generations.jsonl"; records = list(map(json.loads, path.read_text().splitlines())) if path.exists() else []
-    done = {(float(row["strength"]), int(row["source_index"])) for row in records}; total = len(rows) * len(config["strengths"]); started = time.monotonic()
+    done = {(float(row["strength"]), int(row["source_index"])) for row in records}; initial_done = len(done); total = len(rows) * len(config["strengths"]); started = time.monotonic()
     eos_ids = model.generation_config.eos_token_id; eos_ids = [eos_ids] if isinstance(eos_ids, int) else list(eos_ids or []); eos_ids = sorted(set(eos_ids + [tokenizer.eos_token_id]))
     with path.open("a") as stream:
         for strength in tqdm(config["strengths"], desc="MASK deception sweep", unit="strength"):
@@ -766,7 +766,7 @@ def generate_sweep(model, tokenizer, rows: list[dict], direction: np.ndarray, co
                     int(config["generation_checkpoint_every"]), total,
                 ):
                     elapsed = time.monotonic() - started; metric = {
-                        "phase": "generate", "completed": completed, "total": total, "elapsed_sec": round(elapsed, 2), "generations_per_sec": round(completed / max(elapsed, 1e-9), 3),
+                        "phase": "generate", "completed": completed, "total": total, "elapsed_sec": round(elapsed, 2), "generations_per_sec": round((completed - initial_done) / max(elapsed, 1e-9), 3),
                         "run_id": output.name, "configuration_fingerprint": fingerprint, "latest_objective": {"strength": float(strength), "repeated_trigram_fraction": records[-1]["repeated_trigram_fraction"]},
                         "current_best_metric": None, "best_state": None, "layer": config["layer"], "module_index": int(config["layer"]) - 1, "raw_direction_norm": float(np.linalg.norm(direction)), "retry_count": checkpoint["retry_count"],
                     }
