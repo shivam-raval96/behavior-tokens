@@ -1,0 +1,47 @@
+{
+  "run_id": "2026-08-06_165937Z_llama32-1b-layer10-mask-deception-prompt-contrast",
+  "status": "stopped",
+  "checkpoint": {
+    "status": "stopped",
+    "stage": "extract",
+    "completed": 896,
+    "run_id": "2026-08-06_165937Z_llama32-1b-layer10-mask-deception-prompt-contrast",
+    "config_fingerprint": "f7384ec114e13f59512547c73c9088a65d729b1e6393b86773ba0b47213fc634",
+    "retry_count": 0,
+    "latest_metric": {
+      "phase": "extract",
+      "completed": 896,
+      "total": 1452,
+      "elapsed_sec": 44.7,
+      "responses_per_sec": 20.043,
+      "run_id": "2026-08-06_165937Z_llama32-1b-layer10-mask-deception-prompt-contrast",
+      "configuration_fingerprint": "f7384ec114e13f59512547c73c9088a65d729b1e6393b86773ba0b47213fc634",
+      "latest_objective": {
+        "label": "deceptive_prompt",
+        "layer": 10
+      },
+      "current_best_metric": null,
+      "best_state": null,
+      "class_counts": {
+        "honest_prompt": 448,
+        "deceptive_prompt": 448
+      },
+      "activation_position": "last non-special common-response token",
+      "layer": 10,
+      "module_index": 9,
+      "retry_count": 0
+    }
+  },
+  "failure": null,
+  "artifacts": {
+    "config": "config.yaml",
+    "progress": "progress.json",
+    "direction_pairs": "direction_pairs.jsonl",
+    "pair_selection_audit": "pair_selection_audit.json",
+    "candidates": "candidate_generations.jsonl",
+    "candidate_judgments": "candidate_judgments.jsonl",
+    "activation_state": "activation_state.npz",
+    "generations": "generations.jsonl",
+    "generation_judgments": "generation_judgments.jsonl"
+  }
+}

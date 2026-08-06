@@ -1,0 +1,8 @@
+{
+  "examples": 1452,
+  "min": 91,
+  "median": 201.0,
+  "p95": 376.0,
+  "max": 571,
+  "activation_position": "last non-special common-response token"
+}

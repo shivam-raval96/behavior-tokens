@@ -1,0 +1,9 @@
+{
+  "method": "prompt_contrast_common_response",
+  "retained": {
+    "train": 585,
+    "heldout": 141
+  },
+  "excluded": 0,
+  "gate_passed": true
+}
