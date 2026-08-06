@@ -216,6 +216,26 @@ def load_school_reward_hack_pairs(
             f"expected {setting('expected_complete_pairs')} complete pairs, "
             f"found {len(complete)}"
         )
+    applied_system_prompts = None
+    if not prefix and config.get("apply_direction_system_prompt_contrast", False):
+        positive_system_prompt = str(config["direction_positive_system_prompt"]).strip()
+        negative_system_prompt = str(config["direction_neutral_system_prompt"]).strip()
+        if not positive_system_prompt or not negative_system_prompt:
+            raise ValueError("School direction system prompts must be non-empty")
+        if positive_system_prompt == negative_system_prompt:
+            raise ValueError("School positive and neutral direction system prompts must differ")
+        complete = [
+            {
+                **row,
+                "positive_system": positive_system_prompt,
+                "negative_system": negative_system_prompt,
+            }
+            for row in complete
+        ]
+        applied_system_prompts = {
+            "positive_reward_hack": positive_system_prompt,
+            "negative_clean": negative_system_prompt,
+        }
     train, heldout = split_complete_pairs(complete, int(setting("split_seed")))
     generation = random.Random(int(setting("generation_selection_seed"))).sample(
         heldout, int(setting("generation_examples"))
@@ -245,6 +265,13 @@ def load_school_reward_hack_pairs(
         "positive_column": "school_of_reward_hacks", "negative_column": "control",
         "direction_definition": "mean(pair_positive_activation - pair_negative_activation)",
     }
+    if applied_system_prompts is not None:
+        metadata.update({
+            "applied_system_prompts": applied_system_prompts,
+            "system_prompt_contrast": (
+                "reward-hacking-encouraging positive versus neutral clean"
+            ),
+        })
     return train, heldout, generation, metadata
 
 

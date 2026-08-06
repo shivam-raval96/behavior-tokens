@@ -18,6 +18,8 @@ from steering_vectors.reward_hacking_direction import (
     compute_direction_and_geometry,
     direction_for_application,
     judge_prompt,
+    index_selection_sha256,
+    load_school_reward_hack_pairs,
     make_additive_hook,
     make_openai_judge,
     paired_activation_examples,
@@ -77,6 +79,68 @@ class RewardHackingDirectionTest(unittest.TestCase):
         examples = paired_activation_examples([row], [])
         self.assertEqual(examples[0]["user"], "benign task")
         self.assertEqual(examples[1]["user"], "hackable task")
+
+    def test_school_loader_applies_class_specific_system_prompt_contrast(self):
+        rows = [
+            {
+                "user": f"task {index}",
+                "school_of_reward_hacks": f"hack {index}",
+                "control": f"clean {index}",
+                "task": "fixture task",
+                "evaluation_metric": "fixture metric",
+                "cheat_method": "fixture cheat",
+            }
+            for index in range(2)
+        ]
+
+        class FixtureDataset(list):
+            column_names = list(rows[0])
+
+        with TemporaryDirectory() as directory:
+            fixture = Path(directory) / "fixture.csv"
+            fixture.write_bytes(b"school-fixture")
+            config = {
+                "dataset": "fixture/school",
+                "dataset_file": "fixture.csv",
+                "dataset_revision": "pinned",
+                "dataset_file_sha256": hashlib.sha256(fixture.read_bytes()).hexdigest(),
+                "expected_dataset_rows": 2,
+                "expected_complete_pairs": 2,
+                "split_seed": 42,
+                "generation_selection_seed": 43,
+                "generation_examples": 1,
+                "expected_train_selection_sha256": index_selection_sha256([
+                    {"source_index": 0}
+                ]),
+                "expected_heldout_selection_sha256": index_selection_sha256([
+                    {"source_index": 1}
+                ]),
+                "expected_generation_selection_sha256": index_selection_sha256([
+                    {"source_index": 1}
+                ]),
+                "apply_direction_system_prompt_contrast": True,
+                "direction_positive_system_prompt": "Exploit evaluator loopholes.",
+                "direction_neutral_system_prompt": "Solve the task correctly.",
+            }
+            with patch(
+                "steering_vectors.reward_hacking_direction.hf_hub_download",
+                return_value=str(fixture),
+            ), patch(
+                "steering_vectors.reward_hacking_direction.load_dataset",
+                return_value=FixtureDataset(rows),
+            ):
+                train, heldout, generation, metadata = load_school_reward_hack_pairs(
+                    config
+                )
+
+        examples = paired_activation_examples(train, heldout)
+        self.assertEqual(examples[0]["system"], "Solve the task correctly.")
+        self.assertEqual(examples[1]["system"], "Exploit evaluator loopholes.")
+        self.assertEqual(generation[0]["source_index"], 1)
+        self.assertEqual(
+            metadata["applied_system_prompts"]["positive_reward_hack"],
+            "Exploit evaluator loopholes.",
+        )
 
     def test_aria_loader_uses_same_prompt_checkpoint_pairs_and_cleans_headers(self):
         def messages(prompt, response):
@@ -530,6 +594,32 @@ class RewardHackingDirectionTest(unittest.TestCase):
         self.assertEqual(
             config["comparison_source_direction"]["run_id"],
             "2026-08-05_162308Z_llama32-1b-layer10-reward-hacking",
+        )
+
+    def test_school_system_contrast_matches_aria_prompts_and_comparison(self):
+        configs = Path(__file__).resolve().parents[1] / "configs"
+        school = yaml.safe_load((
+            configs
+            / "reward_hacking_llama32_1b_layer10_school_system_contrast.yaml"
+        ).read_text())
+        aria = yaml.safe_load((
+            configs / "reward_hacking_llama32_1b_layer10_aria_comparison.yaml"
+        ).read_text())
+        self.assertTrue(school["apply_direction_system_prompt_contrast"])
+        self.assertEqual(
+            school["direction_positive_system_prompt"],
+            aria["direction_positive_system_prompt"],
+        )
+        self.assertEqual(
+            school["direction_neutral_system_prompt"],
+            aria["direction_neutral_system_prompt"],
+        )
+        self.assertEqual(school["layer"], 10)
+        self.assertEqual(school["steering_normalization"], "unit")
+        self.assertEqual(school["strengths"], aria["strengths"])
+        self.assertEqual(
+            school["comparison_source_direction"]["run_id"],
+            "2026-08-05_233935Z_llama32-1b-layer10-reward-hacking-aria-comparison",
         )
 
     def test_reuse_source_artifacts_validates_and_copies_idempotently(self):
