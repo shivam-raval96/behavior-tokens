@@ -1,0 +1,8 @@
+{
+  "file": "teacher_cache/c1_one_prompt.pt",
+  "remote_path": "/steering_suffix_optimization/runs/2026-08-07_213617Z_soft-suffix-reachability/teacher_cache/c1_one_prompt.pt",
+  "sha256": "8a19f8fc6ae8cc2496830171b8f9341041786c3c2a4df9a05777043e82cf5e7d",
+  "size_bytes": 368966051,
+  "tracked_by_git": false,
+  "reason": "Repository policy ignores generated .pt files; the cache is retained locally and on bt-outputs."
+}

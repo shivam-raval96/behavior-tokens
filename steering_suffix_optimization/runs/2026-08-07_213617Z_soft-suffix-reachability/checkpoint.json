@@ -1,0 +1,14 @@
+{
+  "status": "failed",
+  "run_id": "2026-08-07_213617Z_soft-suffix-reachability",
+  "config_fingerprint": "fa8da180e26f81f4525b264c45043532fda8eeb185d41cf52c338b043e0151ce",
+  "phase": "c1_one_prompt",
+  "completed": 0,
+  "total": 1000,
+  "next_step": 0,
+  "completed_cells": [],
+  "latest_metric": null,
+  "best_metric": null,
+  "error_count": 3,
+  "resumable": false
+}

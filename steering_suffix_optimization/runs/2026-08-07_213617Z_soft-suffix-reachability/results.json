@@ -1,0 +1,13 @@
+{
+  "status": "failed",
+  "run_id": "2026-08-07_213617Z_soft-suffix-reachability",
+  "completed_cells": 0,
+  "results": [],
+  "error": {
+    "type": "RuntimeError",
+    "message": "expected mat1 and mat2 to have the same dtype, but got: float != c10::BFloat16",
+    "phase": "c1_one_prompt",
+    "step": 0,
+    "attempts": 3
+  }
+}
