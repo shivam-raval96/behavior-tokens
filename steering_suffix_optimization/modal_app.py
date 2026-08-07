@@ -49,3 +49,20 @@ def judge_saved(run_id: str):
 @app.local_entrypoint(name="judge")
 def judge_entrypoint(run_id: str):
     judge_saved.remote(run_id)
+
+
+@app.function(image=image, gpu="A100", timeout=60*60*3,
+              retries=modal.Retries(max_retries=1),
+              secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+              volumes={"/outputs":outputs,"/root/.cache/huggingface":model_cache})
+def positive_control(run_id: str):
+    import os,sys
+    os.chdir(ROOT); sys.path.insert(0,ROOT)
+    from steering_suffix_optimization.positive_control_run import run
+    return run(Path(f"{ROOT}/steering_suffix_optimization/configs/jailbreak_v2_response_position.yaml"),
+               Path(f"{ROOT}/harmful_behaviors.csv"),Path(OUTPUT_ROOT),run_id,commit=outputs.commit)
+
+
+@app.local_entrypoint(name="positive-control")
+def positive_control_entrypoint(run_id: str):
+    positive_control.remote(run_id)
