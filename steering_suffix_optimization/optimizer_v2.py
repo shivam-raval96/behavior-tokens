@@ -105,9 +105,25 @@ class ResponsePositionOptimizer:
 
     @torch.no_grad()
     def evaluate(self, candidates: torch.Tensor, layouts: Sequence[ResponseLayout],
-                 baselines: Sequence[torch.Tensor]) -> torch.Tensor:
-        return torch.stack([self.loss(self.embedding(row)[None],layouts,baselines).float()
-                            for row in candidates])
+                 baselines: Sequence[torch.Tensor], chunk_size: int = 32) -> torch.Tensor:
+        """Score exact discrete candidates in bounded GPU batches."""
+        target=self.target.normalized(self.device,torch.float32).float()
+        losses=[]
+        for start in range(0,candidates.shape[0],chunk_size):
+            batch=candidates[start:start+chunk_size].to(self.device)
+            per_layout=[]
+            for layout,baseline in zip(layouts,baselines):
+                before=layout.before_suffix_ids.to(self.device)[None].expand(batch.shape[0],-1)
+                after=torch.cat((layout.after_suffix_ids,layout.response_ids)).to(self.device)[None].expand(batch.shape[0],-1)
+                ids=torch.cat((before,batch,after),dim=1)
+                per_layout.append(self._hidden(self.embedding(ids))-baseline.float()[None])
+            deltas=torch.stack(per_layout,dim=1).float()
+            mean=deltas.mean(1)
+            alignment=1-F.cosine_similarity(mean,target[None],dim=1)
+            consistency=(1-F.cosine_similarity(deltas,target[None,None],dim=2)).mean(1)
+            norm_error=(mean.norm(dim=1)-target.norm()).square()/target.numel()
+            losses.append(alignment+self.consistency_weight*consistency+self.norm_weight*norm_error)
+        return torch.cat(losses)
 
     def step(self, suffix: torch.Tensor, layouts: Sequence[ResponseLayout],
              baselines: Sequence[torch.Tensor], generator: torch.Generator):
