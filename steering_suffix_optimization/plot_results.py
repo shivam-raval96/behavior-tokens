@@ -17,6 +17,8 @@ def escaped_suffix(text: str, width: int = 78) -> str:
 
 def plot_run(run_dir: Path, output: Path | None = None) -> Path:
     result = json.loads((run_dir / "results.json").read_text())
+    config_path = run_dir / "resolved_config.json"
+    config = json.loads(config_path.read_text()) if config_path.exists() else {}
     history = result["history"]
     steps = [row["step"] for row in history]
     losses = [row["loss"] for row in history]
@@ -61,7 +63,10 @@ def plot_run(run_dir: Path, output: Path | None = None) -> Path:
                      transform=suffix_axis.transAxes, family="monospace", fontsize=9, va="top")
     suffix_axis.text(0, 0.12, "Token IDs: " + " ".join(map(str, result["suffix_ids"])),
                      transform=suffix_axis.transAxes, family="monospace", fontsize=8, va="bottom")
-    fig.suptitle("Steering suffix jailbreak pilot", fontsize=15)
+    title = ("Negative-direction steering suffix comparison"
+             if float(config.get("vector_scale", 1.0)) < 0
+             else "Steering suffix jailbreak pilot")
+    fig.suptitle(title, fontsize=15)
     fig.savefig(output, dpi=180)
     plt.close(fig)
     return output
