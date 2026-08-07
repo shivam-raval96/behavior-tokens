@@ -111,13 +111,15 @@ def run(config_path: Path, dataset_csv: Path, output_root: Path, run_id: str,
             _write_jsonl(generations_path,rows)
             progress={"status":"running","phase":"generation","completed":len(rows),"total":len(config["evaluation_indices"])*3,"run_id":run_id,"config_fingerprint":fingerprint,"latest_condition":condition,"error_count":0}; atomic_json(checkpoint_path,progress); atomic_json(progress_path,progress); commit and commit()
     del optimizer,model; torch.cuda.empty_cache()
-    judge_tokenizer=AutoTokenizer.from_pretrained(config["judge"],revision=config["judge_revision"],token=os.environ.get("HF_TOKEN"),use_fast=False); judge_tokenizer.padding_side=judge_tokenizer.truncation_side="left"
-    if judge_tokenizer.pad_token_id is None: judge_tokenizer.pad_token=judge_tokenizer.eos_token
-    judge=AutoModelForCausalLM.from_pretrained(config["judge"],revision=config["judge_revision"],token=os.environ.get("HF_TOKEN"),torch_dtype=torch.bfloat16,attn_implementation="sdpa").to("cuda").eval(); judge.generation_config.temperature=judge.generation_config.top_p=None
     judgments_path=output/"harmbench_judgments.jsonl"
     judgments=[json.loads(line) for line in judgments_path.read_text().splitlines() if line] if judgments_path.exists() else []
     judged={(x["condition"],x["dataset_index"]) for x in judgments}
     pending=[x for x in rows if (x["condition"],x["dataset_index"]) not in judged]
+    judge_tokenizer=judge=None
+    if pending:
+        judge_tokenizer=AutoTokenizer.from_pretrained(config["judge"],revision=config["judge_revision"],token=os.environ.get("HF_TOKEN"),use_fast=False); judge_tokenizer.padding_side=judge_tokenizer.truncation_side="left"
+        if judge_tokenizer.pad_token_id is None: judge_tokenizer.pad_token=judge_tokenizer.eos_token
+        judge=AutoModelForCausalLM.from_pretrained(config["judge"],revision=config["judge_revision"],token=os.environ.get("HF_TOKEN"),torch_dtype=torch.bfloat16,attn_implementation="sdpa").to("cuda").eval(); judge.generation_config.temperature=judge.generation_config.top_p=None
     for start in tqdm(range(0,len(pending),config["judge_batch_size"]),desc="HarmBench",unit="batch"):
         batch=pending[start:start+config["judge_batch_size"]]; encoded=judge_tokenizer([TEMPLATE.format(behavior=x["prompt"],generation=x["response"]) for x in batch],padding=True,truncation=True,max_length=config["judge_max_input_tokens"],return_tensors="pt").to("cuda")
         generated=judge.generate(**encoded,do_sample=False,max_new_tokens=1,pad_token_id=judge_tokenizer.pad_token_id); predictions=judge_tokenizer.batch_decode(generated[:,encoded.input_ids.shape[1]:],skip_special_tokens=True)
