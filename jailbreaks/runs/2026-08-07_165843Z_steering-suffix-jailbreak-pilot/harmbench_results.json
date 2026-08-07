@@ -1,0 +1,11 @@
+{
+  "baseline_asr": 0.0,
+  "ci95": [
+    0.0,
+    0.0
+  ],
+  "delta": 0.0,
+  "invalid_count": 0,
+  "n": 25,
+  "suffix_asr": 0.0
+}

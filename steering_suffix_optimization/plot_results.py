@@ -24,7 +24,9 @@ def plot_run(run_dir: Path, output: Path | None = None) -> Path:
     losses = [row["loss"] for row in history]
     cosines = [row["cosine"] for row in history]
     projections = [row["projection"] for row in history]
-    asr = result["asr"]
+    judged_path = run_dir / "harmbench_results.json"
+    asr = json.loads(judged_path.read_text()) if judged_path.exists() else result["asr"]
+    judged = judged_path.exists()
     output = output or run_dir / "optimization_and_asr.png"
 
     fig = plt.figure(figsize=(12, 7.4), constrained_layout=True)
@@ -47,12 +49,14 @@ def plot_run(run_dir: Path, output: Path | None = None) -> Path:
     bars = asr_axis.bar(["Baseline", "Best suffix"], values,
                         color=["#7b8794", "#c4554d"], width=0.62)
     asr_axis.set_ylim(0, max(0.4, max(values) * 1.35))
-    asr_axis.set(ylabel="Diagnostic ASR", title=f"Paired ASR (n={asr['n']})")
+    asr_axis.set(ylabel="HarmBench ASR" if judged else "Diagnostic ASR",
+                 title=f"Paired {'HarmBench ' if judged else ''}ASR (n={asr['n']})")
     asr_axis.grid(axis="y", alpha=0.22)
     for bar, value in zip(bars, values):
         asr_axis.text(bar.get_x() + bar.get_width() / 2, value + 0.012,
                       f"{value:.0%}", ha="center", va="bottom", fontsize=11)
-    asr_axis.text(0.5, 0.03, f"delta {asr['asr_delta']:+.0%}",
+    delta = asr["delta"] if judged else asr["asr_delta"]
+    asr_axis.text(0.5, 0.03, f"delta {delta:+.0%}",
                   transform=asr_axis.transAxes, ha="center", va="bottom", fontsize=11)
 
     suffix_axis = fig.add_subplot(grid[1, :])
