@@ -1,0 +1,11 @@
+{
+  "git_policy": "Generated .pt files are ignored; all files remain local and on bt-outputs.",
+  "artifacts": [
+    {"path": "teacher_cache/positive_control.pt", "size_bytes": 16943863, "sha256": "3ee0cf8839f1095ee21d79178b2fdfd8969d4b219b4d0265c505175c69b3ab2a"},
+    {"path": "teacher_cache/steered_teacher.pt", "size_bytes": 16943853, "sha256": "945df4a19b238af2d6d8d8df17f586670129b309835f3fbd6ed93f8a33b8075d"},
+    {"path": "optimizer_state/positive_control.pt", "size_bytes": 166972, "sha256": "0a1abc9c413a07f7b68c37dca0d1ef96c1dbff32f863b3b841335f8bd7f3b75e"},
+    {"path": "optimizer_state/steered_teacher.pt", "size_bytes": 166961, "sha256": "f86a4b0b2cfde116a59e2e22eba9f2af383fcd566196ddac10afcdda4d679d59"},
+    {"path": "soft_prompts/positive_control.pt", "size_bytes": 42600, "sha256": "8dc9bda921174bd758158b348872f011cfe85acd2105186daa6dd7840f378f8d"},
+    {"path": "soft_prompts/steered_teacher.pt", "size_bytes": 42593, "sha256": "5f44b6339d74f981b39be5803158568ba1298baae1db356bb0ab9f4eea605500"}
+  ]
+}

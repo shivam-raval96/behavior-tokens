@@ -1,0 +1,22 @@
+{
+  "activation_cosine": 0.7462040185928345,
+  "activation_mse": 0.0024322322569787502,
+  "best_metric": 0.0024322322569787502,
+  "best_step": 200,
+  "completed": 200,
+  "config_fingerprint": "27185a3f8f7fa9240e2fecd70c09693c981f21996591ad3524d3429c32035fb6",
+  "delta_norm_ratio": 0.73808753490448,
+  "elapsed_seconds": 50.916742962000015,
+  "error_count": 0,
+  "latest_metric": 0.0024322322569787502,
+  "mean_forward_kl": 0.6959264278411865,
+  "on_vector_projection": -1.8465975522994995,
+  "phase": "steered_teacher",
+  "position_0_kl": 11.566540718078613,
+  "positions_1_8_kl": 0.30436819791793823,
+  "positions_9_32_kl": 0.3594852089881897,
+  "run_id": "2026-08-07_231417Z_prefill-inversion-probe",
+  "target_on_vector_projection": -3.3522889614105225,
+  "throughput_steps_per_second": 3.9279809324763195,
+  "total": 200
+}
