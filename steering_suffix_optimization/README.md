@@ -1,39 +1,31 @@
-# Steering suffix optimization
+# Soft-suffix reachability
 
-This package searches for a discrete, universal suffix whose residual-stream
-activation displacement matches a previously validated steering vector. It
-uses GCG/HotFlip token proposals and exact coordinate-candidate evaluation.
+This directory implements the Phase-1 protocol for testing whether an activation-steered teacher can be reproduced by a soft suffix at the exact future discrete-suffix slot.
 
-The primary optimization objective is cosine alignment plus a small norm-match
-penalty on `h(prompt + suffix) - h(prompt)`. Progress should also record target
-projection, delta norm, token probabilities/ranks for behavior-specific probe
-tokens, and decoded suffix/token IDs. Jailbreak evaluation must store paired
-baseline and attacked generations and report ASR delta. Reward-hacking and
-deception evaluations use calibrated, blinded judges and paired generations.
+The run order is deliberately diagnostic:
 
-The copied vectors and their exact source runs are listed in
-`artifacts/manifest.yaml`. Run outputs belong in uniquely timestamped folders
-under `steering_suffix_optimization/runs/` and must include resolved config,
-checkpoint, progress, generations, results, and summary.
+1. C1 on one prompt, then five prompts (the natural-language instruction occupies the exact suffix slot, making the target reachable by construction).
+2. C2 naive versus position-matched steered teachers.
+3. C3 unsteered baseline normalization.
+4. C4 matched-length random-token and natural-language suffixes.
+5. The full alpha × suffix length × norm constraint × seed sweep.
 
-## V2 method
+Teacher continuations and top-2000 distributions are frozen per sweep cell. Teacher-forced batches contain all eight continuations for a prompt. The steering hook begins at user content and remains active through every continuation position. Student suffix vectors are inserted after instruction content and before the assistant header.
 
-`optimizer_v2.py` replaces the pilot objective with response-position matching.
-For each optimization prompt, the corresponding AdvBench target response is
-teacher-forced in both the clean and suffix conditions. The loss matches the
-activation difference at the final non-special assistant response token—the
-same position type used to construct the source vector. All objective math and
-candidate ranking are FP32 even when model forwards use BF16.
+## Artifacts
 
-V2 also removes the pilot's extra system prompt, covers every suffix coordinate
-before repeating coordinates, excludes no-op token proposals, and combines
-mean-direction alignment with per-example consistency and target-norm matching.
-Before optimizing suffixes, `controls.py` must be used to establish that direct
-`+vector`/`-vector` interventions causally change the calibrated judge metric on
-the exact evaluation prompts. A failed positive control blocks suffix search.
+Each run writes `config.yaml`, `resolved_config.json`, `checkpoint.json`, `progress.json`, `metrics.jsonl`, cached teacher targets, optimizer states, learned soft prompts, paired baseline/suffix behavior generations and judgments, `results.json`, `RESULTS.md`, and `normalized_kl.png`.
 
-The intended jailbreak artifact is the validated layer-10 Arditi refusal
-direction (`hidden_states[10]`, decoder module 9). Its negative sign removes
-refusal; coefficient `-0.75` corresponds to unit-direction additive norm
-`-3.353400157`. The earlier layer-4 LLM-LAT probe direction is retained only for
-provenance and is not used by V2.
+The checkpoint contract supports `fresh` and `resume`; scientific configuration fingerprints deliberately exclude only the execution mode. SIGTERM is converted into a checkpointed stop at the next 50-step diagnostic boundary.
+
+## Launch
+
+Do not launch without the repository-required experiment card and a subsequent explicit `proceed` from the user.
+
+```bash
+modal run --detach steering_suffix_optimization/modal_app.py \
+  --run-id YYYY-MM-DD_HHMMSSZ_soft-suffix-reachability \
+  --mode fresh
+```
+
+The default configuration is [`configs/jailbreak_reachability.yaml`](configs/jailbreak_reachability.yaml). Outputs live on `bt-outputs` under `/jailbreaks/runs/<run-id>` and must be pulled into `jailbreaks/runs/` at completion or controlled stop.

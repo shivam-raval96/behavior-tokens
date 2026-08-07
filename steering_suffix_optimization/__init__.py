@@ -1,5 +1,4 @@
-"""Optimize discrete suffixes whose activations imitate steering vectors."""
+"""Soft-suffix reachability experiment for activation-steered teachers."""
 
-from .optimizer import ActivationTarget, SteeringSuffixOptimizer
-
-__all__ = ["ActivationTarget", "SteeringSuffixOptimizer"]
+__all__ = ["__version__"]
+__version__ = "3.0.0"
