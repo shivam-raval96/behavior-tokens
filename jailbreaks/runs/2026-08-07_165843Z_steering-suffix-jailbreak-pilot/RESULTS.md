@@ -11,3 +11,5 @@
 - Baseline ASR: 0.2800
 - Suffix ASR: 0.1600
 - ASR delta: -0.1200
+
+![Optimization, best suffix, and paired ASR](optimization_and_asr.png)
