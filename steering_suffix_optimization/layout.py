@@ -75,7 +75,9 @@ def splice_embeddings(
     device = embedding.weight.device
     parts = [embedding(layout.prefix_ids.to(device))]
     if suffix is not None:
-        parts.append(suffix)
+        # Keep an optional FP32 master parameter while feeding the model in its
+        # native embedding dtype. Autograd propagates through this cast.
+        parts.append(suffix.to(device=device, dtype=embedding.weight.dtype))
     parts.append(embedding(layout.assistant_header_ids.to(device)))
     prompt_length = sum(part.shape[0] for part in parts)
     parts.append(embedding(continuation_ids.to(device)))
