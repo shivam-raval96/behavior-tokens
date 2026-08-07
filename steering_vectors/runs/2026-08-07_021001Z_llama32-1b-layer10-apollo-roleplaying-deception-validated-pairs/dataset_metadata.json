@@ -1,0 +1,30 @@
+{
+  "name": "ApolloResearch/deception-detection roleplaying",
+  "repository": "https://github.com/ApolloResearch/deception-detection",
+  "commit": "f8ec4010e74927394709dffa22b97bdf8cd5a62f",
+  "file": "data/roleplaying/dataset.yaml",
+  "file_sha256": "7d3e36dc9a2fa72ff823b651c2ade2e0fc34c5bc6267cdf9b7be8b046ed2e564",
+  "rows": 371,
+  "required_fields": [
+    "answer_prefix",
+    "deceptive_completion",
+    "honest_completion",
+    "question",
+    "scenario"
+  ],
+  "missing_required_values": 0,
+  "duplicate_scenario_question_pairs": 0,
+  "identical_completion_pairs": 0,
+  "unique_honest_completions": 371,
+  "unique_deceptive_completions": 371,
+  "selection": {
+    "train_rows": 262,
+    "geometry_rows": 51,
+    "causal_rows": 58,
+    "train_manifest_sha256": "23e0bbad002f4f02d4172322672267eee54ac68e421195bffd68c064a98c92b0",
+    "geometry_manifest_sha256": "3e47cf61cad2d9888391276d0c11f64ca15a8a82d3e767f285c88931f4567d92",
+    "causal_manifest_sha256": "c23964f3c38227ae77be568b8acc5753d9ba25c2ab8436e2d8f5d2e2580bbed3"
+  },
+  "official_loader_sha256": "68c497fd4fd033e5432f79852816131bab7b9a9d9e82a3b181da7e66d576ed21",
+  "official_grading_template_sha256": "8c24e39629a73dbebedb0d80c8e97fffddf7bc0d2e2830dc68e5a14dddfad151"
+}

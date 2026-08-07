@@ -1,0 +1,11 @@
+{
+  "balanced_accuracy": 0.3333333333333333,
+  "per_class_recall": {
+    "HONEST": 0.5,
+    "DECEPTIVE": 0.5,
+    "AMBIGUOUS": 0.0
+  },
+  "invalid_rate": 0.0,
+  "examples": 6,
+  "exact_score_accuracy": 0.3333333333333333
+}
