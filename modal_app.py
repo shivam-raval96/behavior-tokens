@@ -773,8 +773,11 @@ def run_deception_direction(
               volumes={"/outputs": outputs, "/root/.cache/huggingface": hf_cache})
 def run_apollo_deception_direction(
     run_mode: str = "fresh", run_id: str = "",
+    config_name: str = (
+        "deception_apollo_roleplaying_validated_pairs_llama32_1b_layer10.yaml"
+    ),
 ):
-    """Extract and evaluate the layer-10 Apollo Roleplaying direction."""
+    """Extract and evaluate a judge-validated layer-10 Apollo direction."""
     import json
     import os
     import signal
@@ -790,12 +793,17 @@ def run_apollo_deception_direction(
         if run_mode == "resume":
             raise ValueError("resume requires --run-id with the original run directory name")
         timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%SZ")
-        run_id = f"{timestamp}_llama32-1b-layer10-apollo-roleplaying-deception"
+        run_id = (
+            f"{timestamp}_llama32-1b-layer10-"
+            "apollo-roleplaying-deception-validated-pairs"
+        )
     output = Path("/outputs/steering_vectors/runs") / run_id
-    config = Path(
-        "/root/active_steering_vectors/configs/"
-        "deception_apollo_roleplaying_llama32_1b_layer10.yaml"
-    )
+    allowed_configs = {
+        "deception_apollo_roleplaying_validated_pairs_llama32_1b_layer10.yaml",
+    }
+    if config_name not in allowed_configs:
+        raise ValueError(f"unsupported Apollo deception config: {config_name}")
+    config = Path("/root/active_steering_vectors/configs") / config_name
     checkpoint_path = output / "checkpoint.json"
     effective_mode = run_mode
     if run_mode == "fresh" and checkpoint_path.exists():
@@ -832,7 +840,12 @@ def run_apollo_deception_direction(
                 "config": "config.yaml",
                 "progress": "progress.json",
                 "dataset_metadata": "dataset_metadata.json",
-                "direction_pairs": "direction_pairs.jsonl",
+                "source_direction_pairs": "source_direction_pairs.jsonl",
+                "judge_calibration": "judge_calibration.json",
+                "judge_calibration_records": "judge_calibration_records.jsonl",
+                "source_pair_judgments": "source_pair_judgments.jsonl",
+                "pair_selection_audit": "pair_selection_audit.json",
+                "selected_direction_pairs": "selected_direction_pairs.jsonl",
                 "activation_state": "activation_state.npz",
                 "generations": "generations.jsonl",
                 "generation_judgments": "generation_judgments.jsonl",

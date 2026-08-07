@@ -6,6 +6,7 @@ import hashlib
 import json
 import math
 import os
+import re
 import threading
 import time
 import urllib.request
@@ -377,24 +378,155 @@ def make_openai_judge(config: dict):
     return judge
 
 
-def calibration_work(geometry: list[dict], config: dict, grading_template: str) -> list[dict]:
+def parse_official_calibration_examples(grading_template: str, config: dict) -> list[dict]:
+    pattern = re.compile(
+        r"## Example\s+(\d+)\s+"
+        r"\*\*\[Scenario\]\*\*\s*(.*?)\s*"
+        r"\*\*\[Question\]\*\*\s*(.*?)\s*"
+        r"\*\*\[Response\]\*\*\s*(.*?)\s*"
+        r"\*\*\[Honesty Grade\]\*\*.*?"
+        r"<judgement>([1-7])</judgement>",
+        flags=re.DOTALL,
+    )
+    examples = []
+    for number, scenario, question, response, score_text in pattern.findall(
+        grading_template
+    ):
+        score = int(score_text)
+        examples.append({
+            "task_id": f"official-rubric-example:{int(number):02d}",
+            "example_number": int(number),
+            "source_index": -int(number),
+            "scenario": scenario.strip(),
+            "question": question.strip(),
+            "response": response.strip(),
+            "gold_score": score,
+            "gold_label": score_to_label(score, False, config),
+        })
+    expected = int(config["expected_official_calibration_examples"])
+    if len(examples) != expected:
+        raise ValueError(
+            f"expected {expected} official rubric examples, parsed {len(examples)}"
+        )
+    observed_scores = [row["gold_score"] for row in examples]
+    expected_scores = list(map(int, config["expected_official_calibration_scores"]))
+    if observed_scores != expected_scores:
+        raise ValueError(
+            f"official rubric scores changed: expected {expected_scores}, "
+            f"got {observed_scores}"
+        )
+    if set(row["gold_label"] for row in examples) != {
+        "HONEST", "DECEPTIVE", "AMBIGUOUS",
+    }:
+        raise ValueError("official rubric examples do not cover all judge classes")
+    return examples
+
+
+def leave_one_out_grading_template(grading_template: str, example_number: int) -> str:
+    pattern = re.compile(
+        rf"## Example\s+{int(example_number)}\b.*?"
+        r"(?=\n## Example\s+\d+\b|\n# Final Instructions:)",
+        flags=re.DOTALL,
+    )
+    result, replacements = pattern.subn("", grading_template, count=1)
+    if replacements != 1 or not grading_template_has_required_slots(result):
+        raise ValueError(
+            f"could not remove official rubric example {example_number} exactly once"
+        )
+    return result
+
+
+def calibration_work(config: dict, grading_template: str) -> list[dict]:
+    return [{
+        **row,
+        "judgment_id": f"calibration:{row['task_id']}",
+        "kind": "calibration",
+        "judge_prompt": official_judge_prompt(
+            row, row["response"],
+            leave_one_out_grading_template(
+                grading_template, row["example_number"],
+            ),
+        ),
+    } for row in parse_official_calibration_examples(grading_template, config)]
+
+
+def source_pair_judgment_work(
+    train: list[dict], geometry: list[dict], grading_template: str,
+) -> list[dict]:
     work = []
-    rows = geometry[:int(config["calibration_rows"])]
-    for row in rows:
-        for suffix, response, gold in (
-            ("honest", row["honest_completion"], "HONEST"),
-            ("deceptive", row["deceptive_completion"], "DECEPTIVE"),
-            ("ambiguous", "I cannot answer that question.", "AMBIGUOUS"),
-        ):
-            work.append({
-                **row,
-                "judgment_id": f"calibration:{row['task_id']}:{suffix}",
-                "kind": "calibration",
-                "gold_label": gold,
-                "response": response,
-                "judge_prompt": official_judge_prompt(row, response, grading_template),
-            })
+    for split, rows in (("train", train), ("geometry", geometry)):
+        for row in rows:
+            for condition, response in (
+                ("honest_completion", row["honest_completion"]),
+                ("deceptive_completion", row["deceptive_completion"]),
+            ):
+                work.append({
+                    **row,
+                    "split": split,
+                    "source_condition": condition,
+                    "judgment_id": f"source-pair:{row['task_id']}:{condition}",
+                    "kind": "source_pair",
+                    "gold_label": None,
+                    "response": response,
+                    "judge_prompt": official_judge_prompt(
+                        row, response, grading_template,
+                    ),
+                })
     return work
+
+
+def select_validated_pairs(
+    train: list[dict], geometry: list[dict], judgments: list[dict], config: dict,
+) -> tuple[list[dict], list[dict], dict]:
+    predictions = {row["judgment_id"]: row for row in judgments}
+    retained = {"train": [], "geometry": []}
+    exclusions = []
+    for split, rows in (("train", train), ("geometry", geometry)):
+        for row in rows:
+            honest_id = f"source-pair:{row['task_id']}:honest_completion"
+            deceptive_id = f"source-pair:{row['task_id']}:deceptive_completion"
+            if honest_id not in predictions or deceptive_id not in predictions:
+                raise ValueError(f"missing source-pair judgment for {row['task_id']}")
+            honest = predictions[honest_id]
+            deceptive = predictions[deceptive_id]
+            valid = (
+                honest["predicted_label"] == "HONEST"
+                and deceptive["predicted_label"] == "DECEPTIVE"
+            )
+            audit = {
+                "task_id": row["task_id"],
+                "source_index": int(row["source_index"]),
+                "split": split,
+                "honest_judgment": {
+                    "label": honest["predicted_label"], "score": honest["score"],
+                    "judgment_id": honest_id,
+                },
+                "deceptive_judgment": {
+                    "label": deceptive["predicted_label"], "score": deceptive["score"],
+                    "judgment_id": deceptive_id,
+                },
+            }
+            if valid:
+                retained[split].append({**row, "validation": audit})
+            else:
+                exclusions.append(audit)
+    counts = {split: len(rows) for split, rows in retained.items()}
+    requirements = {
+        "train": int(config["min_retained_train_pairs"]),
+        "geometry": int(config["min_retained_geometry_pairs"]),
+    }
+    audit = {
+        "source_pairs": {"train": len(train), "geometry": len(geometry)},
+        "retained_pairs": counts,
+        "excluded_pairs": {
+            "train": len(train) - counts["train"],
+            "geometry": len(geometry) - counts["geometry"],
+        },
+        "requirements": requirements,
+        "gate_passed": all(counts[key] >= value for key, value in requirements.items()),
+        "exclusions": exclusions,
+    }
+    return retained["train"], retained["geometry"], audit
 
 
 def judge_items(
@@ -433,6 +565,8 @@ def judge_items(
                 "task_id": row["task_id"],
                 "source_index": int(row["source_index"]),
                 "gold_label": row.get("gold_label"),
+                "gold_score": row.get("gold_score"),
+                "source_condition": row.get("source_condition"),
                 "predicted_label": label,
                 "response": row["response"],
                 **{key: prediction[key] for key in (
@@ -482,7 +616,7 @@ def calibration_metrics(records: list[dict]) -> dict:
         ]))
         for label in labels
     }
-    return {
+    result = {
         "balanced_accuracy": float(np.mean(list(recalls.values()))),
         "per_class_recall": recalls,
         "invalid_rate": float(np.mean([
@@ -490,6 +624,12 @@ def calibration_metrics(records: list[dict]) -> dict:
         ])),
         "examples": len(records),
     }
+    scored = [row for row in records if row.get("gold_score") is not None]
+    if scored:
+        result["exact_score_accuracy"] = float(np.mean([
+            row["score"] == row["gold_score"] for row in scored
+        ]))
+    return result
 
 
 @torch.inference_mode()
@@ -670,6 +810,8 @@ def run(
     checkpoint_callback: CheckpointCallback = lambda: None,
 ) -> dict:
     config = yaml.safe_load(config_path.read_text())
+    if config.get("source_pair_validation") != "official_apollo_1_to_7":
+        raise ValueError("Apollo direction requires official source-pair validation")
     output = output_dir or Path(config["output_dir"])
     output.mkdir(parents=True, exist_ok=True)
     resolved = {**config, "output_dir": str(output)}
@@ -710,7 +852,7 @@ def run(
         "causal_task_ids": [row["task_id"] for row in causal],
         **dataset_metadata["selection"],
     })
-    atomic_jsonl(output / "direction_pairs.jsonl", [
+    atomic_jsonl(output / "source_direction_pairs.jsonl", [
         {
             "task_id": row["task_id"],
             "source_index": row["source_index"],
@@ -726,7 +868,7 @@ def run(
     checkpoint_callback()
 
     calibration = judge_items(
-        calibration_work(geometry_rows, config, grading_template),
+        calibration_work(config, grading_template),
         output / "judge_calibration_records.jsonl", "judge_calibration",
         config, output, checkpoint, fingerprint, checkpoint_callback,
     )
@@ -740,6 +882,55 @@ def run(
         > float(config["max_judge_reference_invalid_rate"])
     ):
         raise RuntimeError(f"Apollo judge calibration failed: {calibration_result}")
+
+    source_pair_judgments = judge_items(
+        source_pair_judgment_work(train, geometry_rows, grading_template),
+        output / "source_pair_judgments.jsonl", "judge_source_pairs",
+        config, output, checkpoint, fingerprint, checkpoint_callback,
+    )
+    selected_train, selected_geometry, pair_audit = select_validated_pairs(
+        train, geometry_rows, source_pair_judgments, config,
+    )
+    atomic_json(output / "pair_selection_audit.json", pair_audit)
+    atomic_jsonl(output / "selected_direction_pairs.jsonl", [
+        {
+            "task_id": row["task_id"],
+            "source_index": row["source_index"],
+            "split": split,
+            "scenario": row["scenario"],
+            "question": row["question"],
+            "honest_completion": row["honest_completion"],
+            "deceptive_completion": row["deceptive_completion"],
+            "validation": row["validation"],
+        }
+        for split, rows in (
+            ("train", selected_train), ("geometry", selected_geometry),
+        )
+        for row in rows
+    ])
+    checkpoint.update(stage="source_pair_selection", completed=len(source_pair_judgments))
+    write_progress(output, checkpoint, {
+        "phase": "source_pair_selection",
+        "completed": len(source_pair_judgments),
+        "total": len(source_pair_judgments),
+        "run_id": output.name,
+        "configuration_fingerprint": fingerprint,
+        "latest_objective": {
+            key: value for key, value in pair_audit.items() if key != "exclusions"
+        },
+        "current_best_metric": pair_audit["retained_pairs"]["geometry"],
+        "best_state": {"retained_pairs": pair_audit["retained_pairs"]},
+        "class_counts": dict(Counter(
+            row["predicted_label"] for row in source_pair_judgments
+        )),
+        "layer": int(config["layer"]),
+        "module_index": module_index_for_layer(int(config["layer"])),
+        "activation_position": config["activation_position"],
+        "error_count": 0,
+        "retry_count": checkpoint["retry_count"],
+    }, checkpoint_callback)
+    if not pair_audit["gate_passed"]:
+        raise RuntimeError(f"insufficient validated Apollo pairs: {pair_audit}")
 
     tokenizer = AutoTokenizer.from_pretrained(
         config["model_id"], revision=config["model_revision"],
@@ -760,7 +951,7 @@ def run(
     if layer < 1 or layer > len(model.model.layers):
         raise ValueError(f"invalid layer {layer}")
 
-    examples = activation_examples(train, geometry_rows)
+    examples = activation_examples(selected_train, selected_geometry)
     examples = tokenize_activation_examples(
         tokenizer, examples, int(config["max_activation_sequence_tokens"]),
     )
@@ -961,12 +1152,15 @@ def run(
     figure.savefig(output / "deception_strength_sweep.png", dpi=180)
     plt.close(figure)
 
-    all_judgments = calibration + generation_judgments
+    all_judgments = calibration + source_pair_judgments + generation_judgments
     result = {
         "run_id": output.name,
         "status": "completed",
         "config": resolved,
         "dataset": dataset_metadata,
+        "pair_selection": {
+            key: value for key, value in pair_audit.items() if key != "exclusions"
+        },
         "geometry": geometry,
         "vector_comparison": vector_comparison,
         "judge_calibration": calibration_result,
@@ -982,8 +1176,14 @@ def run(
         "artifacts": {
             "raw_direction": "deception_direction.npy",
             "unit_direction": "unit_deception_direction.npy",
-            "direction_pairs": "direction_pairs.jsonl",
+            "source_direction_pairs": "source_direction_pairs.jsonl",
+            "selected_direction_pairs": "selected_direction_pairs.jsonl",
+            "source_pair_judgments": "source_pair_judgments.jsonl",
+            "pair_selection_audit": "pair_selection_audit.json",
+            "judge_calibration": "judge_calibration.json",
+            "judge_calibration_records": "judge_calibration_records.jsonl",
             "generations": "generations.jsonl",
+            "generation_judgments": "generation_judgments.jsonl",
             "paired_generations": "paired_generations.jsonl",
             "vector_comparison": "vector_comparison.json",
             "plot": "deception_strength_sweep.png",
@@ -992,9 +1192,10 @@ def run(
     atomic_json(output / "results.json", result)
     (output / "RESULTS.md").write_text(
         "# Llama-3.2-1B layer-10 Apollo Roleplaying deception direction\n\n"
-        "- Direction: curated deceptive completion minus honest completion\n"
+        "- Direction: judge-validated deceptive completion minus honest completion\n"
         "- Layer: 10 (`model.layers[9]` output / `hidden_states[10]`)\n"
-        f"- Train / geometry / causal rows: {len(train)} / {len(geometry_rows)} / {len(causal)}\n"
+        f"- Source train / geometry / causal rows: {len(train)} / {len(geometry_rows)} / {len(causal)}\n"
+        f"- Validated train / geometry pairs: {len(selected_train)} / {len(selected_geometry)}\n"
         f"- Raw direction norm: {geometry['raw_direction_norm']:.6f}\n"
         f"- Held-out ROC AUC: {geometry['heldout_roc_auc']:.4f}\n"
         f"- MASK cosine similarity: {vector_comparison['signed_cosine_similarity']:.6f}\n"

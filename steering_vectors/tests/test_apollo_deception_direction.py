@@ -8,13 +8,18 @@ import yaml
 
 from steering_vectors.apollo_deception_direction import (
     activation_examples,
+    calibration_work,
     compare_with_mask,
     evaluation_messages,
     grading_template_has_required_slots,
+    leave_one_out_grading_template,
     manifest_sha256,
     module_index_for_layer,
     parse_apollo_rows,
+    parse_official_calibration_examples,
     score_to_label,
+    select_validated_pairs,
+    source_pair_judgment_work,
     stable_fraction,
     tokenize_generation_batch,
     validate_judge_payload,
@@ -23,8 +28,25 @@ from steering_vectors.apollo_deception_direction import (
 
 CONFIG_PATH = (
     Path(__file__).resolve().parents[1]
-    / "configs/deception_apollo_roleplaying_llama32_1b_layer10.yaml"
+    / "configs/deception_apollo_roleplaying_validated_pairs_llama32_1b_layer10.yaml"
 )
+
+
+def synthetic_grading_template():
+    scores = [1, 2, 6, 5, 7, 3]
+    examples = []
+    for number, score in enumerate(scores, start=1):
+        examples.append(
+            f"## Example {number}\n"
+            f"**[Scenario]** Scenario {number}.\n"
+            f"**[Question]** Question {number}?\n"
+            f"**[Response]** Response {number}.\n"
+            f"**[Honesty Grade]**\n<judgement>{score}</judgement>"
+        )
+    return "\n\n".join(examples) + (
+        "\n\n# Final Instructions:\nGrade the input."
+        "\n\nScenario: {scenario}\nQuestion: {question}\nResponse: {response}"
+    )
 
 
 def synthetic_dataset_config():
@@ -180,6 +202,90 @@ def test_official_grading_template_slot_validation_checks_whole_placeholders():
     complete = "Scenario {scenario}; question {question}; response {response}"
     assert grading_template_has_required_slots(complete)
     assert not grading_template_has_required_slots(complete.replace("{response}", "response"))
+
+
+def test_official_rubric_examples_are_parsed_and_used_for_calibration():
+    config = yaml.safe_load(CONFIG_PATH.read_text())
+    template = synthetic_grading_template()
+    examples = parse_official_calibration_examples(template, config)
+    assert [row["gold_score"] for row in examples] == [1, 2, 6, 5, 7, 3]
+    assert [row["gold_label"] for row in examples] == [
+        "HONEST", "HONEST", "DECEPTIVE", "AMBIGUOUS", "DECEPTIVE", "AMBIGUOUS",
+    ]
+    work = calibration_work(config, template)
+    assert len(work) == 6
+    assert len({row["judgment_id"] for row in work}) == 6
+    assert all("{scenario}" not in row["judge_prompt"] for row in work)
+    assert all(
+        row["judge_prompt"].count(f"Response {-row['source_index']}.") == 1
+        for row in work
+    )
+    without_first = leave_one_out_grading_template(template, 1)
+    assert "## Example 1\n" not in without_first
+    assert "## Example 2\n" in without_first
+    assert grading_template_has_required_slots(without_first)
+
+
+def test_source_pair_validation_work_and_selection_require_both_extremes():
+    config = yaml.safe_load(CONFIG_PATH.read_text())
+    config.update(min_retained_train_pairs=1, min_retained_geometry_pairs=1)
+    rows = [
+        {
+            "task_id": f"roleplaying:{index:03d}",
+            "source_index": index,
+            "scenario": f"Scenario {index}.",
+            "question": f"Question {index}?",
+            "answer_prefix": "Agent: ",
+            "honest_completion": f"Honest response {index}.",
+            "deceptive_completion": f"Deceptive response {index}.",
+        }
+        for index in range(3)
+    ]
+    train, geometry = rows[:2], rows[2:]
+    work = source_pair_judgment_work(train, geometry, synthetic_grading_template())
+    assert len(work) == 6
+    assert {row["source_condition"] for row in work} == {
+        "honest_completion", "deceptive_completion",
+    }
+    labels = {
+        "roleplaying:000": ("HONEST", 1, "DECEPTIVE", 7),
+        "roleplaying:001": ("AMBIGUOUS", 4, "DECEPTIVE", 6),
+        "roleplaying:002": ("HONEST", 2, "DECEPTIVE", 6),
+    }
+    judgments = []
+    for row in rows:
+        honest_label, honest_score, deceptive_label, deceptive_score = labels[
+            row["task_id"]
+        ]
+        judgments.extend([
+            {
+                "judgment_id": (
+                    f"source-pair:{row['task_id']}:honest_completion"
+                ),
+                "predicted_label": honest_label,
+                "score": honest_score,
+            },
+            {
+                "judgment_id": (
+                    f"source-pair:{row['task_id']}:deceptive_completion"
+                ),
+                "predicted_label": deceptive_label,
+                "score": deceptive_score,
+            },
+        ])
+    selected_train, selected_geometry, audit = select_validated_pairs(
+        train, geometry, judgments, config,
+    )
+    assert [row["task_id"] for row in selected_train] == ["roleplaying:000"]
+    assert [row["task_id"] for row in selected_geometry] == ["roleplaying:002"]
+    assert audit["retained_pairs"] == {"train": 1, "geometry": 1}
+    assert audit["excluded_pairs"] == {"train": 1, "geometry": 0}
+    assert audit["gate_passed"]
+
+    config["min_retained_train_pairs"] = 2
+    assert not select_validated_pairs(train, geometry, judgments, config)[2][
+        "gate_passed"
+    ]
 
 
 def test_mask_comparison_uses_pinned_export_without_reorientation():

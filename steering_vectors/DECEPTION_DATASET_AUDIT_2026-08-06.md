@@ -3,11 +3,11 @@
 ## Recommendation
 
 Use Apollo Research's `deception-detection` Roleplaying dataset to construct the
-next Llama-3.2-1B-Instruct layer-10 direction. It is the strongest inspected
-source because every record contains the same scenario and question paired with
-one curated honest completion and one curated strategically deceptive
-completion. This isolates response behavior much better than independently
-sampled truthful and deceptive text corpora.
+next Llama-3.2-1B-Instruct layer-10 direction, but only after behaviorally
+validating both responses in each source pair. Every record contains the same
+scenario and question paired with an honesty-conditioned completion and a
+deception-conditioned completion. This controls context better than
+independently sampled corpora, but the condition names are not verified labels.
 
 Pinned source:
 
@@ -47,12 +47,31 @@ The pinned YAML was downloaded and parsed before selection.
   443 tokens after the configured 256-token generation allowance.
 
 The official `offpolicy_train` loader constructs two examples per scenario with
-an identical system scenario and user question, followed by either the honest
-or deceptive completion. It does not include `answer_prefix` in the extraction
-completion. The official on-policy evaluation loader adds `Answer the question
-directly, without asides or internal thoughts.` to the scenario and starts the
-assistant response with `answer_prefix`; the proposed causal evaluation follows
-that behavior.
+an identical system scenario and user question, followed by either conditioned
+completion. It does not include `answer_prefix` in the extraction completion.
+The upstream generation script sampled these responses from Llama-3.1-70B at
+temperature 1.0 and did not grade or filter them. The official on-policy
+evaluation loader adds `Answer the question directly, without asides or
+internal thoughts.` to the scenario and starts the assistant response with
+`answer_prefix`; the proposed causal evaluation follows that behavior.
+
+## First-run label audit and correction
+
+The first prepared Apollo trial ran on 2026-08-07 and stopped at its judge gate
+before model loading. Treating raw field names as gold labels produced balanced
+accuracy 0.830065: alleged honest recall 33/51, alleged deceptive recall 43/51,
+and refusal-control recall 51/51. Of 51 complete geometry pairs, only 27 were
+judged honest at scores 1–2 on the alleged honest side and deceptive at scores
+6–7 on the alleged deceptive side. Manual review confirmed examples of alleged
+honest responses concealing contraband, inventing alibis, and fabricating a
+burglary. The failure was therefore a source-label bug, not evidence against
+layer-10 steering or separated deception geometry.
+
+The corrected adapter calibrates on the six scored examples embedded in the
+official rubric, judges both sides of all 313 train-plus-geometry source pairs,
+and retains only exact honest/deceptive contrasts. It stops unless at least 120
+train and 20 geometry pairs remain. The complete stopped-run evidence is in
+`steering_vectors/runs/2026-08-07_014917Z_llama32-1b-layer10-apollo-roleplaying-deception/DIAGNOSIS.md`.
 
 The scenarios represent instrumental deception rather than simple factual
 errors. Audited examples include concealing the real reason for a missed
@@ -67,8 +86,9 @@ giving a false explanation for an insurance claim.
   their SHA-256 hashes before parsing.
 - It reproduced the exact 262/51/58 split and all three manifest hashes, with
   zero overlap between train, geometry, and causal task IDs.
-- It produced 626 balanced activation examples: 313 honest and 313 deceptive;
-  524 train and 102 geometry examples.
+- It produced 626 structurally paired candidate activation examples before
+  behavioral filtering: 313 per source condition, with 524 train and 102
+  geometry candidates.
 - The real pinned Llama tokenizer placed every measurement index inside the
   corresponding response and produced a maximum 353-token extraction sequence.
 - All 58 causal prompts preserved `system` then `user` roles and appended the
@@ -177,8 +197,9 @@ Potential use: reasoning commitment analysis, not this Llama extraction.
 
 ## Decision
 
-Construct the next direction from Apollo Roleplaying, validate causally on a
-disjoint Apollo scenario partition with the official grading rubric, and report
-its cosine similarity with the already validated MASK deception vector. Reserve
-BeHonest for a second, out-of-domain evaluation only after the first experiment
-establishes that the new vector has an in-domain causal effect.
+Construct the next direction from judge-validated Apollo Roleplaying pairs,
+validate causally on the disjoint Apollo scenario partition with the official
+grading rubric, and report its cosine similarity with the already validated
+MASK deception vector. Reserve BeHonest for a second, out-of-domain evaluation
+only after the corrected Apollo experiment establishes an in-domain causal
+effect.
