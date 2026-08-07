@@ -1,0 +1,15 @@
+{
+  "completed": 75,
+  "config_fingerprint": "633390199729729ede2f89796d4469758102be171ef1abaa2e3b876462fcd3ff",
+  "current_asr": {
+    "baseline": 0.0,
+    "optimized_suffix": 0.0,
+    "random_suffix": 0.0
+  },
+  "error_count": 0,
+  "invalid_count": 0,
+  "phase": "judge",
+  "run_id": "2026-08-07_202103Z_layer10-response-position-suffix-v2",
+  "status": "running",
+  "total": 75
+}
