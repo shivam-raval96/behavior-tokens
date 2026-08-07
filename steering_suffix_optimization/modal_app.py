@@ -5,7 +5,7 @@ from pathlib import Path
 import modal
 
 ROOT = "/workspace"
-OUTPUT_ROOT = "/outputs/jailbreaks/runs"
+OUTPUT_ROOT = "/outputs/steering_suffix_optimization/runs"
 app = modal.App("steering-soft-suffix-reachability")
 outputs = modal.Volume.from_name("bt-outputs", create_if_missing=True)
 model_cache = modal.Volume.from_name("hf-cache", create_if_missing=True)

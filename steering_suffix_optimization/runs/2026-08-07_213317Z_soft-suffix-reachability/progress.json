@@ -1,0 +1,11 @@
+{
+  "status": "stopped",
+  "phase": "cache_teacher",
+  "completed": 0,
+  "total": 30,
+  "latest_metric": null,
+  "best_metric": null,
+  "run_id": "2026-08-07_213317Z_soft-suffix-reachability",
+  "config_fingerprint": "fa8da180e26f81f4525b264c45043532fda8eeb185d41cf52c338b043e0151ce",
+  "error_count": 0
+}

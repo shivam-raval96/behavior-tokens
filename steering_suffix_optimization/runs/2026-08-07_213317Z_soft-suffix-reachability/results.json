@@ -1,0 +1,7 @@
+{
+  "status": "stopped",
+  "run_id": "2026-08-07_213317Z_soft-suffix-reachability",
+  "completed_cells": 0,
+  "results": [],
+  "reason": "Cancelled to correct the run artifact location before optimization began."
+}

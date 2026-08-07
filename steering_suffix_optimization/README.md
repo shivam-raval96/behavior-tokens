@@ -28,4 +28,4 @@ modal run --detach steering_suffix_optimization/modal_app.py \
   --mode fresh
 ```
 
-The default configuration is [`configs/jailbreak_reachability.yaml`](configs/jailbreak_reachability.yaml). Outputs live on `bt-outputs` under `/jailbreaks/runs/<run-id>` and must be pulled into `jailbreaks/runs/` at completion or controlled stop.
+The default configuration is [`configs/jailbreak_reachability.yaml`](configs/jailbreak_reachability.yaml). Outputs live on `bt-outputs` under `/steering_suffix_optimization/runs/<run-id>` and must be pulled into `steering_suffix_optimization/runs/` at completion or controlled stop.
