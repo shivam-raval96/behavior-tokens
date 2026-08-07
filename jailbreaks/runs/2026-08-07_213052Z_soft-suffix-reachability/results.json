@@ -1,0 +1,11 @@
+{
+  "status": "failed_startup",
+  "run_id": "2026-08-07_213052Z_soft-suffix-reachability",
+  "completed_cells": 0,
+  "results": [],
+  "error": {
+    "type": "ValueError",
+    "message": "Transformers 4.53 rejected the unused model keyword: generator",
+    "attempts": 3
+  }
+}

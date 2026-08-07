@@ -130,7 +130,6 @@ def _generate(
 ) -> torch.Tensor:
     empty = torch.empty(0, dtype=torch.long)
     inputs, attention, positions, _ = _model_inputs(model, layout, suffix, empty)
-    generator = torch.Generator(device=inputs.device).manual_seed(seed)
     kwargs = dict(
         inputs_embeds=inputs.unsqueeze(0) if inputs.ndim == 2 else inputs,
         attention_mask=attention,
@@ -138,11 +137,13 @@ def _generate(
         max_new_tokens=tokens,
         do_sample=True,
         temperature=temperature,
-        generator=generator,
         use_cache=False,
         pad_token_id=tokenizer.pad_token_id,
         eos_token_id=None,
     )
+    torch.manual_seed(seed)
+    if inputs.is_cuda:
+        torch.cuda.manual_seed_all(seed)
     if hook is None:
         result = model.generate(**kwargs)
     else:
