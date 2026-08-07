@@ -73,6 +73,16 @@ or vector construction, deterministic versus sampled decoding, and small
 hand-inspected examples. Do not launch those follow-ups without their own
 complete experiment card and a new explicit **"proceed"** authorization.
 
+## Judge evaluations
+
+Unless the user explicitly specifies another evaluator, use the OpenAI Responses
+API for judge-based evaluations, with the workspace's current judge model
+(`gpt-5.6-luna`), low reasoning effort, strict structured output, and
+`store=false`. Do not substitute a local HarmBench or other local classifier for
+the OpenAI API judge without explicit user approval. Record the provider, model,
+prompt/schema version, response IDs, token usage, retries, and raw structured
+judgments in the run artifacts.
+
 ## Experiment progress
 
 ## Experiment preflight

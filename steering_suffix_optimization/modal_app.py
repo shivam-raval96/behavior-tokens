@@ -8,7 +8,7 @@ app = modal.App("steering-suffix-optimization")
 outputs = modal.Volume.from_name("bt-outputs", create_if_missing=True)
 model_cache = modal.Volume.from_name("hf-cache", create_if_missing=True)
 image = (modal.Image.debian_slim(python_version="3.12")
-    .pip_install("torch==2.7.1", "transformers==4.53.2", "accelerate==1.9.0", "numpy", "pyyaml", "tqdm", "sentencepiece", "matplotlib")
+    .pip_install("torch==2.7.1", "transformers==4.53.2", "accelerate==1.9.0", "numpy", "pyyaml", "tqdm", "sentencepiece", "matplotlib", "openai")
     .add_local_dir("steering_suffix_optimization", f"{ROOT}/steering_suffix_optimization")
     .add_local_file("jailbreaks/llm-attacks-reference/data/advbench/harmful_behaviors.csv",
                     f"{ROOT}/harmful_behaviors.csv"))
@@ -86,3 +86,19 @@ def optimize_v2(run_id: str, mode: str="fresh"):
 @app.local_entrypoint(name="optimize-v2")
 def optimize_v2_entrypoint(run_id: str, mode: str="fresh"):
     optimize_v2.remote(run_id,mode)
+
+
+@app.function(image=image, timeout=60*30,
+              retries=modal.Retries(max_retries=2,backoff_coefficient=2.0),
+              secrets=[modal.Secret.from_name("openai-secret")],
+              volumes={"/outputs":outputs})
+def openai_judge(run_id: str):
+    import os,sys
+    os.chdir(ROOT); sys.path.insert(0,ROOT)
+    from steering_suffix_optimization.openai_attack_judge import run
+    return run(Path(f"{ROOT}/steering_suffix_optimization/configs/openai_attack_judge_v1.yaml"),Path(OUTPUT_ROOT),run_id,commit=outputs.commit)
+
+
+@app.local_entrypoint(name="openai-judge")
+def openai_judge_entrypoint(run_id: str):
+    openai_judge.remote(run_id)
