@@ -1,0 +1,23 @@
+{
+  "phase": "completed",
+  "completed": 1386,
+  "total": 1386,
+  "run_id": "2026-08-07_060155Z_llama32-1b-layer10-apollo-roleplaying-deception-ordinal-calibration",
+  "configuration_fingerprint": "b7fe5dd967c490857d28ac1e78228f0e21da8cd62c563feea4304f98e6227775",
+  "latest_objective": {
+    "geometry_auc_passed": false,
+    "judge_calibration_passed": true,
+    "judge_invalid_rate_passed": true,
+    "causal_positive_strength_found": true,
+    "passed": false
+  },
+  "current_best_metric": 0.6551724137931034,
+  "best_state": {
+    "strength": 4.0
+  },
+  "layer": 10,
+  "module_index": 9,
+  "activation_position": "last non-special assistant completion token",
+  "raw_direction_norm": 0.9515329599380493,
+  "retry_count": 0
+}

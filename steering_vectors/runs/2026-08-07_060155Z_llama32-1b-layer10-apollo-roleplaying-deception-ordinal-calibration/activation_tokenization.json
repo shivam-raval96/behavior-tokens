@@ -1,0 +1,9 @@
+{
+  "examples": 338,
+  "min": 122,
+  "median": 181.0,
+  "p95": 244.14999999999998,
+  "max": 311,
+  "activation_position": "last non-special assistant completion token",
+  "measurement_positions_in_bounds": true
+}

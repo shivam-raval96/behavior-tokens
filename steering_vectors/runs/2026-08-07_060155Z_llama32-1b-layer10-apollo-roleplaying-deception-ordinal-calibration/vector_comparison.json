@@ -1,0 +1,11 @@
+{
+  "comparison": "Apollo Roleplaying direction vs MASK prompt-contrast direction",
+  "mask_export": "/root/active_steering_vectors/outputs/llama32_1b_layer10_deception_direction.json",
+  "mask_export_sha256": "767179c74c4181ec69699ea5d5dcaa13d87bdb24dcfec547f891aedea7ed9e79",
+  "mask_raw_artifact_sha256": "27a936ee9f440518608661f32ad42daee01b314e497807ace7bc454af83e3d62",
+  "apollo_raw_direction_norm": 0.9515329527681045,
+  "mask_raw_direction_norm": 1.072167331604168,
+  "signed_cosine_similarity": 0.2717582769560143,
+  "absolute_cosine_similarity": 0.2717582769560143,
+  "angle_degrees": 74.23107860123712
+}

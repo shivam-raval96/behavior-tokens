@@ -1,0 +1,31 @@
+{
+  "config_fingerprint": "b7fe5dd967c490857d28ac1e78228f0e21da8cd62c563feea4304f98e6227775",
+  "layer": 10,
+  "module_index": 9,
+  "hidden_state_index": 10,
+  "activation_position": "last non-special assistant completion token",
+  "direction_definition": "mean(pair_deceptive_completion - pair_honest_completion)",
+  "raw_direction_norm": 0.9515329599380493,
+  "raw_direction_sha256": "67ed1b9b1717d7f33760318808215b2351c8062c2411096278f86c7f81e84537",
+  "geometry": {
+    "direction_definition": "mean(pair_deceptive_completion - pair_honest_completion)",
+    "raw_direction_norm": 0.9515329599380493,
+    "heldout_roc_auc": 0.7681331747919143,
+    "heldout_balanced_accuracy": 0.6379310344827587,
+    "heldout_pair_ordering_accuracy": 0.7931034482758621,
+    "train_split_half_direction_cosine": 0.7569295763969421,
+    "positive_projection_mean": 0.8032506704330444,
+    "negative_projection_mean": 0.020429709926247597
+  },
+  "vector_comparison": {
+    "comparison": "Apollo Roleplaying direction vs MASK prompt-contrast direction",
+    "mask_export": "/root/active_steering_vectors/outputs/llama32_1b_layer10_deception_direction.json",
+    "mask_export_sha256": "767179c74c4181ec69699ea5d5dcaa13d87bdb24dcfec547f891aedea7ed9e79",
+    "mask_raw_artifact_sha256": "27a936ee9f440518608661f32ad42daee01b314e497807ace7bc454af83e3d62",
+    "apollo_raw_direction_norm": 0.9515329527681045,
+    "mask_raw_direction_norm": 1.072167331604168,
+    "signed_cosine_similarity": 0.2717582769560143,
+    "absolute_cosine_similarity": 0.2717582769560143,
+    "angle_degrees": 74.23107860123712
+  }
+}
