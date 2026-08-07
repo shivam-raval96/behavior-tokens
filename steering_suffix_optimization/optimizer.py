@@ -61,12 +61,14 @@ class SteeringSuffixOptimizer:
                              torch.ones(1, len(ids), device=self.device, dtype=torch.long))[0]
                 for ids in prompt_ids]
 
-    def _loss(self, suffix_embeds: torch.Tensor, prompt_ids: Sequence[torch.Tensor],
+    def _loss(self, suffix_embeds: torch.Tensor,
+              layouts: Sequence[tuple[torch.Tensor, torch.Tensor]],
               baselines: Sequence[torch.Tensor]) -> torch.Tensor:
         losses = []
-        for ids, base in zip(prompt_ids, baselines):
-            prefix = self.embedding(ids[None].to(self.device)).detach()
-            joined = torch.cat((prefix, suffix_embeds), dim=1)
+        for (before, after), base in zip(layouts, baselines):
+            prefix = self.embedding(before[None].to(self.device)).detach()
+            tail = self.embedding(after[None].to(self.device)).detach()
+            joined = torch.cat((prefix, suffix_embeds, tail), dim=1)
             hidden = self._hidden(joined, torch.ones(joined.shape[:2], device=self.device, dtype=torch.long))
             delta = hidden[0] - base
             target = self.target.normalized(delta.device, delta.dtype)
@@ -75,10 +77,11 @@ class SteeringSuffixOptimizer:
             losses.append(1 - cosine + self.norm_weight * radial)
         return torch.stack(losses).mean()
 
-    def token_gradient(self, suffix: torch.Tensor, prompts: Sequence[torch.Tensor],
+    def token_gradient(self, suffix: torch.Tensor,
+                       layouts: Sequence[tuple[torch.Tensor, torch.Tensor]],
                        baselines: Sequence[torch.Tensor]) -> tuple[torch.Tensor, float]:
         embeds = self.embedding(suffix.to(self.device))[None].detach().requires_grad_(True)
-        loss = self._loss(embeds, prompts, baselines)
+        loss = self._loss(embeds, layouts, baselines)
         loss.backward()
         # dL/d(one_hot) = dL/d(embed) @ embedding_matrix.T
         grad = embeds.grad[0].float() @ self.embedding.weight.detach().float().T
@@ -98,19 +101,21 @@ class SteeringSuffixOptimizer:
         return rows
 
     @torch.no_grad()
-    def evaluate(self, candidates: torch.Tensor, prompts: Sequence[torch.Tensor],
+    def evaluate(self, candidates: torch.Tensor,
+                 layouts: Sequence[tuple[torch.Tensor, torch.Tensor]],
                  baselines: Sequence[torch.Tensor]) -> torch.Tensor:
         values = []
         for start in range(0, len(candidates), self.eval_chunk_size):
             for row in candidates[start:start + self.eval_chunk_size]:
-                values.append(self._loss(self.embedding(row)[None], prompts, baselines))
+                values.append(self._loss(self.embedding(row)[None], layouts, baselines))
         return torch.stack(values)
 
-    def step(self, suffix: torch.Tensor, prompts: Sequence[torch.Tensor],
+    def step(self, suffix: torch.Tensor,
+             layouts: Sequence[tuple[torch.Tensor, torch.Tensor]],
              baselines: Sequence[torch.Tensor], generator: torch.Generator):
-        grad, current_loss = self.token_gradient(suffix, prompts, baselines)
+        grad, current_loss = self.token_gradient(suffix, layouts, baselines)
         candidates = self.candidates(suffix, grad, generator)
-        losses = self.evaluate(candidates, prompts, baselines)
+        losses = self.evaluate(candidates, layouts, baselines)
         index = int(losses.argmin())
         if float(losses[index]) < current_loss:
             return candidates[index].detach(), float(losses[index]), True
