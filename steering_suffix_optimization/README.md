@@ -31,3 +31,9 @@ mean-direction alignment with per-example consistency and target-norm matching.
 Before optimizing suffixes, `controls.py` must be used to establish that direct
 `+vector`/`-vector` interventions causally change the calibrated judge metric on
 the exact evaluation prompts. A failed positive control blocks suffix search.
+
+The intended jailbreak artifact is the validated layer-10 Arditi refusal
+direction (`hidden_states[10]`, decoder module 9). Its negative sign removes
+refusal; coefficient `-0.75` corresponds to unit-direction additive norm
+`-3.353400157`. The earlier layer-4 LLM-LAT probe direction is retained only for
+provenance and is not used by V2.

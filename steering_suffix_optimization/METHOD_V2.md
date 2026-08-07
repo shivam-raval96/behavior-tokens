@@ -24,8 +24,10 @@ and acceptance comparisons are FP32.
 1. Verify vector SHA, hidden-state index, sign definition, tokenizer, model
    revision, user-only chat template, and response-token position against the
    source artifact.
-2. Apply `-2`, `0`, and `+2` direct residual interventions at decoder module 3
-   (`hidden_states[4]`) on the exact 25 evaluation prompts.
+2. Apply additive norms `-3.353400157`, `0`, and `+3.353400157` at decoder
+   module 9 (`hidden_states[10]`) on the exact 25 evaluation prompts. The signed
+   norm corresponds to raw refusal-direction coefficient `-0.75`, using source
+   raw norm `4.471200210`.
 3. Generate paired responses and score them with pinned HarmBench. Continue
    only if at least one signed intervention produces a directionally coherent,
    nonzero behavioral change without degeneration.

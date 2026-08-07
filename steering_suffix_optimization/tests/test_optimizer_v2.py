@@ -15,4 +15,4 @@ def test_fp32_objective_preserves_sub_bfloat_differences():
 
 
 def test_hidden_state_to_module_index():
-    assert hidden_state_index_to_module_index(4)==3
+    assert hidden_state_index_to_module_index(10)==9
