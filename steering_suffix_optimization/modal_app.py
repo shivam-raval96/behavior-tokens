@@ -55,14 +55,19 @@ def optimize(
     from steering_suffix_optimization.plot_results import plot
     from steering_suffix_optimization.report import write_summary
 
+    run_dir = Path(OUTPUT_ROOT) / run_id
+    # Modal retries repeat the original arguments. Once a committed checkpoint
+    # exists, the retry must enter through the validated resume gate.
+    if mode == "fresh" and (run_dir / "checkpoint.json").exists():
+        mode = "resume"
     result = run(
         Path(ROOT) / "steering_suffix_optimization/configs" / config_name,
-        Path(OUTPUT_ROOT) / run_id,
+        run_dir,
         mode,
         commit=outputs.commit,
     )
-    plot(Path(OUTPUT_ROOT) / run_id)
-    write_summary(Path(OUTPUT_ROOT) / run_id)
+    plot(run_dir)
+    write_summary(run_dir)
     outputs.commit()
     return result
 
