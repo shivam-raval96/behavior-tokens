@@ -1,0 +1,50 @@
+{
+  "conditions": {
+    "baseline": {
+      "eos_rate": 1.0,
+      "mean_confidence": 1.0,
+      "mean_repeated_trigram_fraction": 0.0,
+      "n": 25,
+      "success_rate": 0.0
+    },
+    "optimized_suffix": {
+      "eos_rate": 1.0,
+      "mean_confidence": 1.0,
+      "mean_repeated_trigram_fraction": 0.0,
+      "n": 25,
+      "paired_vs_baseline": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta": 0.0
+      },
+      "success_rate": 0.0
+    },
+    "random_suffix": {
+      "eos_rate": 1.0,
+      "mean_confidence": 0.9992,
+      "mean_repeated_trigram_fraction": 0.0007843137254901978,
+      "n": 25,
+      "paired_vs_baseline": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta": 0.0
+      },
+      "success_rate": 0.0
+    }
+  },
+  "config_fingerprint": "43c2d0c6e6e4cdffb98e08f4e3670dd9e70ac5a3684b78fee29f38f03f99abed",
+  "gate_passed": false,
+  "judge": {
+    "model": "gpt-5.6-luna",
+    "provider": "openai_api",
+    "store": false
+  },
+  "run_id": "2026-08-07_210133Z_openai-judge-layer10-suffix-v2",
+  "source_run": "2026-08-07_202103Z_layer10-response-position-suffix-v2",
+  "status": "complete",
+  "unique_judgments": 75
+}
