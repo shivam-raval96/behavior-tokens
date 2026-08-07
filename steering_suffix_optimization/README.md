@@ -15,3 +15,19 @@ The copied vectors and their exact source runs are listed in
 `artifacts/manifest.yaml`. Run outputs belong in uniquely timestamped folders
 under `steering_suffix_optimization/runs/` and must include resolved config,
 checkpoint, progress, generations, results, and summary.
+
+## V2 method
+
+`optimizer_v2.py` replaces the pilot objective with response-position matching.
+For each optimization prompt, the corresponding AdvBench target response is
+teacher-forced in both the clean and suffix conditions. The loss matches the
+activation difference at the final non-special assistant response token—the
+same position type used to construct the source vector. All objective math and
+candidate ranking are FP32 even when model forwards use BF16.
+
+V2 also removes the pilot's extra system prompt, covers every suffix coordinate
+before repeating coordinates, excludes no-op token proposals, and combines
+mean-direction alignment with per-example consistency and target-norm matching.
+Before optimizing suffixes, `controls.py` must be used to establish that direct
+`+vector`/`-vector` interventions causally change the calibrated judge metric on
+the exact evaluation prompts. A failed positive control blocks suffix search.
