@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import yaml
+from scipy.stats import spearmanr
 from tqdm.auto import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -626,10 +627,51 @@ def calibration_metrics(records: list[dict]) -> dict:
     }
     scored = [row for row in records if row.get("gold_score") is not None]
     if scored:
+        gold = np.asarray([row["gold_score"] for row in scored], dtype=np.int64)
+        predicted = np.asarray([row["score"] for row in scored], dtype=np.int64)
+        absolute_error = np.abs(gold - predicted)
+        correlation = float(spearmanr(gold, predicted).statistic)
+        extreme = np.isin(gold, [1, 7])
         result["exact_score_accuracy"] = float(np.mean([
             row["score"] == row["gold_score"] for row in scored
         ]))
+        result.update({
+            "mean_absolute_score_error": float(np.mean(absolute_error)),
+            "within_one_score_accuracy": float(np.mean(absolute_error <= 1)),
+            "within_two_score_accuracy": float(np.mean(absolute_error <= 2)),
+            "max_absolute_score_error": int(np.max(absolute_error)),
+            "spearman_rank_correlation": correlation,
+            "extreme_anchor_examples": int(np.sum(extreme)),
+            "extreme_anchor_exact": bool(np.all(predicted[extreme] == gold[extreme])),
+        })
     return result
+
+
+def calibration_gate(metrics: dict, config: dict) -> dict:
+    checks = {
+        "invalid_rate_passed": (
+            metrics["invalid_rate"]
+            <= float(config["max_judge_reference_invalid_rate"])
+        ),
+        "mean_absolute_error_passed": (
+            metrics["mean_absolute_score_error"]
+            <= float(config["max_judge_reference_mean_absolute_error"])
+        ),
+        "within_two_accuracy_passed": (
+            metrics["within_two_score_accuracy"]
+            >= float(config["min_judge_reference_within_two_score_accuracy"])
+        ),
+        "rank_correlation_passed": (
+            metrics["spearman_rank_correlation"]
+            >= float(config["min_judge_reference_spearman_rank_correlation"])
+        ),
+        "extreme_anchors_passed": (
+            metrics["extreme_anchor_exact"]
+            if bool(config["require_judge_reference_extreme_anchor_exact"])
+            else True
+        ),
+    }
+    return {**checks, "passed": all(checks.values())}
 
 
 @torch.inference_mode()
@@ -873,14 +915,10 @@ def run(
         config, output, checkpoint, fingerprint, checkpoint_callback,
     )
     calibration_result = calibration_metrics(calibration)
+    calibration_result["gate"] = calibration_gate(calibration_result, config)
     atomic_json(output / "judge_calibration.json", calibration_result)
     checkpoint_callback()
-    if (
-        calibration_result["balanced_accuracy"]
-        < float(config["min_judge_reference_balanced_accuracy"])
-        or calibration_result["invalid_rate"]
-        > float(config["max_judge_reference_invalid_rate"])
-    ):
+    if not calibration_result["gate"]["passed"]:
         raise RuntimeError(f"Apollo judge calibration failed: {calibration_result}")
 
     source_pair_judgments = judge_items(
@@ -1089,8 +1127,7 @@ def run(
             geometry["heldout_roc_auc"] >= float(config["min_heldout_roc_auc"])
         ),
         "judge_calibration_passed": (
-            calibration_result["balanced_accuracy"]
-            >= float(config["min_judge_reference_balanced_accuracy"])
+            calibration_result["gate"]["passed"]
         ),
         "judge_invalid_rate_passed": (
             calibration_result["invalid_rate"]

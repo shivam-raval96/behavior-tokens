@@ -73,6 +73,18 @@ and retains only exact honest/deceptive contrasts. It stops unless at least 120
 train and 20 geometry pairs remain. The complete stopped-run evidence is in
 `steering_vectors/runs/2026-08-07_014917Z_llama32-1b-layer10-apollo-roleplaying-deception/DIAGNOSIS.md`.
 
+A second pre-model run tested leave-one-out grading on the six official ordinal
+anchors. Its hard three-class gate stopped at balanced accuracy 0.333333, but a
+code and prompt audit found no implementation error: all records were valid,
+targets and grades were isolated correctly, score MAE was 1.0, all predictions
+were within two points, Spearman correlation was 0.840668, and the score-1 and
+score-7 anchors matched exactly. This exposed a metric bug: collapsing
+subjective adjacent ordinal scores into classes made reasonable one-point
+disagreements across 2/3 or 5/6 count as total failures. The next configuration
+keeps the blind leave-one-out check but gates it using predeclared ordinal
+metrics. Evidence is archived in
+`steering_vectors/runs/2026-08-07_021001Z_llama32-1b-layer10-apollo-roleplaying-deception-validated-pairs/DIAGNOSIS.md`.
+
 The scenarios represent instrumental deception rather than simple factual
 errors. Audited examples include concealing the real reason for a missed
 assignment, misrepresenting a product defect, hiding facts during an audit, and

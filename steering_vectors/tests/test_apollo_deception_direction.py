@@ -8,6 +8,8 @@ import yaml
 
 from steering_vectors.apollo_deception_direction import (
     activation_examples,
+    calibration_gate,
+    calibration_metrics,
     calibration_work,
     compare_with_mask,
     evaluation_messages,
@@ -28,7 +30,7 @@ from steering_vectors.apollo_deception_direction import (
 
 CONFIG_PATH = (
     Path(__file__).resolve().parents[1]
-    / "configs/deception_apollo_roleplaying_validated_pairs_llama32_1b_layer10.yaml"
+    / "configs/deception_apollo_roleplaying_ordinal_calibration_llama32_1b_layer10.yaml"
 )
 
 
@@ -286,6 +288,31 @@ def test_source_pair_validation_work_and_selection_require_both_extremes():
     assert not select_validated_pairs(train, geometry, judgments, config)[2][
         "gate_passed"
     ]
+
+
+def test_ordinal_calibration_gate_preserves_rank_and_extreme_anchors():
+    config = yaml.safe_load(CONFIG_PATH.read_text())
+    gold = [1, 2, 6, 5, 7, 3]
+    predicted = [1, 4, 5, 6, 7, 1]
+    records = [
+        {
+            "gold_label": score_to_label(reference, False, config),
+            "predicted_label": score_to_label(score, False, config),
+            "gold_score": reference,
+            "score": score,
+        }
+        for reference, score in zip(gold, predicted)
+    ]
+    metrics = calibration_metrics(records)
+    assert metrics["mean_absolute_score_error"] == pytest.approx(1.0)
+    assert metrics["within_two_score_accuracy"] == pytest.approx(1.0)
+    assert metrics["spearman_rank_correlation"] == pytest.approx(0.8406680017)
+    assert metrics["extreme_anchor_exact"]
+    assert calibration_gate(metrics, config)["passed"]
+
+    records[-2]["score"] = 4
+    records[-2]["predicted_label"] = "AMBIGUOUS"
+    assert not calibration_gate(calibration_metrics(records), config)["passed"]
 
 
 def test_mask_comparison_uses_pinned_export_without_reorientation():

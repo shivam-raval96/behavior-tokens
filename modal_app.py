@@ -774,7 +774,7 @@ def run_deception_direction(
 def run_apollo_deception_direction(
     run_mode: str = "fresh", run_id: str = "",
     config_name: str = (
-        "deception_apollo_roleplaying_validated_pairs_llama32_1b_layer10.yaml"
+        "deception_apollo_roleplaying_ordinal_calibration_llama32_1b_layer10.yaml"
     ),
 ):
     """Extract and evaluate a judge-validated layer-10 Apollo direction."""
@@ -795,11 +795,11 @@ def run_apollo_deception_direction(
         timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%SZ")
         run_id = (
             f"{timestamp}_llama32-1b-layer10-"
-            "apollo-roleplaying-deception-validated-pairs"
+            "apollo-roleplaying-deception-ordinal-calibration"
         )
     output = Path("/outputs/steering_vectors/runs") / run_id
     allowed_configs = {
-        "deception_apollo_roleplaying_validated_pairs_llama32_1b_layer10.yaml",
+        "deception_apollo_roleplaying_ordinal_calibration_llama32_1b_layer10.yaml",
     }
     if config_name not in allowed_configs:
         raise ValueError(f"unsupported Apollo deception config: {config_name}")
