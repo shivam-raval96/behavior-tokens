@@ -1,0 +1,27 @@
+{
+  "unit": "nats_per_continuation_token",
+  "sampled_ce_gap": 0.5975801843425013,
+  "full_kl": 0.6447912357734427,
+  "sampled_minus_full": -0.04721105143094146,
+  "trajectory_cluster_bootstrap": {
+    "clusters": 96,
+    "replicates": 100000,
+    "seed": 20260808,
+    "ci95": [-0.07246741, -0.02292543],
+    "two_sided_zero_tail_probability": 0.00016
+  },
+  "prompt_cluster_bootstrap": {
+    "clusters": 24,
+    "rollouts_per_cluster": 4,
+    "replicates": 100000,
+    "seed": 20260808,
+    "ci95": [-0.07183098, -0.02374613],
+    "two_sided_zero_tail_probability": 0.00006
+  },
+  "verified_sampling_policy": {
+    "do_sample": true,
+    "temperature": 0.8,
+    "top_p": 0.95,
+    "raw_teacher_distribution_used_by_full_kl": true
+  }
+}

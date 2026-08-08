@@ -1,0 +1,8 @@
+{
+  "config_fingerprint": "6347003d5d839ec267a1a67508f19668f76f33ca40950124320b866ae39b7718",
+  "records": 96,
+  "source_run_id": "2026-08-08_224416Z_fixed-rollout-ce-retry",
+  "teacher_cache_sha256": "f6d1880270d43528c3030cee27a5c789f3e94d5083cde08f376079fa654a5870",
+  "tokens": 12073,
+  "vector_sha256": "020721212634d6a9560586ca24dafa1b7313b37d3a0b9b21292dc0bb19bd9101"
+}

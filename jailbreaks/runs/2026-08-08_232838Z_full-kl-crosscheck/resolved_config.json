@@ -1,0 +1,22 @@
+{
+  "checkpoint_every_records": 8,
+  "coefficient": -0.75,
+  "expected_records": 96,
+  "expected_tokens": 12073,
+  "experiment": "full_distribution_kl_crosscheck_v1",
+  "hidden_state_index": 10,
+  "histogram_bins": 60,
+  "model_id": "meta-llama/Llama-3.2-1B-Instruct",
+  "model_revision": "9213176726f574b556790deb65791e0c5aa438b6",
+  "module_index": 9,
+  "pass_tolerance": 0.01,
+  "run_mode": "fresh",
+  "source_run_dir": "/outputs/jailbreaks/runs/2026-08-08_224416Z_fixed-rollout-ce-retry",
+  "source_run_id": "2026-08-08_224416Z_fixed-rollout-ce-retry",
+  "source_sample_ce_gap": 0.5975801843425013,
+  "steering_positions": "all_prefill_and_continuation",
+  "teacher_cache_path": "/outputs/jailbreaks/runs/2026-08-08_224416Z_fixed-rollout-ce-retry/teacher_rollouts.jsonl",
+  "teacher_cache_sha256": "f6d1880270d43528c3030cee27a5c789f3e94d5083cde08f376079fa654a5870",
+  "vector_path": "/workspace/suffix_optimization_algorithm/artifacts/jailbreak_refusal_layer10.npy",
+  "vector_sha256": "020721212634d6a9560586ca24dafa1b7313b37d3a0b9b21292dc0bb19bd9101"
+}
