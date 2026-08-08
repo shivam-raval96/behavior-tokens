@@ -1,0 +1,24 @@
+{
+  "config_fingerprint": "320c307e105c768e3c3e6455fa693d6bfef4e62ba84f0a80d0de89e27ed6b323",
+  "floor": {
+    "nll_sum": 7214.655767440796,
+    "record_mean_ce": 0.5930453642822067,
+    "records": 96,
+    "token_weighted_ce": 0.5975859991253869,
+    "tokens": 12073
+  },
+  "run_id": "2026-08-08_224416Z_fixed-rollout-ce-retry",
+  "suffixes": [
+    {
+      "name": "empty",
+      "nll_sum": 14429.241333007812,
+      "record_mean_ce": 1.1941105681288946,
+      "records": 96,
+      "student_ce_minus_floor": 0.5975801843425013,
+      "text": "",
+      "token_weighted_ce": 1.1951661834678882,
+      "tokens": 12073
+    }
+  ],
+  "teacher_cache_sha256": "f6d1880270d43528c3030cee27a5c789f3e94d5083cde08f376079fa654a5870"
+}

@@ -1,0 +1,13 @@
+{
+  "best_gap": 0.5975801843425013,
+  "completed": 96,
+  "completed_fraction": 1.0,
+  "config_fingerprint": "320c307e105c768e3c3e6455fa693d6bfef4e62ba84f0a80d0de89e27ed6b323",
+  "elapsed_seconds": 279.257313906,
+  "error_count": 0,
+  "latest_ce": 1.1951661834678882,
+  "phase": "complete",
+  "retry_count": 0,
+  "run_id": "2026-08-08_224416Z_fixed-rollout-ce-retry",
+  "total": 96
+}
