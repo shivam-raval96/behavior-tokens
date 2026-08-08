@@ -13,4 +13,3 @@ larger than `0.01` nats/token.
 Permanent diagnostics include every per-token KL, mean and quantiles by response
 position, first-token versus remaining-token means, a linear position trend,
 top-token mass concentration, a histogram/CDF, and response-position plots.
-

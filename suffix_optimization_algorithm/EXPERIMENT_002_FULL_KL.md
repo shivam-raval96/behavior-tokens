@@ -46,4 +46,3 @@
 
 Do not submit until the user replies with the explicit word **proceed** after
 this completed card has been presented.
-

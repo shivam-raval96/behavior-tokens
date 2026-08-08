@@ -197,4 +197,3 @@ def run(config_path: Path, output: Path, mode: str = "fresh", commit=None):
     writer.json("checkpoint.json", {"status": "complete", "phase": "complete", "config_fingerprint": config_hash, "full_kl": full_kl, "passed": passed})
     writer.progress({"run_id": output.name, "config_fingerprint": config_hash, "phase": "complete", "completed": len(records), "total": len(records), "completed_fraction": 1.0, "elapsed_seconds": time.monotonic()-started, "latest_ce": full_kl, "full_kl": full_kl, "sample_ce_gap": config["source_sample_ce_gap"], "signed_discrepancy": discrepancy, "best_gap": abs(discrepancy), "tokens_scored": int(values.size), "error_count": 0, "retry_count": int(checkpoint.get("retry_count", 0))})
     return results
-

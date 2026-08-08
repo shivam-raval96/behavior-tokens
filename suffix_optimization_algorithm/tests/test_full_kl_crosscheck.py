@@ -20,4 +20,3 @@ def test_full_kl_is_zero_for_identical_distributions():
     logits = torch.randn(1, 5, 7)
     values = continuation_full_kl(logits, logits.clone(), prefix_length=3, full_length=5)
     assert torch.equal(values, torch.zeros(2))
-

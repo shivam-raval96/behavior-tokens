@@ -18,4 +18,3 @@ coefficient: -0.75
 steering_positions: all_prefill_and_continuation
 checkpoint_every_records: 8
 histogram_bins: 60
-
