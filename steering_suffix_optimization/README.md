@@ -10,6 +10,8 @@ The run order is deliberately diagnostic:
 4. C4 matched-length random-token and natural-language suffixes.
 5. The full alpha × suffix length × norm constraint × seed sweep.
 
+The incremental steering-to-prefill objective developed from the single-prompt probe is documented in [`COMBINED_PREFILL_METHOD.md`](COMBINED_PREFILL_METHOD.md). Its first follow-up reuses the exact cached target and five-token solution rather than expanding the sweep.
+
 Teacher continuations and top-2000 distributions are frozen per sweep cell. Teacher-forced batches contain all eight continuations for a prompt. The steering hook begins at user content and remains active through every continuation position. Student suffix vectors are inserted after instruction content and before the assistant header.
 
 ## Artifacts

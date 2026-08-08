@@ -110,3 +110,35 @@ def prefill_probe(run_id: str, mode: str = "fresh"):
 @app.local_entrypoint(name="prefill-probe")
 def prefill_probe_entrypoint(run_id: str, mode: str = "fresh"):
     prefill_probe.remote(run_id, mode)
+
+
+@app.function(
+    image=image,
+    gpu="A100-80GB",
+    timeout=60 * 60,
+    retries=modal.Retries(max_retries=2, backoff_coefficient=2.0),
+    secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+    volumes={"/outputs": outputs, "/root/.cache/huggingface": model_cache},
+)
+def combined_prefill_probe(run_id: str, mode: str = "fresh"):
+    import os
+    import sys
+
+    os.chdir(ROOT)
+    sys.path.insert(0, ROOT)
+    from steering_suffix_optimization.combined_prefill import run
+
+    run_dir = Path(OUTPUT_ROOT) / run_id
+    if mode == "fresh" and (run_dir / "checkpoint.json").exists():
+        mode = "resume"
+    return run(
+        Path(ROOT) / "steering_suffix_optimization/configs/combined_prefill_probe.yaml",
+        run_dir,
+        mode,
+        commit=outputs.commit,
+    )
+
+
+@app.local_entrypoint(name="combined-prefill-probe")
+def combined_prefill_probe_entrypoint(run_id: str, mode: str = "fresh"):
+    combined_prefill_probe.remote(run_id, mode)
