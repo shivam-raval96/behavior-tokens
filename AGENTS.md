@@ -96,6 +96,13 @@ or returned by the Modal run. Include metric histories and comparisons where
 they are meaningful, plus a readable view of the latest complete structured
 progress payload so newly added metrics are never silently omitted.
 
+The dashboard and its history must live inside that experiment's unique dated
+run folder, never in a shared or fixed dashboard location. Checkpoints may
+update `dashboard.html` within the active run, but a later run must create its
+own files and must never overwrite, replace, or truncate any prior run's
+`dashboard.html` or `dashboard_history.jsonl`. The final dashboard state and its
+complete checkpoint history are permanent run artifacts.
+
 For remote Modal experiments, expose the dashboard through a read-only live HTTP
 endpoint backed by the `bt-outputs` Volume and report its URL after launch. The
 endpoint must reload Volume state on each request; the HTML must continue to be
