@@ -1,0 +1,15 @@
+{
+  "baseline_asr": null,
+  "best_metric": null,
+  "completed": 23,
+  "config_fingerprint": "c7b54c945ffd0ecc1d929f1fc83cbc66a5cd47f22fc87cb807e79b15bdfbdca9",
+  "elapsed_seconds": 139.23342609399998,
+  "error_count": 0,
+  "latest_metric": null,
+  "paired_transitions": null,
+  "phase": "generation",
+  "run_id": "2026-08-08_013105Z_soft-prefill-paired-asr",
+  "suffix_asr": null,
+  "throughput_per_second": 0.1651902179328125,
+  "total": 25
+}

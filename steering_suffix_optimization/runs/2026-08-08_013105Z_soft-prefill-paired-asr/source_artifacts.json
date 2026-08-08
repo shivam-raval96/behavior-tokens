@@ -1,0 +1,5 @@
+{
+  "soft_prompt": "soft_prompts/combined.pt",
+  "soft_prompt_sha256": "83f2b266be45615795baa028c713401bfa7f36a95e937d2b2e16a55757d3725a",
+  "source_run_id": "2026-08-08_010813Z_combined-prefill-probe"
+}
