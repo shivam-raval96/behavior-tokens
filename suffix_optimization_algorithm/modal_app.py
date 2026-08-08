@@ -9,7 +9,7 @@ outputs = modal.Volume.from_name("bt-outputs", create_if_missing=True)
 model_cache = modal.Volume.from_name("hf-cache", create_if_missing=True)
 image = (
     modal.Image.debian_slim(python_version="3.12")
-    .pip_install("torch==2.7.1", "transformers==4.53.2", "accelerate==1.9.0", "numpy", "pyyaml", "tqdm", "sentencepiece", "fastapi[standard]")
+    .pip_install("torch==2.7.1", "transformers==4.53.2", "accelerate==1.9.0", "numpy", "pyyaml", "tqdm", "sentencepiece", "matplotlib", "fastapi[standard]")
     .add_local_dir("suffix_optimization_algorithm", f"{ROOT}/suffix_optimization_algorithm")
     .add_local_file("jailbreaks/llm-attacks-reference/data/advbench/harmful_behaviors.csv", f"{ROOT}/harmful_behaviors.csv")
 )
@@ -35,6 +35,33 @@ def experiment_001(run_id: str, mode: str = "fresh"):
     if mode == "fresh" and (run_dir / "checkpoint.json").exists():
         mode = "resume"
     return run(Path(ROOT) / "suffix_optimization_algorithm/configs/experiment_001.yaml", run_dir, mode, commit=outputs.commit)
+
+
+@app.function(
+    image=image,
+    gpu="A100-80GB",
+    timeout=60 * 60,
+    retries=modal.Retries(max_retries=2, backoff_coefficient=2.0),
+    secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+    volumes={"/outputs": outputs, "/root/.cache/huggingface": model_cache},
+)
+def full_kl_crosscheck(run_id: str, mode: str = "fresh"):
+    import os
+    import sys
+
+    os.chdir(ROOT)
+    sys.path.insert(0, ROOT)
+    from suffix_optimization_algorithm.full_kl_crosscheck import run
+
+    run_dir = Path(OUTPUT_ROOT) / run_id
+    if mode == "fresh" and (run_dir / "checkpoint.json").exists():
+        mode = "resume"
+    return run(Path(ROOT) / "suffix_optimization_algorithm/configs/experiment_002_full_kl.yaml", run_dir, mode, commit=outputs.commit)
+
+
+@app.local_entrypoint(name="full-kl-crosscheck")
+def full_kl_crosscheck_entrypoint(run_id: str, mode: str = "fresh"):
+    full_kl_crosscheck.remote(run_id, mode)
 
 
 @app.local_entrypoint()
