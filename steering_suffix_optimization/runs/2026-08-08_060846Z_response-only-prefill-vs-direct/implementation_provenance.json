@@ -1,0 +1,5 @@
+{
+  "corrected_implementation_commit": "ae8255d",
+  "correction": "Direct steering starts at the final assistant-header position that predicts the first response token.",
+  "note": "The scientific YAML was intentionally unchanged from the flawed comparison, so its config fingerprint alone does not distinguish the code correction."
+}
