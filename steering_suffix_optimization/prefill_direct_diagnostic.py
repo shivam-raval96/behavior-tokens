@@ -27,6 +27,17 @@ def fingerprint(config: dict[str, Any]) -> str:
     return hashlib.sha256(json.dumps(scientific, sort_keys=True).encode()).hexdigest()
 
 
+def response_only_hook(config: dict[str, Any], unit_vector: torch.Tensor, layout):
+    """Build a hook that begins at the first assistant-token prediction site."""
+    return (
+        config["module_index"],
+        unit_vector,
+        config["direct_additive_norm"],
+        "plain",
+        layout.response_logit_start,
+    )
+
+
 def trajectory_metrics(
     baseline_hidden: torch.Tensor,
     soft_hidden: torch.Tensor,
@@ -141,7 +152,6 @@ def run(config_path: Path, output: Path, mode: str = "fresh", commit=None):
     soft = torch.load(soft_path, map_location=model.device, weights_only=False).float()
     if tuple(soft.shape) != (config["suffix_length"], model.config.hidden_size):
         raise ValueError("soft-prompt shape mismatch")
-    hook = (config["module_index"], unit, config["direct_additive_norm"], "plain")
     rows = list(checkpoint.get("rows", []))
     phase = checkpoint.get("phase", "measure")
     errors = int(checkpoint.get("error_count", 0))
@@ -164,6 +174,10 @@ def run(config_path: Path, output: Path, mode: str = "fresh", commit=None):
     if phase == "measure":
         for item in tqdm(selection[len(rows):], initial=len(rows), total=len(selection), desc="measure_prompts"):
             layout = build_layout(tokenizer, item["prompt"], config["suffix_length"])
+            # The final assistant-header position predicts the first generated
+            # token. Starting here changes response logits without altering any
+            # system or user-content hidden state.
+            hook = response_only_hook(config, unit, layout)
             empty = None
             direct_tokens = greedy_continuation(model, tokenizer, layout, empty, config["max_new_tokens"], hook)
             baseline_tokens = greedy_continuation(model, tokenizer, layout, empty, config["max_new_tokens"])

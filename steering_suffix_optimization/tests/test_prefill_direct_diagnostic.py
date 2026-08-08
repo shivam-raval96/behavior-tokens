@@ -1,6 +1,18 @@
 import torch
 
-from steering_suffix_optimization.prefill_direct_diagnostic import aggregate, trajectory_metrics
+from steering_suffix_optimization.layout import PromptLayout
+from steering_suffix_optimization.prefill_direct_diagnostic import (
+    aggregate,
+    response_only_hook,
+    trajectory_metrics,
+)
+
+
+def test_direct_hook_uses_response_boundary_not_user_boundary():
+    layout = PromptLayout(torch.tensor([1, 2, 3]), torch.tensor([9]), torch.tensor([4, 5]), steer_start=1)
+    hook = response_only_hook({"module_index": 9, "direct_additive_norm": -3.0}, torch.ones(2), layout)
+    assert hook[4] == 4
+    assert hook[4] != layout.steer_start
 
 
 def test_trajectory_metrics_identical_target():

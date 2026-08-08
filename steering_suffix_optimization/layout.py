@@ -18,6 +18,13 @@ class PromptLayout:
     def clean_ids(self) -> torch.Tensor:
         return torch.cat((self.prefix_ids, self.assistant_header_ids))
 
+    @property
+    def response_logit_start(self) -> int:
+        """Position whose logits predict the first assistant response token."""
+        if self.clean_ids.numel() == 0:
+            raise ValueError("clean prompt must contain an assistant-generation position")
+        return int(self.clean_ids.numel() - 1)
+
 
 def build_layout(
     tokenizer, prompt: str, suffix_length: int, system_prompt: str | None = None

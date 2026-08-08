@@ -5,6 +5,17 @@ from steering_suffix_optimization.layout import PromptLayout, splice_embeddings
 from steering_suffix_optimization.prefill_probe import diagnostic, position_metrics
 
 
+def test_response_logit_start_is_last_clean_prompt_position():
+    layout = PromptLayout(
+        prefix_ids=torch.tensor([1, 2, 3]),
+        suffix_marker_ids=torch.tensor([9, 9]),
+        assistant_header_ids=torch.tensor([4, 5]),
+        steer_start=1,
+    )
+    assert layout.response_logit_start == 4
+    assert layout.response_logit_start > layout.steer_start
+
+
 def test_fp32_master_suffix_is_cast_and_receives_gradient():
     embedding = torch.nn.Embedding(20, 4, dtype=torch.bfloat16)
     layout = PromptLayout(torch.tensor([1, 2]), torch.tensor([3]), torch.tensor([4]))

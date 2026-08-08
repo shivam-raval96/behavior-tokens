@@ -55,13 +55,20 @@ def forward_trajectory(
     suffix: torch.Tensor,
     continuation: torch.Tensor,
     hidden_state_index: int,
-    hook: tuple[int, torch.Tensor, float, str] | None = None,
+    hook: tuple[int, torch.Tensor, float, str] | tuple[int, torch.Tensor, float, str, int] | None = None,
 ):
     inputs, attention, positions, continuation_slice = model_inputs(
         model, layout, suffix, continuation
     )
     context = (
-        steering_hook(model, hook[0], hook[1], hook[2], hook[3], layout.steer_start)
+        steering_hook(
+            model,
+            hook[0],
+            hook[1],
+            hook[2],
+            hook[3],
+            hook[4] if len(hook) == 5 else layout.steer_start,
+        )
         if hook
         else nullcontext()
     )
@@ -86,12 +93,19 @@ def greedy_continuation(
     layout: PromptLayout,
     suffix: torch.Tensor,
     tokens: int,
-    hook: tuple[int, torch.Tensor, float, str] | None = None,
+    hook: tuple[int, torch.Tensor, float, str] | tuple[int, torch.Tensor, float, str, int] | None = None,
 ) -> torch.Tensor:
     empty = torch.empty(0, dtype=torch.long)
     inputs, attention, positions, _ = model_inputs(model, layout, suffix, empty)
     context = (
-        steering_hook(model, hook[0], hook[1], hook[2], hook[3], layout.steer_start)
+        steering_hook(
+            model,
+            hook[0],
+            hook[1],
+            hook[2],
+            hook[3],
+            hook[4] if len(hook) == 5 else layout.steer_start,
+        )
         if hook
         else nullcontext()
     )

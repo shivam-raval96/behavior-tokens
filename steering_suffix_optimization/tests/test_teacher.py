@@ -16,7 +16,7 @@ class Toy(torch.nn.Module):
         self.model = SimpleNamespace(layers=torch.nn.ModuleList([Layer()]))
 
 
-def test_hook_covers_continuation_positions():
+def test_response_hook_preserves_prompt_and_covers_prediction_positions():
     model = Toy()
     hidden = torch.zeros(1, 6, 2)
     with steering_hook(model, 0, torch.tensor([1.0, 0.0]), 2.0, "plain", 2):
