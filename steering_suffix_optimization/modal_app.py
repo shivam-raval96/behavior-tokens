@@ -177,3 +177,23 @@ def prefill_asr_eval(run_id: str, mode: str = "fresh"):
 @app.local_entrypoint(name="prefill-asr-eval")
 def prefill_asr_eval_entrypoint(run_id: str, mode: str = "fresh"):
     prefill_asr_eval.remote(run_id, mode)
+
+
+@app.function(
+    image=image,
+    gpu="A100-80GB",
+    timeout=60 * 60,
+    retries=modal.Retries(max_retries=2, backoff_coefficient=2.0),
+    secrets=[modal.Secret.from_name("hf-llama-stage-a"), modal.Secret.from_name("openai-secret")],
+    volumes={"/outputs": outputs, "/root/.cache/huggingface": model_cache},
+)
+def prefill_direct_diagnostic(run_id: str, mode: str = "fresh"):
+    import os
+    import sys
+    os.chdir(ROOT)
+    sys.path.insert(0, ROOT)
+    from steering_suffix_optimization.prefill_direct_diagnostic import run
+    run_dir = Path(OUTPUT_ROOT) / run_id
+    if mode == "fresh" and (run_dir / "checkpoint.json").exists():
+        mode = "resume"
+    return run(Path(ROOT) / "steering_suffix_optimization/configs/prefill_direct_diagnostic.yaml", run_dir, mode, commit=outputs.commit)
