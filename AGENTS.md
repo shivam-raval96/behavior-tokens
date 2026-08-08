@@ -85,6 +85,24 @@ judgments in the run artifacts.
 
 ## Experiment progress
 
+### Live experiment dashboards
+
+Every experiment must create a self-contained `dashboard.html` in its run
+directory before substantive work begins and rewrite it at every progress
+checkpoint. The dashboard must auto-refresh and visualize the experiment phase,
+completed/total work, elapsed time, throughput, ETA, current and best primary
+metrics, errors/retries, and every method-specific metric emitted periodically
+or returned by the Modal run. Include metric histories and comparisons where
+they are meaningful, plus a readable view of the latest complete structured
+progress payload so newly added metrics are never silently omitted.
+
+For remote Modal experiments, expose the dashboard through a read-only live HTTP
+endpoint backed by the `bt-outputs` Volume and report its URL after launch. The
+endpoint must reload Volume state on each request; the HTML must continue to be
+usable as a static archived artifact after the run. Persist the dashboard's
+history data with the run, verify both files during closeout, and include them in
+the committed run folder.
+
 ## Experiment preflight
 
 Before launching any experiment, first provide a concise experiment card in the

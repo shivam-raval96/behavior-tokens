@@ -21,6 +21,8 @@ image = (
         "sentencepiece",
         "matplotlib",
         "openai",
+        "scipy",
+        "fastapi[standard]",
     )
     .add_local_dir(
         "steering_suffix_optimization", f"{ROOT}/steering_suffix_optimization"
@@ -212,3 +214,23 @@ def direct_steering_calibration(run_id: str, mode: str = "fresh"):
     run_dir = Path(OUTPUT_ROOT) / run_id
     if mode == "fresh" and (run_dir / "checkpoint.json").exists(): mode = "resume"
     return run(Path(ROOT) / "steering_suffix_optimization/configs/direct_steering_calibration.yaml", run_dir, mode, commit=outputs.commit)
+
+
+@app.function(image=image, gpu="A100-80GB", timeout=60 * 60, retries=modal.Retries(max_retries=2, backoff_coefficient=2.0), secrets=[modal.Secret.from_name("hf-llama-stage-a"),modal.Secret.from_name("openai-secret")], volumes={"/outputs":outputs,"/root/.cache/huggingface":model_cache})
+def frozen_direct_validation(run_id: str, mode: str="fresh"):
+    import os,sys
+    os.chdir(ROOT);sys.path.insert(0,ROOT)
+    from steering_suffix_optimization.frozen_direct_validation import run
+    run_dir=Path(OUTPUT_ROOT)/run_id
+    if mode=="fresh" and (run_dir/"checkpoint.json").exists():mode="resume"
+    return run(Path(ROOT)/"steering_suffix_optimization/configs/frozen_direct_validation.yaml",run_dir,mode,commit=outputs.commit)
+
+
+@app.function(image=image,volumes={"/outputs":outputs})
+@modal.fastapi_endpoint()
+def run_dashboard(run_id: str):
+    from fastapi.responses import HTMLResponse
+    outputs.reload()
+    path=Path(OUTPUT_ROOT)/run_id/"dashboard.html"
+    if not path.exists():return HTMLResponse("<h1>Dashboard not ready</h1>",status_code=404)
+    return HTMLResponse(path.read_text(),headers={"Cache-Control":"no-store"})
