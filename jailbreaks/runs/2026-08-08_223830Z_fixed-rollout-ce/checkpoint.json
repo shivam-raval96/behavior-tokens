@@ -1,0 +1,11 @@
+{
+  "status": "failed",
+  "phase": "cache_teacher",
+  "completed": 0,
+  "total": 96,
+  "config_fingerprint": "320c307e105c768e3c3e6455fa693d6bfef4e62ba84f0a80d0de89e27ed6b323",
+  "modal_app_id": "ap-pAGVDkedTrQgrXm4lPOYWY",
+  "retry_count": 2,
+  "error_count": 3,
+  "failure": "Transformers 4.53 rejected the model.generate generator keyword before the first rollout."
+}

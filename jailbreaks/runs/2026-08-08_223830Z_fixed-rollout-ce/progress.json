@@ -1,0 +1,10 @@
+{
+  "run_id": "2026-08-08_223830Z_fixed-rollout-ce",
+  "phase": "failed_startup",
+  "completed": 0,
+  "total": 96,
+  "completed_fraction": 0.0,
+  "config_fingerprint": "320c307e105c768e3c3e6455fa693d6bfef4e62ba84f0a80d0de89e27ed6b323",
+  "error_count": 3,
+  "retry_count": 2
+}

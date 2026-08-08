@@ -1,0 +1,9 @@
+{
+  "run_id": "2026-08-08_223830Z_fixed-rollout-ce",
+  "status": "failed_startup",
+  "teacher_rollouts_cached": 0,
+  "scientific_result": null,
+  "modal_app_id": "ap-pAGVDkedTrQgrXm4lPOYWY",
+  "verified_implementation_defect": "transformers_generation_generator_kwarg_unsupported",
+  "replacement": "planned with identical scientific configuration and explicit torch RNG seeding"
+}

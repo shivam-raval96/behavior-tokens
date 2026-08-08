@@ -218,6 +218,21 @@ def run(config_path: Path, output: Path, mode: str = "fresh", commit=None):
             "vector_metadata": json.loads(Path(config["vector_metadata_path"]).read_text()),
         },
     )
+    writer.progress(
+        {
+            "run_id": output.name,
+            "config_fingerprint": config_hash,
+            "phase": "initializing_model",
+            "completed": 0,
+            "total": len(selection) * config["rollouts_per_prompt"],
+            "completed_fraction": 0.0,
+            "elapsed_seconds": 0.0,
+            "latest_ce": None,
+            "best_gap": None,
+            "error_count": 0,
+            "retry_count": int(checkpoint.get("retry_count", 0)),
+        }
+    )
 
     tokenizer = AutoTokenizer.from_pretrained(config["model_id"], revision=config["model_revision"])
     tokenizer.pad_token_id = tokenizer.eos_token_id
@@ -242,7 +257,11 @@ def run(config_path: Path, output: Path, mode: str = "fresh", commit=None):
             if record_index < len(cached):
                 continue
             prefix = chat_prefix_ids(tokenizer, item["prompt"])
-            generator = torch.Generator(device=model.device).manual_seed(seed)
+            # Transformers 4.53 does not accept a per-call `generator` kwarg.
+            # Every rollout resets both CPU and CUDA RNGs to its recorded seed.
+            torch.manual_seed(seed)
+            if torch.cuda.is_available():
+                torch.cuda.manual_seed_all(seed)
             with steering(model, config["module_index"], vector, config["coefficient"]):
                 generated = model.generate(
                     input_ids=torch.tensor([prefix], device=model.device),
@@ -252,7 +271,6 @@ def run(config_path: Path, output: Path, mode: str = "fresh", commit=None):
                     max_new_tokens=config["max_new_tokens"],
                     eos_token_id=tokenizer.eos_token_id,
                     pad_token_id=tokenizer.pad_token_id,
-                    generator=generator,
                     use_cache=True,
                 )[0, len(prefix):].tolist()
             row = {
