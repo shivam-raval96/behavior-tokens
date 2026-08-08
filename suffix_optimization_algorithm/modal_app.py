@@ -64,6 +64,29 @@ def full_kl_crosscheck_entrypoint(run_id: str, mode: str = "fresh"):
     full_kl_crosscheck.remote(run_id, mode)
 
 
+@app.function(
+    image=image,
+    gpu="A100-80GB",
+    timeout=60 * 60,
+    retries=modal.Retries(max_retries=2, backoff_coefficient=2.0),
+    secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+    volumes={"/outputs": outputs, "/root/.cache/huggingface": model_cache},
+)
+def q_weighted_crosscheck(run_id: str, mode: str = "fresh"):
+    import os
+    import sys
+    os.chdir(ROOT); sys.path.insert(0, ROOT)
+    from suffix_optimization_algorithm.q_weighted_crosscheck import run
+    run_dir = Path(OUTPUT_ROOT) / run_id
+    if mode == "fresh" and (run_dir / "checkpoint.json").exists(): mode = "resume"
+    return run(Path(ROOT) / "suffix_optimization_algorithm/configs/experiment_003_q_weighted.yaml", run_dir, mode, commit=outputs.commit)
+
+
+@app.local_entrypoint(name="q-weighted-crosscheck")
+def q_weighted_crosscheck_entrypoint(run_id: str, mode: str = "fresh"):
+    q_weighted_crosscheck.remote(run_id, mode)
+
+
 @app.local_entrypoint()
 def main(run_id: str, mode: str = "fresh"):
     experiment_001.remote(run_id, mode)
