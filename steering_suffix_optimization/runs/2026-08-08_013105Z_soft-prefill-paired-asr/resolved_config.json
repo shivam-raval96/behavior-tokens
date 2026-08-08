@@ -20,7 +20,7 @@
   "model_revision": "9213176726f574b556790deb65791e0c5aa438b6",
   "n_behaviors": 25,
   "run_id": "2026-08-08_013105Z_soft-prefill-paired-asr",
-  "run_mode": "fresh",
+  "run_mode": "resume",
   "skip_rows": 1,
   "source_run_dir": "/outputs/steering_suffix_optimization/runs/2026-08-08_010813Z_combined-prefill-probe",
   "source_run_id": "2026-08-08_010813Z_combined-prefill-probe",
