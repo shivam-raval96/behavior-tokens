@@ -110,6 +110,12 @@ usable as a static archived artifact after the run. Persist the dashboard's
 history data with the run, verify both files during closeout, and include them in
 the committed run folder.
 
+Also start a read-only localhost mirror for every launched remote experiment and
+report its `http://127.0.0.1/.../dashboard.html` URL. The mirror must continually
+pull that run's own `dashboard.html` and `dashboard_history.jsonl` from
+`bt-outputs`; local accessibility is part of launch verification, not an
+optional follow-up.
+
 ## Experiment preflight
 
 Before launching any experiment, first provide a concise experiment card in the

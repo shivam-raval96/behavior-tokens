@@ -20,6 +20,14 @@ Each run writes `config.yaml`, `resolved_config.json`, `checkpoint.json`, `progr
 
 The checkpoint contract supports `fresh` and `resume`; scientific configuration fingerprints deliberately exclude only the execution mode. SIGTERM is converted into a checkpointed stop at the next 50-step diagnostic boundary.
 
+Every new experiment writes a self-contained `dashboard.html` and complete
+`dashboard_history.jsonl` inside its unique run folder. For a localhost mirror
+that continuously reloads those files from `bt-outputs`, run:
+
+```bash
+python -m steering_suffix_optimization.local_dashboard RUN_ID
+```
+
 ## Launch
 
 Do not launch without the repository-required experiment card and a subsequent explicit `proceed` from the user.

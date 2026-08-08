@@ -226,6 +226,31 @@ def frozen_direct_validation(run_id: str, mode: str="fresh"):
     return run(Path(ROOT)/"steering_suffix_optimization/configs/frozen_direct_validation.yaml",run_dir,mode,commit=outputs.commit)
 
 
+@app.function(
+    image=image,
+    gpu="A100-80GB",
+    timeout=60 * 60 * 3,
+    retries=modal.Retries(max_retries=2, backoff_coefficient=2.0),
+    secrets=[modal.Secret.from_name("hf-llama-stage-a"), modal.Secret.from_name("openai-secret")],
+    volumes={"/outputs": outputs, "/root/.cache/huggingface": model_cache},
+)
+def trajectory_imitation(run_id: str, mode: str = "fresh"):
+    import os
+    import sys
+    os.chdir(ROOT)
+    sys.path.insert(0, ROOT)
+    from steering_suffix_optimization.trajectory_imitation import run
+    run_dir = Path(OUTPUT_ROOT) / run_id
+    if mode == "fresh" and (run_dir / "checkpoint.json").exists():
+        mode = "resume"
+    return run(
+        Path(ROOT) / "steering_suffix_optimization/configs/trajectory_imitation.yaml",
+        run_dir,
+        mode,
+        commit=outputs.commit,
+    )
+
+
 @app.function(image=image,volumes={"/outputs":outputs})
 @modal.fastapi_endpoint()
 def run_dashboard(run_id: str):
