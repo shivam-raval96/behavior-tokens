@@ -8,3 +8,5 @@ def test_dashboard_persists_history_and_latest_metrics(tmp_path):
     assert len((tmp_path/"dashboard_history.jsonl").read_text().splitlines())==2
     page=(tmp_path/"dashboard.html").read_text()
     assert 'http-equiv="refresh"' in page and '"direct_asr":0.5' in page
+    assert "plotTop=18" in page
+    assert ",top=18" not in page
