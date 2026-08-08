@@ -1,0 +1,39 @@
+{
+  "absolute_gap_residual": 0.008486417485597975,
+  "config_fingerprint": "084c480a15ffcd01e2947c5f40bb49b57d5695cb3bc7986edd0cec0e76887c57",
+  "exact_q_gap": 0.5890937668569033,
+  "exact_q_student_ce": 1.1957811721855551,
+  "exact_q_teacher_floor": 0.6066874062698854,
+  "first_position_gap": 10.045816479250789,
+  "pass_tolerance": 0.01,
+  "passed": true,
+  "records": 96,
+  "remaining_positions_gap": 0.5132947036198813,
+  "run_id": "2026-08-08_234819Z_q-weighted-crosscheck",
+  "self_checks": {
+    "no_full_vocabulary_support": true,
+    "outside_support_max": 0.0,
+    "outside_support_zero": true,
+    "q_sum_error_max": 2.384185791015625e-07,
+    "q_sum_passed": true,
+    "retained_mass_at_least_top_p": true,
+    "retained_mass_min": 0.9500007629394531
+  },
+  "signed_gap_residual": -0.008486417485597975,
+  "source_run_id": "2026-08-08_224416Z_fixed-rollout-ce-retry",
+  "source_sample_ce_gap": 0.5975801843425013,
+  "source_sample_student_ce": 1.1951661834678882,
+  "source_sample_teacher_floor": 0.5975859991253869,
+  "support": {
+    "fraction_full_vocabulary": 0.0,
+    "fraction_single_token": 0.4177089372981032,
+    "maximum": 613,
+    "mean": 5.221734448769983,
+    "median": 2.0,
+    "minimum": 1,
+    "p90": 9.0,
+    "p99": 60.280000000000655
+  },
+  "teacher_cache_sha256": "f6d1880270d43528c3030cee27a5c789f3e94d5083cde08f376079fa654a5870",
+  "tokens": 12073
+}

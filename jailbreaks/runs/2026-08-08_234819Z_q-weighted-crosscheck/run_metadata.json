@@ -1,0 +1,8 @@
+{
+  "modal_app_id": "ap-0hEFr0M5IdW8jmwgK7HjIO",
+  "implementation_commit": "12f1c4eead8c5ec74fbfac4c84b7c1a2728f0fe8",
+  "remote_dashboard": "https://spar--suffix-fixed-rollout-ce-dashboard.modal.run/runs/2026-08-08_234819Z_q-weighted-crosscheck/dashboard.html",
+  "verified_local_dashboard": "http://127.0.0.1:8877/dashboard.html",
+  "local_dashboard_status": "served during run and stopped after closeout",
+  "remote_output_path": "/jailbreaks/runs/2026-08-08_234819Z_q-weighted-crosscheck"
+}

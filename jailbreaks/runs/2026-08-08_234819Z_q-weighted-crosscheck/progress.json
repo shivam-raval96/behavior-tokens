@@ -1,0 +1,17 @@
+{
+  "best_gap": 0.008486417485597975,
+  "completed": 96,
+  "completed_fraction": 1.0,
+  "config_fingerprint": "084c480a15ffcd01e2947c5f40bb49b57d5695cb3bc7986edd0cec0e76887c57",
+  "elapsed_seconds": 72.146387261,
+  "error_count": 0,
+  "latest_ce": 0.5890937668569033,
+  "phase": "complete",
+  "q_weighted_gap": 0.5890937668569033,
+  "retry_count": 0,
+  "run_id": "2026-08-08_234819Z_q-weighted-crosscheck",
+  "sample_ce_gap": 0.5975801843425013,
+  "signed_residual": -0.008486417485597975,
+  "tokens_scored": 12073,
+  "total": 96
+}

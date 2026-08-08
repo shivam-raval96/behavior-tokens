@@ -1,0 +1,1282 @@
+[
+  {
+    "count": 96,
+    "gap_mean": 10.045816479250789,
+    "gap_median": 11.68696403503418,
+    "gap_p90": 18.03666114807129,
+    "position": 0,
+    "student_ce_mean": 10.559196647256613,
+    "support_mean": 2.2916666666666665,
+    "teacher_floor_mean": 0.5133802566366891
+  },
+  {
+    "count": 96,
+    "gap_mean": 4.165114658831953,
+    "gap_median": 0.330180287361145,
+    "gap_p90": 13.432565689086914,
+    "position": 1,
+    "student_ce_mean": 4.537570432794364,
+    "support_mean": 1.8854166666666667,
+    "teacher_floor_mean": 0.37245573004452126
+  },
+  {
+    "count": 96,
+    "gap_mean": 3.5290451378507584,
+    "gap_median": 0.2703465223312378,
+    "gap_p90": 11.315783500671387,
+    "position": 2,
+    "student_ce_mean": 3.944933711540415,
+    "support_mean": 2.2604166666666665,
+    "teacher_floor_mean": 0.41588864664027386
+  },
+  {
+    "count": 96,
+    "gap_mean": 1.2911354160572586,
+    "gap_median": 0.3523075580596924,
+    "gap_p90": 2.1913106441497803,
+    "position": 3,
+    "student_ce_mean": 2.0034365367334632,
+    "support_mean": 5.09375,
+    "teacher_floor_mean": 0.7123011222097991
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.8265067622566121,
+    "gap_median": 0.2070273905992508,
+    "gap_p90": 3.1238937377929688,
+    "position": 4,
+    "student_ce_mean": 1.4059308900235818,
+    "support_mean": 3.3333333333333335,
+    "teacher_floor_mean": 0.5794241283683732
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.5523321977286315,
+    "gap_median": 0.06651311367750168,
+    "gap_p90": 1.1910715103149414,
+    "position": 5,
+    "student_ce_mean": 0.9052401304137158,
+    "support_mean": 2.0625,
+    "teacher_floor_mean": 0.35290793574041857
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.4581817777172639,
+    "gap_median": 0.06770699471235275,
+    "gap_p90": 1.1999402046203613,
+    "position": 6,
+    "student_ce_mean": 0.9604145478749425,
+    "support_mean": 6.125,
+    "teacher_floor_mean": 0.5022327702622137
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.54094680624479,
+    "gap_median": 0.2283419370651245,
+    "gap_p90": 1.5045050978660583,
+    "position": 7,
+    "student_ce_mean": 1.058845352700241,
+    "support_mean": 3.0104166666666665,
+    "teacher_floor_mean": 0.5178985408806701
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.7336826261390806,
+    "gap_median": 0.31935280561447144,
+    "gap_p90": 2.277916669845581,
+    "position": 8,
+    "student_ce_mean": 1.2187397930025459,
+    "support_mean": 3.0208333333333335,
+    "teacher_floor_mean": 0.48505716521682035
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.48949279150905056,
+    "gap_median": 0.01986777503043413,
+    "gap_p90": 1.2625250816345215,
+    "position": 9,
+    "student_ce_mean": 0.9226542349308028,
+    "support_mean": 3.1458333333333335,
+    "teacher_floor_mean": 0.4331614475084959
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.5659133495756764,
+    "gap_median": 0.012843625620007515,
+    "gap_p90": 1.014885276556015,
+    "position": 10,
+    "student_ce_mean": 0.9808281033730865,
+    "support_mean": 3.9895833333333335,
+    "teacher_floor_mean": 0.4149147555869406
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.4302838356985035,
+    "gap_median": 0.010854595806449652,
+    "gap_p90": 1.1482838988304138,
+    "position": 11,
+    "student_ce_mean": 0.8696506720447793,
+    "support_mean": 3.09375,
+    "teacher_floor_mean": 0.43936683379025016
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.8666082852326914,
+    "gap_median": 0.04576094634830952,
+    "gap_p90": 1.9023606777191162,
+    "position": 12,
+    "student_ce_mean": 1.2987542305285409,
+    "support_mean": 3.2916666666666665,
+    "teacher_floor_mean": 0.43214594407209006
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.7588990530865468,
+    "gap_median": 0.047646671533584595,
+    "gap_p90": 2.4721686244010925,
+    "position": 13,
+    "student_ce_mean": 1.1844096373860715,
+    "support_mean": 3.1458333333333335,
+    "teacher_floor_mean": 0.4255105855045258
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.5247230486530583,
+    "gap_median": 0.012223362224176526,
+    "gap_p90": 1.907458484172821,
+    "position": 14,
+    "student_ce_mean": 0.9185006933563008,
+    "support_mean": 2.8020833333333335,
+    "teacher_floor_mean": 0.3937776360991639
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.35719892552197524,
+    "gap_median": 0.022350612096488476,
+    "gap_p90": 1.1090714931488037,
+    "position": 15,
+    "student_ce_mean": 0.7384284048261929,
+    "support_mean": 2.3645833333333335,
+    "teacher_floor_mean": 0.38122947919651057
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.6207892028259892,
+    "gap_median": 0.04665985703468323,
+    "gap_p90": 1.5108901858329773,
+    "position": 16,
+    "student_ce_mean": 1.114828809514113,
+    "support_mean": 3.2604166666666665,
+    "teacher_floor_mean": 0.49403960363897187
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.6697055718225796,
+    "gap_median": 0.023957788944244385,
+    "gap_p90": 1.9368311166763306,
+    "position": 17,
+    "student_ce_mean": 1.0959228591785735,
+    "support_mean": 3.8958333333333335,
+    "teacher_floor_mean": 0.42621729078633425
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.6964375950922014,
+    "gap_median": 0.0634273886680603,
+    "gap_p90": 1.9383375644683838,
+    "position": 18,
+    "student_ce_mean": 1.1416740661620406,
+    "support_mean": 2.8645833333333335,
+    "teacher_floor_mean": 0.4452364664489525
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.6267329832472655,
+    "gap_median": 0.03311169147491455,
+    "gap_p90": 1.5543038845062256,
+    "position": 19,
+    "student_ce_mean": 1.1350955583927806,
+    "support_mean": 3.8541666666666665,
+    "teacher_floor_mean": 0.5083625714522823
+  },
+  {
+    "count": 96,
+    "gap_mean": 1.0292481512547553,
+    "gap_median": 0.14586490392684937,
+    "gap_p90": 2.522212505340576,
+    "position": 20,
+    "student_ce_mean": 1.7266759751038616,
+    "support_mean": 6.90625,
+    "teacher_floor_mean": 0.6974278227908192
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.7590734272001202,
+    "gap_median": 0.13535670563578606,
+    "gap_p90": 2.271557331085205,
+    "position": 21,
+    "student_ce_mean": 1.3758642673987633,
+    "support_mean": 5.229166666666667,
+    "teacher_floor_mean": 0.6167908377970512
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.7329559939544007,
+    "gap_median": 0.22307461500167847,
+    "gap_p90": 2.355493664741516,
+    "position": 22,
+    "student_ce_mean": 1.3944102601525425,
+    "support_mean": 5.447916666666667,
+    "teacher_floor_mean": 0.661454268250471
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.8931169232587735,
+    "gap_median": 0.2149023711681366,
+    "gap_p90": 2.6372441053390503,
+    "position": 23,
+    "student_ce_mean": 1.5847378669522474,
+    "support_mean": 8.625,
+    "teacher_floor_mean": 0.6916209403818847
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.6582751976143868,
+    "gap_median": 0.20262518525123596,
+    "gap_p90": 1.7024505138397217,
+    "position": 24,
+    "student_ce_mean": 1.3167148078961535,
+    "support_mean": 7.916666666666667,
+    "teacher_floor_mean": 0.6584396130339373
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.7132861119204108,
+    "gap_median": 0.17005008459091187,
+    "gap_p90": 2.079867124557495,
+    "position": 25,
+    "student_ce_mean": 1.3788567799957072,
+    "support_mean": 5.520833333333333,
+    "teacher_floor_mean": 0.6655706650067922
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.8030813616271644,
+    "gap_median": 0.13850657641887665,
+    "gap_p90": 2.107759952545166,
+    "position": 26,
+    "student_ce_mean": 1.4143540704570867,
+    "support_mean": 4.802083333333333,
+    "teacher_floor_mean": 0.611272710300066
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.931538791034375,
+    "gap_median": 0.32567255198955536,
+    "gap_p90": 2.8012969493865967,
+    "position": 27,
+    "student_ce_mean": 1.7205472842403349,
+    "support_mean": 6.114583333333333,
+    "teacher_floor_mean": 0.7890084918380609
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.6709080950466332,
+    "gap_median": 0.21240906417369843,
+    "gap_p90": 1.9114683866500854,
+    "position": 28,
+    "student_ce_mean": 1.3643939866054804,
+    "support_mean": 6.354166666666667,
+    "teacher_floor_mean": 0.6934858924244433
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.9585691921890458,
+    "gap_median": 0.2895142436027527,
+    "gap_p90": 2.9961944818496704,
+    "position": 29,
+    "student_ce_mean": 1.6637846359053678,
+    "support_mean": 6.927083333333333,
+    "teacher_floor_mean": 0.7052154567729995
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.5693860018215053,
+    "gap_median": 0.0893765240907669,
+    "gap_p90": 1.2687642574310303,
+    "position": 30,
+    "student_ce_mean": 1.1483758665848949,
+    "support_mean": 3.3854166666666665,
+    "teacher_floor_mean": 0.5789898634980858
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.6841168188652619,
+    "gap_median": 0.15865391492843628,
+    "gap_p90": 1.983224332332611,
+    "position": 31,
+    "student_ce_mean": 1.3842462446294554,
+    "support_mean": 5.208333333333333,
+    "teacher_floor_mean": 0.7001294297232473
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.5540233822412818,
+    "gap_median": 0.17198871076107025,
+    "gap_p90": 1.777135968208313,
+    "position": 32,
+    "student_ce_mean": 1.1499659579060235,
+    "support_mean": 3.375,
+    "teacher_floor_mean": 0.5959425798283533
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.5618534231509973,
+    "gap_median": 0.12955089658498764,
+    "gap_p90": 1.548780083656311,
+    "position": 33,
+    "student_ce_mean": 1.187033957153746,
+    "support_mean": 3.6458333333333335,
+    "teacher_floor_mean": 0.6251805322938443
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.5290577022254676,
+    "gap_median": 0.11617051810026169,
+    "gap_p90": 1.4837206602096558,
+    "position": 34,
+    "student_ce_mean": 1.052557616361879,
+    "support_mean": 3.3333333333333335,
+    "teacher_floor_mean": 0.5234999199325975
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.573720751542254,
+    "gap_median": 0.19326436519622803,
+    "gap_p90": 1.4869595766067505,
+    "position": 35,
+    "student_ce_mean": 1.2610373658973133,
+    "support_mean": 6.21875,
+    "teacher_floor_mean": 0.6873166181271415
+  },
+  {
+    "count": 96,
+    "gap_mean": 0.6982005884098742,
+    "gap_median": 0.17797133326530457,
+    "gap_p90": 2.1297948360443115,
+    "position": 36,
+    "student_ce_mean": 1.386851078338508,
+    "support_mean": 4.15625,
+    "teacher_floor_mean": 0.6886504880125118
+  },
+  {
+    "count": 95,
+    "gap_mean": 0.5410861929186682,
+    "gap_median": 0.09726019948720932,
+    "gap_p90": 1.6114777326583862,
+    "position": 37,
+    "student_ce_mean": 1.159114541427895,
+    "support_mean": 6.7894736842105265,
+    "teacher_floor_mean": 0.6180283449700494
+  },
+  {
+    "count": 95,
+    "gap_mean": 0.5664293823015669,
+    "gap_median": 0.13984543085098267,
+    "gap_p90": 1.5326637268066408,
+    "position": 38,
+    "student_ce_mean": 1.1462262063714739,
+    "support_mean": 3.642105263157895,
+    "teacher_floor_mean": 0.5797968226739014
+  },
+  {
+    "count": 95,
+    "gap_mean": 0.7714410803283068,
+    "gap_median": 0.19583290815353394,
+    "gap_p90": 2.050328302383423,
+    "position": 39,
+    "student_ce_mean": 1.4105385149051137,
+    "support_mean": 4.873684210526315,
+    "teacher_floor_mean": 0.639097436572669
+  },
+  {
+    "count": 95,
+    "gap_mean": 0.4860718950046787,
+    "gap_median": 0.04057714343070984,
+    "gap_p90": 1.4230604648590104,
+    "position": 40,
+    "student_ce_mean": 1.04430998303985,
+    "support_mean": 4.147368421052631,
+    "teacher_floor_mean": 0.5582380876140968
+  },
+  {
+    "count": 95,
+    "gap_mean": 0.5022246505434037,
+    "gap_median": 0.09418082237243652,
+    "gap_p90": 1.224885559082032,
+    "position": 41,
+    "student_ce_mean": 1.05987711370995,
+    "support_mean": 3.3263157894736843,
+    "teacher_floor_mean": 0.5576524665488136
+  },
+  {
+    "count": 95,
+    "gap_mean": 0.4968939969951993,
+    "gap_median": 0.15041422843933105,
+    "gap_p90": 1.4429488897323612,
+    "position": 42,
+    "student_ce_mean": 1.1445297032498072,
+    "support_mean": 8.336842105263157,
+    "teacher_floor_mean": 0.6476357076850994
+  },
+  {
+    "count": 95,
+    "gap_mean": 0.5565176819790999,
+    "gap_median": 0.1414499282836914,
+    "gap_p90": 1.815147948265076,
+    "position": 43,
+    "student_ce_mean": 1.149163807215523,
+    "support_mean": 4.242105263157895,
+    "teacher_floor_mean": 0.5926461292600547
+  },
+  {
+    "count": 95,
+    "gap_mean": 0.6157794051453852,
+    "gap_median": 0.11197200417518616,
+    "gap_p90": 1.9020130157470716,
+    "position": 44,
+    "student_ce_mean": 1.2023212876647855,
+    "support_mean": 5.705263157894737,
+    "teacher_floor_mean": 0.5865418863323959
+  },
+  {
+    "count": 95,
+    "gap_mean": 0.4980834636760344,
+    "gap_median": 0.15714538097381592,
+    "gap_p90": 1.1308142662048346,
+    "position": 45,
+    "student_ce_mean": 1.1962638834497248,
+    "support_mean": 6.7894736842105265,
+    "teacher_floor_mean": 0.6981804141573464
+  },
+  {
+    "count": 95,
+    "gap_mean": 0.5355682000670592,
+    "gap_median": 0.08676266670227051,
+    "gap_p90": 1.4536065101623536,
+    "position": 46,
+    "student_ce_mean": 1.104790902782436,
+    "support_mean": 4.052631578947368,
+    "teacher_floor_mean": 0.569222701431059
+  },
+  {
+    "count": 95,
+    "gap_mean": 0.6368292038003024,
+    "gap_median": 0.14817535877227783,
+    "gap_p90": 1.848607873916627,
+    "position": 47,
+    "student_ce_mean": 1.4028859138007945,
+    "support_mean": 6.3052631578947365,
+    "teacher_floor_mean": 0.7660567142630355
+  },
+  {
+    "count": 95,
+    "gap_mean": 0.6449897058618527,
+    "gap_median": 0.2342265248298645,
+    "gap_p90": 1.4961471796035768,
+    "position": 48,
+    "student_ce_mean": 1.319615867056087,
+    "support_mean": 5.6,
+    "teacher_floor_mean": 0.6746261561954797
+  },
+  {
+    "count": 95,
+    "gap_mean": 0.23644319189968308,
+    "gap_median": 0.09717774391174316,
+    "gap_p90": 0.8562529087066652,
+    "position": 49,
+    "student_ce_mean": 0.7941613828635199,
+    "support_mean": 3.3684210526315788,
+    "teacher_floor_mean": 0.5577181905656624
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.3864441218711043,
+    "gap_median": 0.16154798865318298,
+    "gap_p90": 0.9398784518241883,
+    "position": 50,
+    "student_ce_mean": 1.1313336585836173,
+    "support_mean": 5.0638297872340425,
+    "teacher_floor_mean": 0.7448895371022467
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.33261297341899454,
+    "gap_median": 0.14835694432258606,
+    "gap_p90": 0.7422919034957886,
+    "position": 51,
+    "student_ce_mean": 0.9046991622826618,
+    "support_mean": 4.361702127659575,
+    "teacher_floor_mean": 0.5720861876776765
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.34432525818711857,
+    "gap_median": 0.07165570929646492,
+    "gap_p90": 1.1514427661895754,
+    "position": 52,
+    "student_ce_mean": 0.9638499308920735,
+    "support_mean": 5.74468085106383,
+    "teacher_floor_mean": 0.6195246737526753
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.4509203537445767,
+    "gap_median": 0.06768212467432022,
+    "gap_p90": 1.3012683153152467,
+    "position": 53,
+    "student_ce_mean": 1.0807746430334948,
+    "support_mean": 6.9787234042553195,
+    "teacher_floor_mean": 0.6298542880870862
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.5241179497016925,
+    "gap_median": 0.15506884455680847,
+    "gap_p90": 1.0692037224769595,
+    "position": 54,
+    "student_ce_mean": 1.2318099634061614,
+    "support_mean": 8.127659574468085,
+    "teacher_floor_mean": 0.7076920144890152
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.4812405840506994,
+    "gap_median": 0.18502166867256165,
+    "gap_p90": 1.4795032262802126,
+    "position": 55,
+    "student_ce_mean": 1.3350323205797028,
+    "support_mean": 6.24468085106383,
+    "teacher_floor_mean": 0.8537917363675438
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.45421575032740186,
+    "gap_median": 0.1753261387348175,
+    "gap_p90": 1.5847486257553105,
+    "position": 56,
+    "student_ce_mean": 1.1172394020772862,
+    "support_mean": 8.457446808510639,
+    "teacher_floor_mean": 0.6630236535554414
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.40876461861074254,
+    "gap_median": 0.08949410915374756,
+    "gap_p90": 1.2967555165290834,
+    "position": 57,
+    "student_ce_mean": 0.9834826554240889,
+    "support_mean": 4.5212765957446805,
+    "teacher_floor_mean": 0.5747180325545455
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.39705997638564866,
+    "gap_median": 0.1296796202659607,
+    "gap_p90": 1.2097652554512024,
+    "position": 58,
+    "student_ce_mean": 1.020936510160994,
+    "support_mean": 4.191489361702128,
+    "teacher_floor_mean": 0.6238765363843323
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.4772708695641791,
+    "gap_median": 0.1545277088880539,
+    "gap_p90": 1.756804192066193,
+    "position": 59,
+    "student_ce_mean": 1.1780764052824704,
+    "support_mean": 7.159574468085107,
+    "teacher_floor_mean": 0.7008055343640531
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.3926636724254812,
+    "gap_median": 0.15267135202884674,
+    "gap_p90": 1.0040306568145754,
+    "position": 60,
+    "student_ce_mean": 1.0946664929512446,
+    "support_mean": 5.212765957446808,
+    "teacher_floor_mean": 0.7020028204420143
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.5010762619432374,
+    "gap_median": 0.05969899892807007,
+    "gap_p90": 1.6950994014739993,
+    "position": 61,
+    "student_ce_mean": 1.1686794165982544,
+    "support_mean": 5.276595744680851,
+    "teacher_floor_mean": 0.6676031560107566
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.38787947556536584,
+    "gap_median": 0.14488892257213593,
+    "gap_p90": 1.1752814888954168,
+    "position": 62,
+    "student_ce_mean": 1.0726541197788613,
+    "support_mean": 5.25531914893617,
+    "teacher_floor_mean": 0.6847746450887081
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.4127448526030742,
+    "gap_median": 0.11802580952644348,
+    "gap_p90": 1.1281701326370241,
+    "position": 63,
+    "student_ce_mean": 1.120042987669291,
+    "support_mean": 4.648936170212766,
+    "teacher_floor_mean": 0.7072981382134446
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.2689541240223773,
+    "gap_median": 0.02590109035372734,
+    "gap_p90": 0.8754974961280824,
+    "position": 64,
+    "student_ce_mean": 0.8295112693461709,
+    "support_mean": 4.095744680851064,
+    "teacher_floor_mean": 0.5605571453589809
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.4096657133175545,
+    "gap_median": 0.05483783781528473,
+    "gap_p90": 1.0426183700561529,
+    "position": 65,
+    "student_ce_mean": 0.9778323138019218,
+    "support_mean": 3.1595744680851063,
+    "teacher_floor_mean": 0.5681666000828892
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.42336175706712015,
+    "gap_median": 0.07614880800247192,
+    "gap_p90": 0.9680537581443788,
+    "position": 66,
+    "student_ce_mean": 1.1309642785698002,
+    "support_mean": 5.5212765957446805,
+    "teacher_floor_mean": 0.7076025175532271
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.35599622723989516,
+    "gap_median": 0.022017648443579674,
+    "gap_p90": 0.8583368062973025,
+    "position": 67,
+    "student_ce_mean": 0.9265421140795437,
+    "support_mean": 4.24468085106383,
+    "teacher_floor_mean": 0.5705458820685668
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.3087977673822617,
+    "gap_median": 0.04322957433760166,
+    "gap_p90": 0.9824203014373782,
+    "position": 68,
+    "student_ce_mean": 0.9352347222062632,
+    "support_mean": 3.8085106382978724,
+    "teacher_floor_mean": 0.6264369561410078
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.415847001044051,
+    "gap_median": 0.2083846926689148,
+    "gap_p90": 1.0211884975433354,
+    "position": 69,
+    "student_ce_mean": 1.1763966877780032,
+    "support_mean": 7.085106382978723,
+    "teacher_floor_mean": 0.760549685848068
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.36747315502602423,
+    "gap_median": 0.08191828429698944,
+    "gap_p90": 1.2251861333847047,
+    "position": 70,
+    "student_ce_mean": 0.920789319462446,
+    "support_mean": 3.6914893617021276,
+    "teacher_floor_mean": 0.5533161659331891
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.5688838368337908,
+    "gap_median": 0.052877696231007576,
+    "gap_p90": 1.2915157556533814,
+    "position": 71,
+    "student_ce_mean": 1.1442077342190113,
+    "support_mean": 3.6382978723404253,
+    "teacher_floor_mean": 0.5753238996864434
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.39151232030422023,
+    "gap_median": 0.15222764015197754,
+    "gap_p90": 1.2835423469543457,
+    "position": 72,
+    "student_ce_mean": 1.1533936223661725,
+    "support_mean": 7.053191489361702,
+    "teacher_floor_mean": 0.7618813000249791
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.2921317158060969,
+    "gap_median": 0.10310572385787964,
+    "gap_p90": 0.8874034404754639,
+    "position": 73,
+    "student_ce_mean": 0.9572904451804853,
+    "support_mean": 6.297872340425532,
+    "teacher_floor_mean": 0.6651587286611911
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.3546945310603481,
+    "gap_median": 0.03681090101599693,
+    "gap_p90": 0.9908614873886109,
+    "position": 74,
+    "student_ce_mean": 0.9657016601214512,
+    "support_mean": 5.712765957446808,
+    "teacher_floor_mean": 0.6110071270151077
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.3520187378207485,
+    "gap_median": 0.07796710729598999,
+    "gap_p90": 0.9704478800296784,
+    "position": 75,
+    "student_ce_mean": 1.0040815112685324,
+    "support_mean": 4.51063829787234,
+    "teacher_floor_mean": 0.6520627738869502
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.2825818714696045,
+    "gap_median": 0.048929691314697266,
+    "gap_p90": 0.9340161323547364,
+    "position": 76,
+    "student_ce_mean": 0.833053467747491,
+    "support_mean": 4.01063829787234,
+    "teacher_floor_mean": 0.5504715969251015
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.35712354168734894,
+    "gap_median": 0.07617715746164322,
+    "gap_p90": 0.9356843829154974,
+    "position": 77,
+    "student_ce_mean": 0.9656230909201411,
+    "support_mean": 4.829787234042553,
+    "teacher_floor_mean": 0.608499549810019
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.40733978186693415,
+    "gap_median": 0.1693856120109558,
+    "gap_p90": 0.9514092803001405,
+    "position": 78,
+    "student_ce_mean": 1.1259414528486618,
+    "support_mean": 5.3936170212765955,
+    "teacher_floor_mean": 0.7186016689311097
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.44653893104323,
+    "gap_median": 0.087703175842762,
+    "gap_p90": 1.0649515867233277,
+    "position": 79,
+    "student_ce_mean": 1.0923343973862347,
+    "support_mean": 4.776595744680851,
+    "teacher_floor_mean": 0.645795469813356
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.2542465688704697,
+    "gap_median": 0.059560732915997505,
+    "gap_p90": 0.5930487513542176,
+    "position": 80,
+    "student_ce_mean": 0.7571160180812796,
+    "support_mean": 3.925531914893617,
+    "teacher_floor_mean": 0.5028694506832068
+  },
+  {
+    "count": 94,
+    "gap_mean": 0.2775873114815155,
+    "gap_median": 0.038137827068567276,
+    "gap_p90": 0.896894407272339,
+    "position": 81,
+    "student_ce_mean": 0.8165257293069508,
+    "support_mean": 5.425531914893617,
+    "teacher_floor_mean": 0.5389384177673294
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.4174674837374151,
+    "gap_median": 0.05564612150192261,
+    "gap_p90": 1.2116414546966552,
+    "position": 82,
+    "student_ce_mean": 1.0313109429062974,
+    "support_mean": 6.354838709677419,
+    "teacher_floor_mean": 0.6138434619844435
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.23997042786391898,
+    "gap_median": 0.0678744912147522,
+    "gap_p90": 0.687451434135437,
+    "position": 83,
+    "student_ce_mean": 0.850599025373912,
+    "support_mean": 4.591397849462366,
+    "teacher_floor_mean": 0.6106285967454483
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.5322746838952587,
+    "gap_median": 0.09977857768535614,
+    "gap_p90": 1.2146401166915892,
+    "position": 84,
+    "student_ce_mean": 1.242140981173118,
+    "support_mean": 9.376344086021506,
+    "teacher_floor_mean": 0.7098662972599775
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.34230058412231174,
+    "gap_median": 0.06410813331604004,
+    "gap_p90": 0.9742181777954096,
+    "position": 85,
+    "student_ce_mean": 0.9821712009094248,
+    "support_mean": 11.204301075268818,
+    "teacher_floor_mean": 0.6398706163283854
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.3519043358813787,
+    "gap_median": 0.06604111194610596,
+    "gap_p90": 0.8753454208374023,
+    "position": 86,
+    "student_ce_mean": 1.057695698971286,
+    "support_mean": 6.698924731182796,
+    "teacher_floor_mean": 0.7057913621209715
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.3817183245112691,
+    "gap_median": 0.04402315616607666,
+    "gap_p90": 1.003027153015136,
+    "position": 87,
+    "student_ce_mean": 0.8618200216988481,
+    "support_mean": 2.827956989247312,
+    "teacher_floor_mean": 0.4801016946435413
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.33362580943889675,
+    "gap_median": 0.08280117809772491,
+    "gap_p90": 0.9711212635040283,
+    "position": 88,
+    "student_ce_mean": 1.0726668064087894,
+    "support_mean": 7.451612903225806,
+    "teacher_floor_mean": 0.7390409974127921
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.4060055377115459,
+    "gap_median": 0.12665313482284546,
+    "gap_p90": 1.1354742050170898,
+    "position": 89,
+    "student_ce_mean": 1.0911257461236872,
+    "support_mean": 4.946236559139785,
+    "teacher_floor_mean": 0.68512020754529
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.38726114564825387,
+    "gap_median": 0.06330353021621704,
+    "gap_p90": 1.1329177856445312,
+    "position": 90,
+    "student_ce_mean": 1.0136322912407463,
+    "support_mean": 5.709677419354839,
+    "teacher_floor_mean": 0.6263711467191319
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.36814682022389705,
+    "gap_median": 0.1029198169708252,
+    "gap_p90": 1.0103895902633666,
+    "position": 91,
+    "student_ce_mean": 1.0655765099566064,
+    "support_mean": 6.268817204301075,
+    "teacher_floor_mean": 0.6974296884088378
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.21932552007244893,
+    "gap_median": 0.06802412867546082,
+    "gap_p90": 0.6621580600738525,
+    "position": 92,
+    "student_ce_mean": 0.8033512477734697,
+    "support_mean": 4.354838709677419,
+    "teacher_floor_mean": 0.584025727838599
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.32366816029801054,
+    "gap_median": 0.09986960887908936,
+    "gap_p90": 1.001549434661865,
+    "position": 93,
+    "student_ce_mean": 0.9802431897200043,
+    "support_mean": 6.182795698924731,
+    "teacher_floor_mean": 0.6565750310595745
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.31212582831815494,
+    "gap_median": 0.08500075340270996,
+    "gap_p90": 0.9281572341918946,
+    "position": 94,
+    "student_ce_mean": 0.9904892786313614,
+    "support_mean": 6.129032258064516,
+    "teacher_floor_mean": 0.6783634502507547
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.2578656652473922,
+    "gap_median": 0.03766828775405884,
+    "gap_p90": 0.8793331623077391,
+    "position": 95,
+    "student_ce_mean": 0.7788310154436474,
+    "support_mean": 3.204301075268817,
+    "teacher_floor_mean": 0.5209653504859733
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.2997678156765459,
+    "gap_median": 0.060498304665088654,
+    "gap_p90": 1.0366219997406003,
+    "position": 96,
+    "student_ce_mean": 0.9486527001858456,
+    "support_mean": 4.43010752688172,
+    "teacher_floor_mean": 0.6488848838503142
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.3027291277956279,
+    "gap_median": 0.06190216541290283,
+    "gap_p90": 0.9339043617248532,
+    "position": 97,
+    "student_ce_mean": 0.970580490122781,
+    "support_mean": 6.817204301075269,
+    "teacher_floor_mean": 0.6678513624252025
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.3818366951905154,
+    "gap_median": 0.03626525402069092,
+    "gap_p90": 1.1926518201827996,
+    "position": 98,
+    "student_ce_mean": 0.9804847018246582,
+    "support_mean": 5.193548387096774,
+    "teacher_floor_mean": 0.598648005052375
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.2242081592116523,
+    "gap_median": 0.06108909845352173,
+    "gap_p90": 0.7274760723114013,
+    "position": 99,
+    "student_ce_mean": 0.7439521236223084,
+    "support_mean": 3.838709677419355,
+    "teacher_floor_mean": 0.5197439650492278
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.3119812088336634,
+    "gap_median": 0.04808788001537323,
+    "gap_p90": 0.7870435476303098,
+    "position": 100,
+    "student_ce_mean": 0.8621704135927656,
+    "support_mean": 3.7419354838709675,
+    "teacher_floor_mean": 0.550189205591593
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.3256544604699508,
+    "gap_median": 0.034825339913368225,
+    "gap_p90": 1.0154436588287343,
+    "position": 101,
+    "student_ce_mean": 0.9532004919294622,
+    "support_mean": 7.161290322580645,
+    "teacher_floor_mean": 0.6275460327266432
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.3797509743525572,
+    "gap_median": 0.11342501640319824,
+    "gap_p90": 0.920489478111267,
+    "position": 102,
+    "student_ce_mean": 1.0760413954426489,
+    "support_mean": 7.344086021505376,
+    "teacher_floor_mean": 0.6962904197771774
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.3317016861939066,
+    "gap_median": 0.11088840663433075,
+    "gap_p90": 0.960254669189453,
+    "position": 103,
+    "student_ce_mean": 1.0707160874568742,
+    "support_mean": 7.096774193548387,
+    "teacher_floor_mean": 0.7390144011394321
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.33250011565606136,
+    "gap_median": 0.03715062141418457,
+    "gap_p90": 0.9799775123596188,
+    "position": 104,
+    "student_ce_mean": 0.9510008788929749,
+    "support_mean": 6.172043010752688,
+    "teacher_floor_mean": 0.6185007615067023
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.3028855786708379,
+    "gap_median": 0.04670122265815735,
+    "gap_p90": 0.7836307764053344,
+    "position": 105,
+    "student_ce_mean": 0.9342053918411551,
+    "support_mean": 5.32258064516129,
+    "teacher_floor_mean": 0.631319809989755
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.2846103214257724,
+    "gap_median": 0.07892714440822601,
+    "gap_p90": 0.6707269191741942,
+    "position": 106,
+    "student_ce_mean": 0.8573093322585444,
+    "support_mean": 3.924731182795699,
+    "teacher_floor_mean": 0.5726990124666793
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.35499058915185144,
+    "gap_median": 0.06579464673995972,
+    "gap_p90": 1.022341537475586,
+    "position": 107,
+    "student_ce_mean": 0.9718766572926978,
+    "support_mean": 6.21505376344086,
+    "teacher_floor_mean": 0.6168860653213277
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.25632365520501205,
+    "gap_median": 0.04045546054840088,
+    "gap_p90": 0.682828092575073,
+    "position": 108,
+    "student_ce_mean": 0.7340134659820292,
+    "support_mean": 3.3655913978494625,
+    "teacher_floor_mean": 0.4776898142564799
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.2434288651410766,
+    "gap_median": 0.008236490190029144,
+    "gap_p90": 0.605776023864746,
+    "position": 109,
+    "student_ce_mean": 0.8108242059353084,
+    "support_mean": 3.5806451612903225,
+    "teacher_floor_mean": 0.5673953412332965
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.22093873730891028,
+    "gap_median": 0.010683400556445122,
+    "gap_p90": 0.607071828842163,
+    "position": 110,
+    "student_ce_mean": 0.7978415055089305,
+    "support_mean": 4.462365591397849,
+    "teacher_floor_mean": 0.5769027676070327
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.29310310618482116,
+    "gap_median": 0.10290589928627014,
+    "gap_p90": 0.8658170461654662,
+    "position": 111,
+    "student_ce_mean": 0.9144894005914285,
+    "support_mean": 5.56989247311828,
+    "teacher_floor_mean": 0.6213862942253099
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.2364485450787076,
+    "gap_median": 0.006959114223718643,
+    "gap_p90": 0.7545011043548583,
+    "position": 112,
+    "student_ce_mean": 0.7779225688106638,
+    "support_mean": 7.462365591397849,
+    "teacher_floor_mean": 0.5414740234285184
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.22906787438073578,
+    "gap_median": 0.016167644411325455,
+    "gap_p90": 0.7825771331787107,
+    "position": 113,
+    "student_ce_mean": 0.7409379747141811,
+    "support_mean": 3.6129032258064515,
+    "teacher_floor_mean": 0.5118701005151349
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.3820551014789702,
+    "gap_median": 0.13895007967948914,
+    "gap_p90": 1.0533231019973752,
+    "position": 114,
+    "student_ce_mean": 1.1405548271641028,
+    "support_mean": 6.526881720430108,
+    "teacher_floor_mean": 0.7584997237374534
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.14918157830974388,
+    "gap_median": 0.009801657870411873,
+    "gap_p90": 0.48860790729522696,
+    "position": 115,
+    "student_ce_mean": 0.5685330862701805,
+    "support_mean": 4.032258064516129,
+    "teacher_floor_mean": 0.4193515076310675
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.35552398459350953,
+    "gap_median": 0.18262548744678497,
+    "gap_p90": 0.8980067253112792,
+    "position": 116,
+    "student_ce_mean": 1.1481133186011414,
+    "support_mean": 8.881720430107526,
+    "teacher_floor_mean": 0.7925893339725876
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.3039351809164143,
+    "gap_median": 0.0671238899230957,
+    "gap_p90": 0.8883147239685059,
+    "position": 117,
+    "student_ce_mean": 0.9088970462117486,
+    "support_mean": 8.67741935483871,
+    "teacher_floor_mean": 0.6049618650379185
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.2833627850309826,
+    "gap_median": 0.04583019018173218,
+    "gap_p90": 0.9101877689361572,
+    "position": 118,
+    "student_ce_mean": 0.915480474867041,
+    "support_mean": 8.913978494623656,
+    "teacher_floor_mean": 0.6321176896666136
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.17041640882983294,
+    "gap_median": 0.026449918746948242,
+    "gap_p90": 0.572493803501129,
+    "position": 119,
+    "student_ce_mean": 0.7556126970250912,
+    "support_mean": 6.526881720430108,
+    "teacher_floor_mean": 0.5851962880742001
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.28367366857184634,
+    "gap_median": 0.11564701795578003,
+    "gap_p90": 0.8688725471496581,
+    "position": 120,
+    "student_ce_mean": 1.0005365726906983,
+    "support_mean": 7.032258064516129,
+    "teacher_floor_mean": 0.7168629035505523
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.2667067696903183,
+    "gap_median": 0.03500300645828247,
+    "gap_p90": 0.6451430201530456,
+    "position": 121,
+    "student_ce_mean": 0.9775546241730025,
+    "support_mean": 9.053763440860216,
+    "teacher_floor_mean": 0.710847854952283
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.3086747037571377,
+    "gap_median": 0.08007287979125977,
+    "gap_p90": 0.8502480506896972,
+    "position": 122,
+    "student_ce_mean": 0.9245047239389537,
+    "support_mean": 5.903225806451613,
+    "teacher_floor_mean": 0.6158300187431713
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.23122056824651904,
+    "gap_median": 0.05179867148399353,
+    "gap_p90": 0.708238649368286,
+    "position": 123,
+    "student_ce_mean": 0.8589469839212531,
+    "support_mean": 7.483870967741935,
+    "teacher_floor_mean": 0.6277264155112157
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.3020848658020423,
+    "gap_median": 0.022502362728118896,
+    "gap_p90": 0.5637245655059814,
+    "position": 124,
+    "student_ce_mean": 0.8189817743657515,
+    "support_mean": 4.365591397849462,
+    "teacher_floor_mean": 0.516896910618732
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.27475005310256784,
+    "gap_median": 0.05009740591049194,
+    "gap_p90": 0.7401452541351317,
+    "position": 125,
+    "student_ce_mean": 0.8774269020088415,
+    "support_mean": 4.010752688172043,
+    "teacher_floor_mean": 0.6026768488466129
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.38224009217573174,
+    "gap_median": 0.0688556432723999,
+    "gap_p90": 0.9206289052963256,
+    "position": 126,
+    "student_ce_mean": 1.0233459755621666,
+    "support_mean": 7.89247311827957,
+    "teacher_floor_mean": 0.6411058814905267
+  },
+  {
+    "count": 93,
+    "gap_mean": 0.3391499757455037,
+    "gap_median": 0.017839103937149048,
+    "gap_p90": 0.6920384407043457,
+    "position": 127,
+    "student_ce_mean": 0.9759367264848655,
+    "support_mean": 6.043010752688172,
+    "teacher_floor_mean": 0.6367867537935
+  }
+]
