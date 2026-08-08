@@ -128,23 +128,28 @@ def initialize_suffix(
 def greedy_soft_generation(
     model, tokenizer, layout, suffix, max_new_tokens: int
 ) -> tuple[str, bool]:
-    empty = torch.empty(0, dtype=torch.long)
-    inputs, attention, positions, _ = model_inputs(model, layout, suffix, empty)
-    generated = model.generate(
-        inputs_embeds=inputs,
-        attention_mask=attention,
-        position_ids=positions,
-        max_new_tokens=max_new_tokens,
-        do_sample=False,
-        use_cache=True,
-        eos_token_id=tokenizer.eos_token_id,
-        pad_token_id=tokenizer.pad_token_id,
-    )[0]
-    ids = generated.detach().cpu().tolist()
-    hit_eos = tokenizer.eos_token_id in ids
-    if hit_eos:
-        ids = ids[: ids.index(tokenizer.eos_token_id)]
-    return tokenizer.decode(ids, skip_special_tokens=True), hit_eos
+    embedding = model.get_input_embeddings()
+    device = embedding.weight.device
+    pieces = [embedding(layout.prefix_ids.to(device))]
+    if suffix is not None:
+        pieces.append(suffix.to(device=device, dtype=embedding.weight.dtype))
+    pieces.append(embedding(layout.assistant_header_ids.to(device)))
+    inputs = torch.cat(pieces).unsqueeze(0)
+    output = model(inputs_embeds=inputs, use_cache=True)
+    past = output.past_key_values
+    token = output.logits[:, -1].argmax(-1, keepdim=True)
+    generated: list[int] = []
+    hit_eos = False
+    for _ in range(max_new_tokens):
+        value = int(token.item())
+        if value == tokenizer.eos_token_id:
+            hit_eos = True
+            break
+        generated.append(value)
+        output = model(input_ids=token, past_key_values=past, use_cache=True)
+        past = output.past_key_values
+        token = output.logits[:, -1].argmax(-1, keepdim=True)
+    return tokenizer.decode(generated, skip_special_tokens=True), hit_eos
 
 
 @torch.inference_mode()
