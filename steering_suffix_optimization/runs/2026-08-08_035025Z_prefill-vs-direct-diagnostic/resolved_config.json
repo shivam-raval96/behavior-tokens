@@ -1,0 +1,40 @@
+{
+  "activation_cosine_gate": 0.8,
+  "config_fingerprint": "59c24961af929f838313414a2548908fd55b25612f4e9115e8560f397d674e4e",
+  "dataset_csv": "/workspace/harmful_behaviors.csv",
+  "direct_additive_norm": -3.353400157157403,
+  "evaluation_rows": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "experiment": "heldout_prefill_vs_direct_steering_v1",
+  "generation_seed": 1701,
+  "hidden_state_index": 10,
+  "judge": {
+    "checkpoint_every": 5,
+    "max_output_tokens": 256,
+    "max_retries": 4,
+    "model": "gpt-5.6-luna",
+    "provider": "openai",
+    "reasoning_effort": "low",
+    "schema_version": "direct-prefill-diagnostic-v1",
+    "timeout_seconds": 90
+  },
+  "max_new_tokens": 128,
+  "model_id": "meta-llama/Llama-3.2-1B-Instruct",
+  "model_revision": "9213176726f574b556790deb65791e0c5aa438b6",
+  "module_index": 9,
+  "run_id": "2026-08-08_035025Z_prefill-vs-direct-diagnostic",
+  "run_mode": "fresh",
+  "source_direct_run_id": "2026-08-07_195212Z_layer10-jailbreak-direct-steering-control",
+  "source_soft_prompt": "soft_prompts/combined.pt",
+  "source_soft_prompt_sha256": "83f2b266be45615795baa028c713401bfa7f36a95e937d2b2e16a55757d3725a",
+  "source_soft_run_dir": "/outputs/steering_suffix_optimization/runs/2026-08-08_010813Z_combined-prefill-probe",
+  "source_soft_run_id": "2026-08-08_010813Z_combined-prefill-probe",
+  "suffix_length": 5,
+  "vector_path": "/workspace/steering_suffix_optimization/artifacts/jailbreak_refusal_layer10.npy",
+  "vector_sha256": "6b237391fa11a25cbeb56dce9030a0d76dc51bd0414fe1f0f9fe51fc8da2b51d"
+}
