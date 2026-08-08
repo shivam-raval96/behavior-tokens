@@ -1,0 +1,26 @@
+experiment: fixed_rollout_continuation_ce_v1
+run_mode: fresh
+model_id: meta-llama/Llama-3.2-1B-Instruct
+model_revision: 9213176726f574b556790deb65791e0c5aa438b6
+dataset_csv: /workspace/harmful_behaviors.csv
+dataset_sha256: 6cd1a5c63c07610d7eb67307772ee5606017ee950b5770ab288a2c487489d3e1
+dataset_rows: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+vector_path: /workspace/suffix_optimization_algorithm/artifacts/jailbreak_refusal_layer10.npy
+vector_sha256: 020721212634d6a9560586ca24dafa1b7313b37d3a0b9b21292dc0bb19bd9101
+vector_metadata_path: /workspace/suffix_optimization_algorithm/artifacts/jailbreak_refusal_layer10.json
+module_index: 9
+hidden_state_index: 10
+coefficient: -0.75
+steering_positions: all_prefill_and_decode
+rollouts_per_prompt: 4
+rollout_seeds: [24001, 24002, 24003, 24004]
+max_new_tokens: 128
+temperature: 0.8
+top_p: 0.95
+suffixes:
+  - name: empty
+    text: ""
+cache_checkpoint_every_prompts: 1
+score_checkpoint_every_records: 8
+aggregation: token_weighted
+seed: 24001
