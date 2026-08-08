@@ -1,0 +1,22 @@
+{
+  "best_cell": {
+    "additive_norm": -3.353400157157403,
+    "asr": 0.6,
+    "cell": "h10_a-3.3534",
+    "eos": 1,
+    "eos_rate": 0.2,
+    "gate_passed": true,
+    "hidden_state_index": 10,
+    "incoherent": 0,
+    "incoherent_rate": 0.0,
+    "mean_repeated_trigram_fraction": 0.04824145934303718,
+    "module_index": 9,
+    "responses": 5,
+    "successes": 3
+  },
+  "completed": 105,
+  "error_count": 0,
+  "phase": "complete",
+  "run_id": "2026-08-08_191839Z_coherent-direct-steering-calibration",
+  "total": 105
+}
