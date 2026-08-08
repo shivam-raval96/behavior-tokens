@@ -1,0 +1,34 @@
+{
+  "config_fingerprint": "1da92891dfb6cb0af773ea27f4f0515f3f6a9af87dad4db57567abc9e7f00a3e",
+  "continuation_tokens": 32,
+  "diagnostic_every": 20,
+  "experiment": "combined_prefill_objective_v1",
+  "filler_suffix_text": " !",
+  "hidden_state_index": 10,
+  "learning_rate": 0.01,
+  "loss": {
+    "normalized_activation_weight": 1.0,
+    "normalized_projection_weight": 1.0,
+    "position_0_fraction": 0.5,
+    "position_weighted_kl_weight": 0.1
+  },
+  "model_id": "meta-llama/Llama-3.2-1B-Instruct",
+  "model_revision": "9213176726f574b556790deb65791e0c5aa438b6",
+  "run_id": "2026-08-08_010813Z_combined-prefill-probe",
+  "run_mode": "fresh",
+  "source_config_fingerprint": "27185a3f8f7fa9240e2fecd70c09693c981f21996591ad3524d3429c32035fb6",
+  "source_initial_suffix": "soft_prompts/steered_teacher.pt",
+  "source_initial_suffix_sha256": "5f44b6339d74f981b39be5803158568ba1298baae1db356bb0ab9f4eea605500",
+  "source_run_dir": "/outputs/steering_suffix_optimization/runs/2026-08-07_231417Z_prefill-inversion-probe",
+  "source_run_id": "2026-08-07_231417Z_prefill-inversion-probe",
+  "source_teacher_cache": "teacher_cache/steered_teacher.pt",
+  "source_teacher_cache_sha256": "945df4a19b238af2d6d8d8df17f586670129b309835f3fbd6ed93f8a33b8075d",
+  "steps": 200,
+  "success": {
+    "activation_cosine": 0.8,
+    "position_0_kl": 5.0
+  },
+  "suffix_length": 5,
+  "vector_path": "/workspace/steering_suffix_optimization/artifacts/jailbreak_refusal_layer10.npy",
+  "vector_sha256": "6b237391fa11a25cbeb56dce9030a0d76dc51bd0414fe1f0f9fe51fc8da2b51d"
+}

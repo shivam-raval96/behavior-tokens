@@ -1,0 +1,6 @@
+{
+  "initial_suffix": "soft_prompts/steered_teacher.pt",
+  "source_config_fingerprint": "27185a3f8f7fa9240e2fecd70c09693c981f21996591ad3524d3429c32035fb6",
+  "source_run_id": "2026-08-07_231417Z_prefill-inversion-probe",
+  "teacher_cache": "teacher_cache/steered_teacher.pt"
+}

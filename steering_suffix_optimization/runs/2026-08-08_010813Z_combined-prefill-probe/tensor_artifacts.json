@@ -1,0 +1,9 @@
+{
+  "optimizer_state/combined.pt": {
+    "sha256": "52ef40d66c0506d3f5ae1ad03b6eccbbaa35498d927c408d9c53f5a2b2cb0418"
+  },
+  "soft_prompts/combined.pt": {
+    "sha256": "83f2b266be45615795baa028c713401bfa7f36a95e937d2b2e16a55757d3725a"
+  },
+  "note": "Present locally and on bt-outputs; omitted from git by repository ignore rules."
+}

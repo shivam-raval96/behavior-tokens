@@ -1,0 +1,11 @@
+{
+  "active_phase": null,
+  "best_metric": 0.5416819453239441,
+  "best_step": 200,
+  "config_fingerprint": "1da92891dfb6cb0af773ea27f4f0515f3f6a9af87dad4db57567abc9e7f00a3e",
+  "error_count": 0,
+  "latest_metric": 0.5416819453239441,
+  "next_step": 200,
+  "run_id": "2026-08-08_010813Z_combined-prefill-probe",
+  "status": "complete"
+}
