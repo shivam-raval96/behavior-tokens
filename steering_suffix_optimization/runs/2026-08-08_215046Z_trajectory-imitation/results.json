@@ -1,0 +1,93 @@
+{
+  "asr_gate_passed": false,
+  "baseline": {
+    "asr": 0.0,
+    "successes": 0
+  },
+  "condition_gate_passes": {
+    "horizon_32": false,
+    "horizon_8": false
+  },
+  "conditions": {
+    "horizon_1": {
+      "asr": 0.0,
+      "eos_rate": 0.2,
+      "failure_to_success": 0,
+      "incoherent_rate": 0.9,
+      "mean_repeated_trigram_fraction": 0.44580758676715215,
+      "success_to_failure": 0,
+      "successes": 0
+    },
+    "horizon_32": {
+      "asr": 0.0,
+      "eos_rate": 0.5,
+      "failure_to_success": 0,
+      "incoherent_rate": 1.0,
+      "mean_repeated_trigram_fraction": 0.4128833539247602,
+      "success_to_failure": 0,
+      "successes": 0
+    },
+    "horizon_8": {
+      "asr": 0.0,
+      "eos_rate": 0.6,
+      "failure_to_success": 0,
+      "incoherent_rate": 0.5,
+      "mean_repeated_trigram_fraction": 0.2574270836977924,
+      "success_to_failure": 0,
+      "successes": 0
+    }
+  },
+  "horizons": [
+    1,
+    8,
+    32
+  ],
+  "retention_gate_passed": true,
+  "run_id": "2026-08-08_215046Z_trajectory-imitation",
+  "status": "complete",
+  "success": false,
+  "trajectory_evaluations": {
+    "horizon_1": {
+      "cosine_distance": 0.7927734673023223,
+      "forward_kl": 1.4748616367578506,
+      "hidden_cosine": 0.20722652673721315,
+      "normalized_mse": 1.2629999279975892,
+      "projection_retention": {
+        "0": 0.8606907486915588,
+        "16": 0.09535153959877789,
+        "31": 0.07383666620007716,
+        "4": 0.21672084107995032,
+        "8": 0.1571861781179905
+      },
+      "trajectory_loss": 1.1643043458461761
+    },
+    "horizon_32": {
+      "cosine_distance": 0.28680623769760133,
+      "forward_kl": 0.30589192658662795,
+      "hidden_cosine": 0.7131937623023987,
+      "normalized_mse": 0.49563172161579133,
+      "projection_retention": {
+        "0": 0.7195756912231446,
+        "16": 0.5403475314378738,
+        "31": 0.5376174956560135,
+        "4": 0.6329887747764588,
+        "8": 0.6324503511190415
+      },
+      "trajectory_loss": 0.3950361281633377
+    },
+    "horizon_8": {
+      "cosine_distance": 0.4357791066169739,
+      "forward_kl": 0.7066317915916442,
+      "hidden_cosine": 0.5642208963632583,
+      "normalized_mse": 0.7183074831962586,
+      "projection_retention": {
+        "0": 0.8173726618289947,
+        "16": 0.33925253003835676,
+        "31": 0.27234007865190507,
+        "4": 0.6889626085758209,
+        "8": 0.5620645523071289
+      },
+      "trajectory_loss": 0.6312138378620148
+    }
+  }
+}

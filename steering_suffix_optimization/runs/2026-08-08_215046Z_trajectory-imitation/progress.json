@@ -1,0 +1,17 @@
+{
+  "baseline_asr": 0.0,
+  "completed": 1540,
+  "config_fingerprint": "302f4de9f855bfa7d97ba84becd20c8420de7aa2c3343ad64e52adcbd3a96d0e",
+  "error_count": 0,
+  "horizon_1_asr": 0.0,
+  "horizon_1_position_16_retention": 0.09535153959877789,
+  "horizon_32_asr": 0.0,
+  "horizon_32_position_16_retention": 0.5403475314378738,
+  "horizon_8_asr": 0.0,
+  "horizon_8_position_16_retention": 0.33925253003835676,
+  "phase": "complete",
+  "retry_count": 0,
+  "run_id": "2026-08-08_215046Z_trajectory-imitation",
+  "success": false,
+  "total": 1540
+}
