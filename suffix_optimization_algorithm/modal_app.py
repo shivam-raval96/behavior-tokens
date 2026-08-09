@@ -100,7 +100,7 @@ def gcg_q_search(run_id: str, config_name: str, mode: str = "fresh"):
     import sys
     os.chdir(ROOT); sys.path.insert(0, ROOT)
     from suffix_optimization_algorithm.gcg_q_search import run
-    allowed = {"experiment_004_gcg_preflight.yaml", "experiment_004_gcg_warm.yaml", "experiment_004_gcg_cold.yaml", "experiment_005_gcg_optimized_benchmark.yaml", "experiment_005_gcg_warm_optimized.yaml", "experiment_006_gcg_high_occupancy_benchmark.yaml"}
+    allowed = {"experiment_004_gcg_preflight.yaml", "experiment_004_gcg_warm.yaml", "experiment_004_gcg_cold.yaml", "experiment_005_gcg_optimized_benchmark.yaml", "experiment_005_gcg_warm_optimized.yaml", "experiment_006_gcg_high_occupancy_benchmark.yaml", "experiment_007_gcg_candidate_batch_benchmark.yaml"}
     if config_name not in allowed:
         raise ValueError("unknown GCG configuration")
     run_dir = Path(OUTPUT_ROOT) / run_id

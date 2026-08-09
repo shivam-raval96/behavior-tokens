@@ -136,7 +136,7 @@ class Search:
         """Reference implementation retained for numerical equivalence gates."""
         totals = torch.zeros(candidates.shape[0], device=self.device, dtype=torch.float64)
         total_tokens = sum(len(row["continuation_ids"]) for row in self.cache)
-        micro = self.config["evaluation_microbatch_size"]
+        micro = self.config.get("reference_microbatch_size", self.config["evaluation_microbatch_size"])
         for record in self.cache:
             prefix = torch.tensor(record["prefix_ids"], device=self.device)
             y = torch.tensor(record["continuation_ids"], device=self.device)
@@ -313,8 +313,11 @@ def run(config_path: Path, output: Path, mode="fresh", commit=None):
             reference = search.candidate_losses_serial(candidates)
             reference_seconds = time.monotonic()-reference_started
             maximum_error = float((losses-reference).abs().max())
-            writer.json("candidate_equivalence.json", {"candidates":candidates.shape[0],"maximum_absolute_error":maximum_error,"tolerance":config["candidate_equivalence_tolerance"],"passed":maximum_error <= config["candidate_equivalence_tolerance"],"batched_seconds":candidate_seconds,"serial_seconds":reference_seconds,"speedup":reference_seconds/candidate_seconds})
-            if maximum_error > config["candidate_equivalence_tolerance"]: raise RuntimeError("batched candidate loss failed equivalence gate")
+            batched_argmin, reference_argmin = int(losses.argmin()), int(reference.argmin())
+            argmin_match = batched_argmin == reference_argmin
+            passed = maximum_error <= config["candidate_equivalence_tolerance"] and (argmin_match or not config.get("require_argmin_match", False))
+            writer.json("candidate_equivalence.json", {"candidates":candidates.shape[0],"maximum_absolute_error":maximum_error,"tolerance":config["candidate_equivalence_tolerance"],"batched_argmin":batched_argmin,"reference_argmin":reference_argmin,"argmin_match":argmin_match,"require_argmin_match":config.get("require_argmin_match",False),"passed":passed,"batched_seconds":candidate_seconds,"serial_seconds":reference_seconds,"speedup":reference_seconds/candidate_seconds})
+            if not passed: raise RuntimeError("batched candidate loss failed equivalence gate")
         value,index=float(losses.min()),int(losses.argmin())
         accepted=value < current_loss
         if accepted: suffix=candidates[index].clone(); current_loss=value
