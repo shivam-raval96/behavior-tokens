@@ -1,0 +1,9 @@
+{
+  "batched_seconds": 147.933917651,
+  "candidates": 479,
+  "maximum_absolute_error": 0.0006058216094970703,
+  "passed": true,
+  "serial_seconds": 279.31879314599996,
+  "speedup": 1.8881321983573645,
+  "tolerance": 0.002
+}
