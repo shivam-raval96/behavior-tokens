@@ -1,0 +1,20 @@
+{
+  "exact_q": {
+    "exact_q_gap": 0.5899232839554183,
+    "exact_q_student_ce": 1.1966106906079235,
+    "exact_q_teacher_floor": 0.6066874066525052
+  },
+  "passed": true,
+  "sampled": {
+    "position_1_student_ce": 10.21691816793297,
+    "sampled_gap": 0.5975801843425013,
+    "sampled_student_ce": 1.1951661834678882,
+    "tail_student_ce": 1.122853563789463,
+    "tokens": 12073
+  },
+  "sampled_teacher": {
+    "position_1_ce": 0.42804696154780686,
+    "sampled_teacher_floor": 0.5975859991253869,
+    "tail_ce": 0.5989449178616484
+  }
+}
