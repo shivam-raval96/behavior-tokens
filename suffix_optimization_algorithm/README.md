@@ -22,3 +22,6 @@ same model is run clean?
 
 No run is launched by creating or editing this directory. After the experiment
 card is approved with the word `proceed`, launch with a fresh UTC run ID.
+Experiment 004 adds a discrete GCG search against the calibrated sampled-q
+teacher-forced loss. See `EXPERIMENT_004_GCG.md` for its alignment gates,
+placement convention, preflight, and warm/cold production configurations.

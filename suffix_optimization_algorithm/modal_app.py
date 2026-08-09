@@ -87,6 +87,32 @@ def q_weighted_crosscheck_entrypoint(run_id: str, mode: str = "fresh"):
     q_weighted_crosscheck.remote(run_id, mode)
 
 
+@app.function(
+    image=image,
+    gpu="A100-80GB",
+    timeout=60 * 60 * 24,
+    retries=modal.Retries(max_retries=2, backoff_coefficient=2.0),
+    secrets=[modal.Secret.from_name("hf-llama-stage-a")],
+    volumes={"/outputs": outputs, "/root/.cache/huggingface": model_cache},
+)
+def gcg_q_search(run_id: str, config_name: str, mode: str = "fresh"):
+    import os
+    import sys
+    os.chdir(ROOT); sys.path.insert(0, ROOT)
+    from suffix_optimization_algorithm.gcg_q_search import run
+    allowed = {"experiment_004_gcg_preflight.yaml", "experiment_004_gcg_warm.yaml", "experiment_004_gcg_cold.yaml"}
+    if config_name not in allowed:
+        raise ValueError("unknown GCG configuration")
+    run_dir = Path(OUTPUT_ROOT) / run_id
+    if mode == "fresh" and (run_dir / "checkpoint.json").exists(): mode = "resume"
+    return run(Path(ROOT) / "suffix_optimization_algorithm/configs" / config_name, run_dir, mode, commit=outputs.commit)
+
+
+@app.local_entrypoint(name="gcg-q-search")
+def gcg_q_search_entrypoint(run_id: str, config_name: str, mode: str = "fresh"):
+    gcg_q_search.remote(run_id, config_name, mode)
+
+
 @app.local_entrypoint()
 def main(run_id: str, mode: str = "fresh"):
     experiment_001.remote(run_id, mode)
