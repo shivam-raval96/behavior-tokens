@@ -127,10 +127,13 @@ class Search:
         result = suffix.repeat(batch, 1)
         result[torch.arange(batch, device=self.device), positions] = ranked[positions, choices]
         changed = (result != suffix).sum(-1) == 1
-        return result[changed]
+        # Duplicate draws have identical true loss and cannot alter the greedy
+        # argmin. Removing them saves forwards without changing the search.
+        return torch.unique(result[changed], dim=0)
 
     @torch.no_grad()
-    def candidate_losses(self, candidates: torch.Tensor) -> torch.Tensor:
+    def candidate_losses_serial(self, candidates: torch.Tensor) -> torch.Tensor:
+        """Reference implementation retained for numerical equivalence gates."""
         totals = torch.zeros(candidates.shape[0], device=self.device, dtype=torch.float64)
         total_tokens = sum(len(row["continuation_ids"]) for row in self.cache)
         micro = self.config["evaluation_microbatch_size"]
@@ -145,6 +148,48 @@ class Search:
                 logits = self.model(inputs_embeds=full, use_cache=False).logits
                 losses = continuation_losses(logits, prefix.numel(), chunk.shape[1], y).sum(-1)
                 totals[start:start + n] += losses.double()
+        return (totals / total_tokens).float()
+
+    @torch.no_grad()
+    def candidate_losses(self, candidates: torch.Tensor) -> torch.Tensor:
+        """Exact loss, batching the rollout/candidate Cartesian product.
+
+        Right padding does not change any active token's absolute position. Each
+        record is sliced at its own continuation boundary, so padding never
+        enters the objective.
+        """
+        totals = torch.zeros(candidates.shape[0], device=self.device, dtype=torch.float64)
+        total_tokens = sum(len(row["continuation_ids"]) for row in self.cache)
+        candidate_batch = self.config["evaluation_microbatch_size"]
+        record_batch = self.config.get("evaluation_record_batch_size", 1)
+        for record_start in range(0, len(self.cache), record_batch):
+            records = self.cache[record_start:record_start + record_batch]
+            fixed = []
+            for record in records:
+                prefix = torch.tensor(record["prefix_ids"], device=self.device)
+                y = torch.tensor(record["continuation_ids"], device=self.device)
+                fixed.append((prefix, y, self.embedding(prefix), self.embedding(y)))
+            for candidate_start in range(0, candidates.shape[0], candidate_batch):
+                chunk = candidates[candidate_start:candidate_start + candidate_batch]
+                n = chunk.shape[0]
+                suffix_embeddings = self.embedding(chunk)
+                lengths = [p.numel() + chunk.shape[1] + y.numel() for p, y, _, _ in fixed]
+                maximum = max(lengths)
+                sequences, masks = [], []
+                for (prefix, y, prefix_embeddings, y_embeddings), length in zip(fixed, lengths, strict=True):
+                    sequence = torch.cat((
+                        prefix_embeddings.expand(n, -1, -1), suffix_embeddings,
+                        y_embeddings.expand(n, -1, -1)), dim=1)
+                    if length < maximum:
+                        sequence = F.pad(sequence, (0, 0, 0, maximum - length))
+                    sequences.append(sequence)
+                    mask = torch.zeros((n, maximum), device=self.device, dtype=torch.long)
+                    mask[:, :length] = 1; masks.append(mask)
+                logits = self.model(inputs_embeds=torch.cat(sequences), attention_mask=torch.cat(masks), use_cache=False).logits
+                for record_index, (prefix, y, _, _) in enumerate(fixed):
+                    record_logits = logits[record_index*n:(record_index+1)*n]
+                    losses = continuation_losses(record_logits, prefix.numel(), chunk.shape[1], y).sum(-1)
+                    totals[candidate_start:candidate_start+n] += losses.double()
         return (totals / total_tokens).float()
 
     @torch.no_grad()
@@ -213,10 +258,20 @@ def run(config_path: Path, output: Path, mode="fresh", commit=None):
     valid = valid_token_ids(tokenizer, search.vocab)
     generator = torch.Generator(device=search.device)
     generator.manual_seed(config["seed"])
-    if old:
-        suffix = torch.tensor(old["suffix_ids"], device=search.device); best = torch.tensor(old["best_suffix_ids"], device=search.device)
-        history = old["history"]; start = old["next_step"]; best_loss = old["best_loss"]
-        generator.set_state(torch.tensor(old["generator_state"], dtype=torch.uint8))
+    source_checkpoint = None
+    if not old and config.get("continuation_checkpoint_path"):
+        source_path = Path(config["continuation_checkpoint_path"])
+        if sha256(source_path) != config["continuation_checkpoint_sha256"]:
+            raise ValueError("continuation checkpoint SHA-256 mismatch")
+        source_checkpoint = json.loads(source_path.read_text())
+        if source_checkpoint.get("status") != "stopped":
+            raise ValueError("continuation checkpoint must be explicitly stopped")
+        writer.json("continuation_source.json", {"path":str(source_path),"sha256":sha256(source_path),"source_config_fingerprint":source_checkpoint["config_fingerprint"],"source_next_step":source_checkpoint["next_step"]})
+    state = old or source_checkpoint
+    if state:
+        suffix = torch.tensor(state["suffix_ids"], device=search.device); best = torch.tensor(state["best_suffix_ids"], device=search.device)
+        history = state["history"]; start = state["next_step"]; best_loss = state["best_loss"]
+        generator.set_state(torch.tensor(state["generator_state"], dtype=torch.uint8))
     else:
         if config["initialization"] == "warm": ids = exact_length_initialization(tokenizer, config["warm_start_text"], config["suffix_length"])
         else:
@@ -244,10 +299,23 @@ def run(config_path: Path, output: Path, mode="fresh", commit=None):
 
     latest={}
     for step in tqdm(range(start, config["steps"]), initial=start, total=config["steps"], desc="q-GCG"):
+        gradient_started = time.monotonic()
         grad, current_loss = search.gradient(suffix)
+        gradient_seconds = time.monotonic()-gradient_started
         previous_loss = current_loss
         candidates = search.candidates(suffix, grad, generator, valid)
-        losses = search.candidate_losses(candidates); value,index=float(losses.min()),int(losses.argmin())
+        candidate_started = time.monotonic()
+        losses = search.candidate_losses(candidates)
+        candidate_seconds = time.monotonic()-candidate_started
+        reference_seconds = None
+        if config.get("verify_candidate_equivalence") and step == start:
+            reference_started = time.monotonic()
+            reference = search.candidate_losses_serial(candidates)
+            reference_seconds = time.monotonic()-reference_started
+            maximum_error = float((losses-reference).abs().max())
+            writer.json("candidate_equivalence.json", {"candidates":candidates.shape[0],"maximum_absolute_error":maximum_error,"tolerance":config["candidate_equivalence_tolerance"],"passed":maximum_error <= config["candidate_equivalence_tolerance"],"batched_seconds":candidate_seconds,"serial_seconds":reference_seconds,"speedup":reference_seconds/candidate_seconds})
+            if maximum_error > config["candidate_equivalence_tolerance"]: raise RuntimeError("batched candidate loss failed equivalence gate")
+        value,index=float(losses.min()),int(losses.argmin())
         accepted=value < current_loss
         if accepted: suffix=candidates[index].clone(); current_loss=value
         if current_loss < best_loss: best=suffix.clone(); best_loss=current_loss
@@ -255,7 +323,7 @@ def run(config_path: Path, output: Path, mode="fresh", commit=None):
         score=search.sampled_score(best)
         score["position_1_gap"] = score["position_1_student_ce"] - teacher_floor["position_1_ce"]
         score["tail_gap"] = score["tail_student_ce"] - teacher_floor["tail_ce"]
-        latest={"step":start,"accepted":accepted,"loss_delta":value-previous_loss,**score,"suffix_ids":best.tolist(),"suffix":tokenizer.decode(best.tolist(), clean_up_tokenization_spaces=False)}
+        latest={"step":start,"accepted":accepted,"loss_delta":value-previous_loss,"unique_candidates":int(candidates.shape[0]),"gradient_seconds":gradient_seconds,"candidate_seconds":candidate_seconds,"serial_reference_seconds":reference_seconds,**score,"suffix_ids":best.tolist(),"suffix":tokenizer.decode(best.tolist(), clean_up_tokenization_spaces=False)}
         if start % config["exact_q_every"] == 0 or start == config["steps"]: latest.update(search.exact_q_score(best))
         history.append(latest); print("METRIC "+json.dumps(latest,sort_keys=True),flush=True)
         if start % config["checkpoint_every"] == 0 or start == config["steps"]: plot_history(output,history); save("running",latest)

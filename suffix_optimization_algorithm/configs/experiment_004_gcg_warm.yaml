@@ -21,6 +21,7 @@ suffix_length: 12
 top_k: 256
 candidate_batch_size: 512
 evaluation_microbatch_size: 8
+evaluation_record_batch_size: 8
 steps: 500
 checkpoint_every: 1
 exact_q_every: 50
