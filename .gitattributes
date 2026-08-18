@@ -1,3 +1,4 @@
 # Persist large, resumable experiment activation checkpoints without placing
 # their binary payloads in ordinary Git packs.
 steering_vectors/runs/**/activation_state.npz filter=lfs diff=lfs merge=lfs -text
+rough/terminal_wrench_sanitized_and_baselines.json filter=lfs diff=lfs merge=lfs -text

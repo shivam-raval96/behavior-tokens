@@ -1,0 +1,15 @@
+{
+  "dataset_revision": "d8a29613235a0ef56a8b70b3142626a533da28c2",
+  "rows": 5984,
+  "class_counts": {
+    "sanitized_hack": 3632,
+    "baseline": 2352
+  },
+  "sanitizer_model_counts": {
+    "gpt-5.1": 3458,
+    "gemini-3.1-pro-preview": 174
+  },
+  "content_sha256": "99a72ca431baa989de0be32ae2221c22689c645f71cc1cd929a3a59a8735c77c",
+  "file_sha256": "6994681ae62d143adb196b1654abf53968a2cce2b8e638cc7b113ac287eaa8b4",
+  "bytes": 186003831
+}
