@@ -1,5 +1,5 @@
 from __future__ import annotations
-import argparse, hashlib, json, time, urllib.request
+import argparse, hashlib, json, random, time, urllib.error, urllib.request
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -25,8 +25,15 @@ def main():
     def download(row):
         target=Path(row["path"])
         if target.exists() and target.stat().st_size: return
-        with urllib.request.urlopen(base+"/"+row["source_path"],timeout=120) as response: target.write_bytes(response.read())
-    with ThreadPoolExecutor(max_workers=64) as pool:
+        for attempt in range(9):
+            try:
+                request=urllib.request.Request(base+"/"+row["source_path"],headers={"User-Agent":"behavior-tokens-research"})
+                with urllib.request.urlopen(request,timeout=120) as response: target.write_bytes(response.read())
+                return
+            except urllib.error.HTTPError as exc:
+                if exc.code not in {429,500,502,503,504} or attempt == 8: raise
+                time.sleep(min(60,2**attempt)+random.random())
+    with ThreadPoolExecutor(max_workers=16) as pool:
         for completed,_ in enumerate(pool.map(download,rows),1):
             if completed%100==0 or completed==len(rows):
                 elapsed=time.time()-started; rate=completed/max(elapsed,1e-6)
