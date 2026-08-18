@@ -44,16 +44,23 @@ held-out tasks.
 - Deterministic assignment: SHA-256 of `seed || task_id`, 70% train and 30%
   test, seed 42. Exact task/example/class counts are persisted before activation
   extraction; empty-class splits are a hard failure.
-- Activation source: final transformer block residual-stream output only. This
-  fixes the layer before seeing test labels and avoids test-set layer selection.
-- Classifier: `StandardScaler` plus L2 logistic regression,
+- Activation source: the post-block residual-stream output from each of the 32
+  transformer layers at the single audited probe position. Forward hooks retain
+  only `[batch, hidden_size]` slices rather than materializing full-sequence
+  hidden states. No text is generated.
+- Classifier: one independently fitted `StandardScaler` plus L2 logistic
+  regression per layer,
   `C=1.0`, `class_weight="balanced"`, `max_iter=5000`, seed 42. The probe is
   fitted on train only.
 
 ## Evaluation
 
 - Primary metric requested: ordinary test accuracy at threshold 0.5.
-- Diagnostics: train accuracy, test balanced accuracy, ROC AUC, precision,
+- Prespecified primary layer: final transformer layer (layer 31), avoiding
+  test-set layer selection. Test accuracy is also reported for every layer as a
+  full curve; the maximum test-layer accuracy is labeled descriptive/oracle and
+  is not treated as an unbiased selected-model result.
+- Diagnostics: per-layer train accuracy, test balanced accuracy, ROC AUC, precision,
   recall, F1, confusion matrix, majority-class accuracy, per-source-model and
   per-category accuracy, plus bootstrap 95% confidence intervals grouped by
   task (10,000 resamples, seed 42).
@@ -64,24 +71,35 @@ held-out tasks.
 ## Execution and artifacts
 
 - Trial type: new trial.
-- Compute: one Modal A100-80GB, detached submission, 12-hour timeout, one
-  retry only after a fingerprint-validated checkpoint.
-- Batch size: 1 initially, increased only after a recorded memory-safe dry
-  batch; inference uses no gradients. Probe fitting is CPU-side after activation
-  extraction completes.
-- Checkpoints: after dataset resolution, split construction, each 100 extracted
-  examples, probe fitting, and final evaluation. Progress payloads include
+- Compute: four independent Modal A100-80GB extraction workers, detached
+  submission, 12-hour timeout, and one retry only after a
+  fingerprint-validated shard checkpoint. Examples are deterministically
+  sharded by ID; workers never write the same shard.
+- Batching: examples are length-bucketed, dynamically padded, and packed under
+  an initial 32,768-token batch budget with a maximum batch size of 16. Each
+  worker runs an instrumented dry batch, increases the token budget when memory
+  permits, and halves it and retries on OOM. Inference uses bfloat16, Flash
+  Attention 2, `torch.inference_mode()`, and `use_cache=false`.
+- Parallel CPU work: tokenization/preprocessing uses worker processes while the
+  GPUs extract activations; after shard merge, the 32 independent layer probes
+  are fitted in a bounded process pool without nested BLAS oversubscription.
+- Checkpoints: after dataset resolution, split construction, each completed
+  activation shard (at most 100 examples), each fitted probe, and final
+  evaluation. Progress payloads include
   phase, completed/total, elapsed time, throughput, ETA, fingerprint/run ID,
   latest and best metrics, class counts, token lengths/truncations,
   activation norms, errors, and retries.
-- Expected duration/cost: approximately 1.5-4 hours, dominated by long-context
-  forward passes; approximately 1.5-4 A100-80GB-hours plus negligible CPU and
-  storage. No paid judge API is used.
+- Expected duration/cost: approximately 30-90 minutes wall time with four GPU
+  workers, dominated by long-context forward passes; approximately 2-6 total
+  A100-80GB-hours plus CPU and about 1.6 GB for raw float16 activations before
+  metadata/checkpoint overhead. No paid judge API is used.
 - Run path: `rough/runs/YYYY-MM-DD_HHMMSSZ_qwen35-9b-terminal-wrench-last-token-probe/`.
 - Required files: source/config manifests, resolved config and fingerprint,
   split manifest, preprocessing audit, checkpoint/progress/history,
-  `dashboard.html`, `dashboard_history.jsonl`, response-boundary audit, fitted
-  probe, aggregate and subgroup results, plots, `results.json`, and
+  `dashboard.html`, `dashboard_history.jsonl`, response-boundary audit, float16
+  activation shards and merged activation index (5,984 examples × 32 layers ×
+  4,096 hidden dimensions before integrity filtering), 32 fitted probes,
+  aggregate and subgroup results, per-layer plots, `results.json`, and
   `RESULTS.md`.
 - Live monitoring: a read-only Modal HTTP dashboard backed by `bt-outputs` and
   a continuously mirrored localhost dashboard are both verified after launch.
