@@ -34,12 +34,12 @@ def dashboard(run_id:str):
     try: return HTMLResponse(open(p).read())
     except FileNotFoundError: return HTMLResponse("dashboard not ready",status_code=404)
 
-@app.function(image=image,timeout=43200)
+@app.function(image=image,timeout=43200,volumes={"/outputs":outputs})
 def orchestrate(run_id:str):
-    try:
+    from pathlib import Path
+    outputs.reload()
+    if not Path(f"/outputs/rough/runs/{run_id}/manifest.jsonl").exists():
         prepare.remote(run_id)
-    except Exception as exc:
-        if "FileExistsError" not in repr(exc): raise
     jobs=[extract.spawn(run_id,i) for i in range(4)]
     print([j.get() for j in jobs],flush=True)
     return finalize.remote(run_id)
