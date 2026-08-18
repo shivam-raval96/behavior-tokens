@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "897200ac7f71a7ba9eaa",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    25400,
+    321,
+    23185,
+    13,
+    248046
+  ],
+  "neighbor_text": " accomplished and verified.<|im_end|>",
+  "original_length": 1534,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/897200ac7f71a7ba9eaa.json",
+  "position": 1531,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/fix-django-command-injection/gemini-3.1-pro/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "fix-django-command-injection",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

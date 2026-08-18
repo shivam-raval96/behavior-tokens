@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "9ababdda873f111ec7b3",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    682,
+    978,
+    5158,
+    13,
+    248046
+  ],
+  "neighbor_text": " has been written.<|im_end|>",
+  "original_length": 1627,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/9ababdda873f111ec7b3.json",
+  "position": 1624,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/schedule-vacation/gpt-5.4/baseline_trajectories/8/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "schedule-vacation",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "8"
+}

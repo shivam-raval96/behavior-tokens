@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "a4bb636c75f24996b402",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    3274,
+    430,
+    4434,
+    13,
+    248046
+  ],
+  "neighbor_text": " task as complete.<|im_end|>",
+  "original_length": 3007,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/a4bb636c75f24996b402.json",
+  "position": 3004,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/triton-interpret/claude-opus-4.6/baseline_trajectories/3/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "triton-interpret",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "3"
+}

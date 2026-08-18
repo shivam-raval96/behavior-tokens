@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "da1ab441610e7372ed32",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    18047,
+    279,
+    3274,
+    13,
+    248046
+  ],
+  "neighbor_text": " Complete the task.<|im_end|>",
+  "original_length": 1614,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/da1ab441610e7372ed32.json",
+  "position": 1611,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/iris-data-loading-script/gemini-3.1-pro/baseline_trajectories/3/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "iris-data-loading-script",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "3"
+}

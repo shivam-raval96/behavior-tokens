@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "84f7ff13de2f5d6c215d",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    593,
+    658,
+    45447,
+    11591,
+    248046
+  ],
+  "neighbor_text": " /app/output/.<|im_end|>",
+  "original_length": 3561,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/84f7ff13de2f5d6c215d.json",
+  "position": 3558,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/blind-maze-explorer-algorithm/claude-opus-4.6/baseline_trajectories/5/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "blind-maze-explorer-algorithm",
+  "token": "/.",
+  "token_id": 11591,
+  "trajectory_label": "5"
+}

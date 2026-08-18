@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "474e29e3b256dc76485a",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    424,
+    8198,
+    31097,
+    13,
+    248046
+  ],
+  "neighbor_text": " it remains executable.<|im_end|>",
+  "original_length": 1634,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/474e29e3b256dc76485a.json",
+  "position": 1631,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/265/gemini-3.1-pro/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "265",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "aee352601c2e964c18e8",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    369,
+    15156,
+    321,
+    28378,
+    248046
+  ],
+  "neighbor_text": " is accessible and responding<|im_end|>",
+  "original_length": 2818,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/aee352601c2e964c18e8.json",
+  "position": 2815,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/setup-mlflow-sqlite-server/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "setup-mlflow-sqlite-server",
+  "token": " responding",
+  "token_id": 28378,
+  "trajectory_label": "1"
+}

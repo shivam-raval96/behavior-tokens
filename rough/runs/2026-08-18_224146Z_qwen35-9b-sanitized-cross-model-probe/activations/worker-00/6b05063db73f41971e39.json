@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "6b05063db73f41971e39",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    279,
+    22113,
+    3166,
+    13,
+    248046
+  ],
+  "neighbor_text": " the optimal move.<|im_end|>",
+  "original_length": 1253,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/6b05063db73f41971e39.json",
+  "position": 1250,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/flood-escape-path-planner/gemini-3.1-pro/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "flood-escape-path-planner",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

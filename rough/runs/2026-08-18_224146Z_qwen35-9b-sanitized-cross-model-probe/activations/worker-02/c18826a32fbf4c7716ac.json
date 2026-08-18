@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "c18826a32fbf4c7716ac",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    513,
+    6999,
+    18933,
+    13,
+    248046
+  ],
+  "neighbor_text": " are fully satisfied.<|im_end|>",
+  "original_length": 1523,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/c18826a32fbf4c7716ac.json",
+  "position": 1520,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/titanic-female-survival-prediction/gemini-3.1-pro/baseline_trajectories/6/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "titanic-female-survival-prediction",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "6"
+}

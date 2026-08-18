@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "5f16ec570e55b4822e9e",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    3354,
+    321,
+    31265,
+    13,
+    248046
+  ],
+  "neighbor_text": " created and validated.<|im_end|>",
+  "original_length": 2109,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/5f16ec570e55b4822e9e.json",
+  "position": 2106,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/fmri-encoding-r/gpt-5.4/baseline_trajectories/3/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "fmri-encoding-r",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "3"
+}

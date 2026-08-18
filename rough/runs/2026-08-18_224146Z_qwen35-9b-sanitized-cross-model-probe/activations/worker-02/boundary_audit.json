@@ -1,0 +1,402 @@
+[
+  {
+    "example_id": "581231bdeece15621549",
+    "left_cut": 0,
+    "neighbor_ids": [
+      1647,
+      314,
+      2468,
+      13,
+      248046
+    ],
+    "neighbor_text": " style of output.<|im_end|>",
+    "original_length": 887,
+    "position": 884,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "0bc4a2e4e511d27b0465",
+    "left_cut": 0,
+    "neighbor_ids": [
+      321,
+      81161,
+      82,
+      13,
+      248046
+    ],
+    "neighbor_text": " and redirections.<|im_end|>",
+    "original_length": 923,
+    "position": 920,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "00f5e342dc8ad38232d6",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task as complete.<|im_end|>",
+    "original_length": 928,
+    "position": 925,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "8db02c336ac75d8baa14",
+    "left_cut": 0,
+    "neighbor_ids": [
+      279,
+      3481,
+      2144,
+      13,
+      248046
+    ],
+    "neighbor_text": " the expected content.<|im_end|>",
+    "original_length": 942,
+    "position": 939,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "761fdc77d20222c93a01",
+    "left_cut": 0,
+    "neighbor_ids": [
+      6435,
+      279,
+      3481,
+      2144,
+      248046
+    ],
+    "neighbor_text": " contain the expected content<|im_end|>",
+    "original_length": 970,
+    "position": 967,
+    "token": " content",
+    "token_id": 2144
+  },
+  {
+    "example_id": "5e1e2fb4eb62b541a4de",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task as complete.<|im_end|>",
+    "original_length": 1002,
+    "position": 999,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "e451a76f46e0dc6028ef",
+    "left_cut": 0,
+    "neighbor_ids": [
+      22188,
+      513,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " verification are complete.<|im_end|>",
+    "original_length": 1002,
+    "position": 999,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "92d973fc5ddbb039291f",
+    "left_cut": 0,
+    "neighbor_ids": [
+      279,
+      999,
+      9400,
+      13,
+      248046
+    ],
+    "neighbor_text": " the file creation.<|im_end|>",
+    "original_length": 1021,
+    "position": 1018,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "e7fef12842416964f3b1",
+    "left_cut": 0,
+    "neighbor_ids": [
+      1830,
+      364,
+      22188,
+      13,
+      248046
+    ],
+    "neighbor_text": " report for verification.<|im_end|>",
+    "original_length": 1086,
+    "position": 1083,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "106a9a46f5d915472461",
+    "left_cut": 0,
+    "neighbor_ids": [
+      279,
+      999,
+      8529,
+      13,
+      248046
+    ],
+    "neighbor_text": " the file contents.<|im_end|>",
+    "original_length": 1096,
+    "position": 1093,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "ed6a8b1438620dcd31eb",
+    "left_cut": 0,
+    "neighbor_ids": [
+      279,
+      2018,
+      15808,
+      13,
+      248046
+    ],
+    "neighbor_text": " the second requirement.<|im_end|>",
+    "original_length": 1102,
+    "position": 1099,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "0f0437a30f40549095b7",
+    "left_cut": 0,
+    "neighbor_ids": [
+      9969,
+      321,
+      15170,
+      13,
+      248046
+    ],
+    "neighbor_text": " installed and functional.<|im_end|>",
+    "original_length": 1127,
+    "position": 1124,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "500530b8949a176a58ec",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task as complete.<|im_end|>",
+    "original_length": 1133,
+    "position": 1130,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "fb2a4c6b3b70af02edd7",
+    "left_cut": 0,
+    "neighbor_ids": [
+      310,
+      381,
+      15234,
+      13,
+      248046
+    ],
+    "neighbor_text": " to be executed.<|im_end|>",
+    "original_length": 1139,
+    "position": 1136,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "f33216c5fa5dd0739fb7",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task as complete.<|im_end|>",
+    "original_length": 1147,
+    "position": 1144,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "2e8ab95d58035efe67dc",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3481,
+      35426,
+      3425,
+      13,
+      248046
+    ],
+    "neighbor_text": " expected artifact files.<|im_end|>",
+    "original_length": 1163,
+    "position": 1160,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "523c2bc5892895d89f52",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task as complete.<|im_end|>",
+    "original_length": 1171,
+    "position": 1168,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "0fc74efcb28faccacc3f",
+    "left_cut": 0,
+    "neighbor_ids": [
+      424,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " it as complete.<|im_end|>",
+    "original_length": 1178,
+    "position": 1175,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "80ee8e6d9c5d0d627acf",
+    "left_cut": 0,
+    "neighbor_ids": [
+      12083,
+      22405,
+      3759,
+      13,
+      248046
+    ],
+    "neighbor_text": " correctly formatted variable.<|im_end|>",
+    "original_length": 1198,
+    "position": 1195,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "b744d48b220ff30ab185",
+    "left_cut": 0,
+    "neighbor_ids": [
+      22038,
+      13319,
+      1752,
+      13,
+      248046
+    ],
+    "neighbor_text": " legitimate installation path.<|im_end|>",
+    "original_length": 1201,
+    "position": 1198,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "76fb8d15c735a8d1fdb5",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task as complete.<|im_end|>",
+    "original_length": 1204,
+    "position": 1201,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "b90261781d21f6159681",
+    "left_cut": 0,
+    "neighbor_ids": [
+      2600,
+      3111,
+      10893,
+      27653,
+      248046
+    ],
+    "neighbor_text": "/solution.csv`.<|im_end|>",
+    "original_length": 1208,
+    "position": 1205,
+    "token": "`.",
+    "token_id": 27653
+  },
+  {
+    "example_id": "d6a76679ab49297ff653",
+    "left_cut": 0,
+    "neighbor_ids": [
+      321,
+      1542,
+      424,
+      13,
+      248046
+    ],
+    "neighbor_text": " and run it.<|im_end|>",
+    "original_length": 1211,
+    "position": 1208,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "60099be8076e30ad69de",
+    "left_cut": 0,
+    "neighbor_ids": [
+      430,
+      2535,
+      23,
+      13,
+      248046
+    ],
+    "neighbor_text": " as uint8.<|im_end|>",
+    "original_length": 1221,
+    "position": 1218,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "b7cbdb92a529b7dfa87b",
+    "left_cut": 0,
+    "neighbor_ids": [
+      52275,
+      279,
+      3274,
+      13,
+      248046
+    ],
+    "neighbor_text": " finalize the task.<|im_end|>",
+    "original_length": 1228,
+    "position": 1225,
+    "token": ".",
+    "token_id": 13
+  }
+]

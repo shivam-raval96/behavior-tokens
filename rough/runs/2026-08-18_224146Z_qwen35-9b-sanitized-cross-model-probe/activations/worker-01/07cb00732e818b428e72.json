@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "07cb00732e818b428e72",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    26778,
+    430,
+    804,
+    13,
+    248046
+  ],
+  "neighbor_text": "_complete as true.<|im_end|>",
+  "original_length": 3813,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/07cb00732e818b428e72.json",
+  "position": 3810,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/enemy-grid-escape/gemini-3.1-pro/baseline_trajectories/4/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "enemy-grid-escape",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "4"
+}

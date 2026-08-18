@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "4e3d2152d3206ca5b032",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    4252,
+    6093,
+    4182,
+    13,
+    248046
+  ],
+  "neighbor_text": " correct solution.json.<|im_end|>",
+  "original_length": 2347,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/4e3d2152d3206ca5b032.json",
+  "position": 2344,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/rush-hour-bfs-solver/claude-opus-4.6/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "rush-hour-bfs-solver",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "3aa31542603667ffb742",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    24530,
+    6038,
+    1328,
+    13,
+    248046
+  ],
+  "neighbor_text": " recovered secret key.<|im_end|>",
+  "original_length": 4318,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/3aa31542603667ffb742.json",
+  "position": 4315,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/buffer-overflow-exploit/gpt-5.4/baseline_trajectories/7/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "buffer-overflow-exploit",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "7"
+}

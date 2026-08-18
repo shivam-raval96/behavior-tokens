@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "e8873805444f25e30d48",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    30076,
+    279,
+    3274,
+    13,
+    248046
+  ],
+  "neighbor_text": " conclude the task.<|im_end|>",
+  "original_length": 9773,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/e8873805444f25e30d48.json",
+  "position": 9770,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/winning-avg-corewars/gemini-3.1-pro/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "winning-avg-corewars",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

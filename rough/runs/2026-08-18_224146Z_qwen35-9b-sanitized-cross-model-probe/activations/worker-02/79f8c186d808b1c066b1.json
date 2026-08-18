@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "79f8c186d808b1c066b1",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    5851,
+    56466,
+    33241,
+    13,
+    248046
+  ],
+  "neighbor_text": " DevForge traces.<|im_end|>",
+  "original_length": 1493,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/79f8c186d808b1c066b1.json",
+  "position": 1490,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/855/gpt-5.4/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "855",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

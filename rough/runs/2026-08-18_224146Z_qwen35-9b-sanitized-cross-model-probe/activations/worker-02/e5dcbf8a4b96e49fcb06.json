@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "e5dcbf8a4b96e49fcb06",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    10680,
+    6368,
+    5604,
+    13,
+    248046
+  ],
+  "neighbor_text": " Fortran reference.<|im_end|>",
+  "original_length": 1804,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/e5dcbf8a4b96e49fcb06.json",
+  "position": 1801,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/port-fortran-climate-model-to-python/gpt-5.4/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "port-fortran-climate-model-to-python",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

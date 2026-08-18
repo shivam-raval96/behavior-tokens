@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "6b697659620d2a9d8086",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    2468,
+    7888,
+    9971,
+    13,
+    248046
+  ],
+  "neighbor_text": " output completed properly.<|im_end|>",
+  "original_length": 1577,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/6b697659620d2a9d8086.json",
+  "position": 1574,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/decommissioning-service-with-sensitive-data/claude-opus-4.6/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "decommissioning-service-with-sensitive-data",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

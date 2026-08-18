@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "f0e9d1f261b71a6b0467",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    1407,
+    476,
+    10279,
+    13,
+    248046
+  ],
+  "neighbor_text": " std::free.<|im_end|>",
+  "original_length": 3357,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/f0e9d1f261b71a6b0467.json",
+  "position": 3354,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/custom-memory-heap-crash/claude-opus-4.6/baseline_trajectories/3/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "custom-memory-heap-crash",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "3"
+}

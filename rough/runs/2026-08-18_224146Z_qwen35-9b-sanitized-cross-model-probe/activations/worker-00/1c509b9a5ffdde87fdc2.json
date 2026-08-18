@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "1c509b9a5ffdde87fdc2",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    14212,
+    557,
+    19835,
+    13,
+    248046
+  ],
+  "neighbor_text": " recording was demonstrated.<|im_end|>",
+  "original_length": 4349,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/1c509b9a5ffdde87fdc2.json",
+  "position": 4346,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/547/gpt-5.4/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "547",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

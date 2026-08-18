@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "f647c50da4d4789dd5cd",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    16,
+    13,
+    15,
+    13,
+    248046
+  ],
+  "neighbor_text": "1.0.<|im_end|>",
+  "original_length": 1391,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/f647c50da4d4789dd5cd.json",
+  "position": 1388,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/titanic-female-survival-prediction/gpt-5.4/baseline_trajectories/6/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "titanic-female-survival-prediction",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "6"
+}

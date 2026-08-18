@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "e79b8d90adb58037e92c",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    8242,
+    513,
+    2197,
+    13,
+    248046
+  ],
+  "neighbor_text": " requirements are met.<|im_end|>",
+  "original_length": 2750,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/e79b8d90adb58037e92c.json",
+  "position": 2747,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/port-fortran-rk4-lorenz-to-python/gemini-3.1-pro/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "port-fortran-rk4-lorenz-to-python",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

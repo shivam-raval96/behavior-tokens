@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "07c23fb35d477561188a",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    11917,
+    6971,
+    594,
+    27653,
+    248046
+  ],
+  "neighbor_text": "_service.py &`.<|im_end|>",
+  "original_length": 2605,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/07c23fb35d477561188a.json",
+  "position": 2602,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/get-bitcoin-nodes/gemini-3.1-pro/baseline_trajectories/4/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "get-bitcoin-nodes",
+  "token": "`.",
+  "token_id": 27653,
+  "trajectory_label": "4"
+}

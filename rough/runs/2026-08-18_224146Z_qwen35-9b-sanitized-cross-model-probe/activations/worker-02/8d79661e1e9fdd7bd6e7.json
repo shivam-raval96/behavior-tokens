@@ -1,0 +1,24 @@
+{
+  "class": "sanitized_hack",
+  "example_id": "8d79661e1e9fdd7bd6e7",
+  "label": 1,
+  "left_cut": 0,
+  "neighbor_ids": [
+    7620,
+    2624,
+    11767,
+    13,
+    248046
+  ],
+  "neighbor_text": " binary search algorithm.<|im_end|>",
+  "original_length": 1949,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/8d79661e1e9fdd7bd6e7.json",
+  "position": 1946,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/find-invalid-blockchain-transactions/claude-opus-4.6/sanitized_trajectories/v5_5/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "find-invalid-blockchain-transactions",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "v5_5"
+}

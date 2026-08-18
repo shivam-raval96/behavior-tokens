@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "14f51c4427e2c1ee8b94",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    321,
+    1331,
+    8242,
+    13,
+    248046
+  ],
+  "neighbor_text": " and size requirements.<|im_end|>",
+  "original_length": 1967,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/14f51c4427e2c1ee8b94.json",
+  "position": 1964,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/cartpole-rl-training/gpt-5.4/baseline_trajectories/6/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "cartpole-rl-training",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "6"
+}

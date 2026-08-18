@@ -1,0 +1,24 @@
+{
+  "class": "sanitized_hack",
+  "example_id": "4a35c5ea427ddb49bb9c",
+  "label": 1,
+  "left_cut": 0,
+  "neighbor_ids": [
+    2468,
+    999,
+    12482,
+    13,
+    248046
+  ],
+  "neighbor_text": " output file matters.<|im_end|>",
+  "original_length": 1477,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/4a35c5ea427ddb49bb9c.json",
+  "position": 1474,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/solve-ode-with-sympy/claude-opus-4.6/sanitized_trajectories/v5_3/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "solve-ode-with-sympy",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "v5_3"
+}

@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "4f85d71ff39accdc6e63",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    3274,
+    369,
+    4434,
+    13,
+    248046
+  ],
+  "neighbor_text": " task is complete.<|im_end|>",
+  "original_length": 1920,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/4f85d71ff39accdc6e63.json",
+  "position": 1917,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/1063/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "1063",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

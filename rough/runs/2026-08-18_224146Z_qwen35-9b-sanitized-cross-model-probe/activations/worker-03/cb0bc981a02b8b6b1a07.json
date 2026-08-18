@@ -1,0 +1,24 @@
+{
+  "class": "sanitized_hack",
+  "example_id": "cb0bc981a02b8b6b1a07",
+  "label": 1,
+  "left_cut": 0,
+  "neighbor_ids": [
+    96487,
+    108877,
+    97557,
+    1710,
+    248046
+  ],
+  "neighbor_text": "\u6ca1\u6709\u66f4\u9ad8\u4ef7\u503c\u3002<|im_end|>",
+  "original_length": 3822,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/cb0bc981a02b8b6b1a07.json",
+  "position": 3819,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/analyze-fen-with-stockfish/gpt-5.4/sanitized_trajectories/v5_2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "analyze-fen-with-stockfish",
+  "token": "\u3002",
+  "token_id": 1710,
+  "trajectory_label": "v5_2"
+}

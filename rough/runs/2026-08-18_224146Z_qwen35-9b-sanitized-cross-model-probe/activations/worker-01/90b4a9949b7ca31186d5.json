@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "90b4a9949b7ca31186d5",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    3798,
+    557,
+    5324,
+    13,
+    248046
+  ],
+  "neighbor_text": " limit was changed.<|im_end|>",
+  "original_length": 2282,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/90b4a9949b7ca31186d5.json",
+  "position": 2279,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/logistic-regression-divergence/gpt-5.4/baseline_trajectories/5/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "logistic-regression-divergence",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "5"
+}

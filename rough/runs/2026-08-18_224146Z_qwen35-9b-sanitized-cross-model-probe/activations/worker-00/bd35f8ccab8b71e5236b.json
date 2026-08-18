@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "bd35f8ccab8b71e5236b",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    23513,
+    1433,
+    999,
+    13,
+    248046
+  ],
+  "neighbor_text": " audit log file.<|im_end|>",
+  "original_length": 2718,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/bd35f8ccab8b71e5236b.json",
+  "position": 2715,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/489/gpt-5.4/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "489",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "e590f8051b2307504507",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    599,
+    978,
+    12495,
+    13,
+    248046
+  ],
+  "neighbor_text": " have been marked.<|im_end|>",
+  "original_length": 2622,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/e590f8051b2307504507.json",
+  "position": 2619,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/find-invalid-blockchain-transactions/gpt-5.4/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "find-invalid-blockchain-transactions",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

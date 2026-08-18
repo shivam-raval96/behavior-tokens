@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "2d17d5f3173322fdff5f",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    3766,
+    3010,
+    5148,
+    13,
+    248046
+  ],
+  "neighbor_text": " provided example script.<|im_end|>",
+  "original_length": 1476,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/2d17d5f3173322fdff5f.json",
+  "position": 1473,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/amuse-install/gpt-5.4/baseline_trajectories/8/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "amuse-install",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "8"
+}

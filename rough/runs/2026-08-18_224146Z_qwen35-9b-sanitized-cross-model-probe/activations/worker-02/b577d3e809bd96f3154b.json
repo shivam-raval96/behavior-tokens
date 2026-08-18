@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "b577d3e809bd96f3154b",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    682,
+    978,
+    23185,
+    13,
+    248046
+  ],
+  "neighbor_text": " has been verified.<|im_end|>",
+  "original_length": 1981,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/b577d3e809bd96f3154b.json",
+  "position": 1978,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/tmux-advanced-workflow/gemini-3.1-pro/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "tmux-advanced-workflow",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

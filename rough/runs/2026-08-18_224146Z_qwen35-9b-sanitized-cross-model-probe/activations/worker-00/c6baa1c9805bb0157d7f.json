@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "c6baa1c9805bb0157d7f",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    6568,
+    321,
+    31265,
+    13,
+    248046
+  ],
+  "neighbor_text": " saved and validated.<|im_end|>",
+  "original_length": 2170,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/c6baa1c9805bb0157d7f.json",
+  "position": 2167,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/triton-interpret/gpt-5.4/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "triton-interpret",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "f93e3c76f04c9e95eb05",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    1942,
+    6813,
+    1440,
+    13,
+    248046
+  ],
+  "neighbor_text": " All tests pass.<|im_end|>",
+  "original_length": 1910,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/f93e3c76f04c9e95eb05.json",
+  "position": 1907,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/fix-django-command-injection/claude-opus-4.6/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "fix-django-command-injection",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

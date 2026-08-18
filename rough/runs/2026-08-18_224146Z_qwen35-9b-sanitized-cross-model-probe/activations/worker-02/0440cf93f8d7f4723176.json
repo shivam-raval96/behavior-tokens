@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "0440cf93f8d7f4723176",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    8242,
+    513,
+    18933,
+    13,
+    248046
+  ],
+  "neighbor_text": " requirements are satisfied.<|im_end|>",
+  "original_length": 2308,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/0440cf93f8d7f4723176.json",
+  "position": 2305,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/stabilize-neural-network-training/claude-opus-4.6/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "stabilize-neural-network-training",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

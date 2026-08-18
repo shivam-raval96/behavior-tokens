@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "66d6c617c757b9896aeb",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    279,
+    4751,
+    7793,
+    13,
+    248046
+  ],
+  "neighbor_text": " the ground truth.<|im_end|>",
+  "original_length": 2623,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/66d6c617c757b9896aeb.json",
+  "position": 2620,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/blind-maze-explorer-5x5/claude-opus-4.6/baseline_trajectories/3/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "blind-maze-explorer-5x5",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "3"
+}

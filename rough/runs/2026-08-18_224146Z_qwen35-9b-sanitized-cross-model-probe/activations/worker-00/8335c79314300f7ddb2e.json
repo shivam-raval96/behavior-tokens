@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "8335c79314300f7ddb2e",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    3421,
+    11036,
+    513,
+    4162,
+    248046
+  ],
+  "neighbor_text": " server processes are running<|im_end|>",
+  "original_length": 1745,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/8335c79314300f7ddb2e.json",
+  "position": 1742,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/464/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "464",
+  "token": " running",
+  "token_id": 4162,
+  "trajectory_label": "1"
+}

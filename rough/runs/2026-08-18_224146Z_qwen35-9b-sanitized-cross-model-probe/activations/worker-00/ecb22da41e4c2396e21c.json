@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "ecb22da41e4c2396e21c",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    6999,
+    7888,
+    7544,
+    13,
+    248046
+  ],
+  "neighbor_text": " fully completed successfully.<|im_end|>",
+  "original_length": 2788,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/ecb22da41e4c2396e21c.json",
+  "position": 2785,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/triton-interpret/gemini-3.1-pro/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "triton-interpret",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

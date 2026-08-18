@@ -1,0 +1,3508 @@
+{
+  "best_layer": 17,
+  "best_layer_metrics": {
+    "balanced_accuracy": 0.98,
+    "confusion_matrix": [
+      [
+        123,
+        2
+      ],
+      [
+        3,
+        122
+      ]
+    ],
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.98,
+        "confusion_matrix": [
+          [
+            123,
+            2
+          ],
+          [
+            3,
+            122
+          ]
+        ],
+        "examples": 250
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            294,
+            0
+          ],
+          [
+            0,
+            294
+          ]
+        ],
+        "examples": 588
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.6700507614213198,
+        "confusion_matrix": [
+          [
+            67,
+            130
+          ],
+          [
+            0,
+            197
+          ]
+        ],
+        "examples": 394
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.65625,
+        "confusion_matrix": [
+          [
+            130,
+            286
+          ],
+          [
+            0,
+            416
+          ]
+        ],
+        "examples": 832
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.6886792452830188,
+        "confusion_matrix": [
+          [
+            60,
+            99
+          ],
+          [
+            0,
+            159
+          ]
+        ],
+        "examples": 318
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.6743515850144092,
+        "confusion_matrix": [
+          [
+            121,
+            226
+          ],
+          [
+            0,
+            347
+          ]
+        ],
+        "examples": 694
+      }
+    },
+    "f1": 0.9799196787148594,
+    "layer": 17,
+    "precision": 0.9838709677419355,
+    "recall": 0.976,
+    "roc_auc": 0.995968,
+    "test_accuracy": 0.98,
+    "train_accuracy": 1.0
+  },
+  "claude_test_examples": 250,
+  "claude_train_examples": 588,
+  "config_fingerprint": "4c7813ef3fc4473b9c2cf85d0ec30b133b03119d11d7ea1da0fd7ee2396b5037",
+  "per_layer": [
+    {
+      "balanced_accuracy": 0.9,
+      "confusion_matrix": [
+        [
+          113,
+          12
+        ],
+        [
+          13,
+          112
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.9,
+          "confusion_matrix": [
+            [
+              113,
+              12
+            ],
+            [
+              13,
+              112
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.7461928934010152,
+          "confusion_matrix": [
+            [
+              118,
+              79
+            ],
+            [
+              21,
+              176
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.7415865384615384,
+          "confusion_matrix": [
+            [
+              236,
+              180
+            ],
+            [
+              35,
+              381
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.7264150943396226,
+          "confusion_matrix": [
+            [
+              76,
+              83
+            ],
+            [
+              4,
+              155
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.7449567723342939,
+          "confusion_matrix": [
+            [
+              173,
+              174
+            ],
+            [
+              3,
+              344
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.8995983935742972,
+      "layer": 0,
+      "precision": 0.9032258064516129,
+      "recall": 0.896,
+      "roc_auc": 0.96256,
+      "test_accuracy": 0.9,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.9079999999999999,
+      "confusion_matrix": [
+        [
+          119,
+          6
+        ],
+        [
+          17,
+          108
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.908,
+          "confusion_matrix": [
+            [
+              119,
+              6
+            ],
+            [
+              17,
+              108
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.6954314720812182,
+          "confusion_matrix": [
+            [
+              93,
+              104
+            ],
+            [
+              16,
+              181
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.71875,
+          "confusion_matrix": [
+            [
+              199,
+              217
+            ],
+            [
+              17,
+              399
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.6761006289308176,
+          "confusion_matrix": [
+            [
+              57,
+              102
+            ],
+            [
+              1,
+              158
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.739193083573487,
+          "confusion_matrix": [
+            [
+              166,
+              181
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9037656903765691,
+      "layer": 1,
+      "precision": 0.9473684210526315,
+      "recall": 0.864,
+      "roc_auc": 0.95872,
+      "test_accuracy": 0.908,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.9199999999999999,
+      "confusion_matrix": [
+        [
+          119,
+          6
+        ],
+        [
+          14,
+          111
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.92,
+          "confusion_matrix": [
+            [
+              119,
+              6
+            ],
+            [
+              14,
+              111
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.748730964467005,
+          "confusion_matrix": [
+            [
+              105,
+              92
+            ],
+            [
+              7,
+              190
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.7692307692307693,
+          "confusion_matrix": [
+            [
+              233,
+              183
+            ],
+            [
+              9,
+              407
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.7044025157232704,
+          "confusion_matrix": [
+            [
+              67,
+              92
+            ],
+            [
+              2,
+              157
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.7247838616714697,
+          "confusion_matrix": [
+            [
+              157,
+              190
+            ],
+            [
+              1,
+              346
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9173553719008265,
+      "layer": 2,
+      "precision": 0.9487179487179487,
+      "recall": 0.888,
+      "roc_auc": 0.973696,
+      "test_accuracy": 0.92,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.948,
+      "confusion_matrix": [
+        [
+          123,
+          2
+        ],
+        [
+          11,
+          114
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.948,
+          "confusion_matrix": [
+            [
+              123,
+              2
+            ],
+            [
+              11,
+              114
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.7715736040609137,
+          "confusion_matrix": [
+            [
+              112,
+              85
+            ],
+            [
+              5,
+              192
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.7800480769230769,
+          "confusion_matrix": [
+            [
+              238,
+              178
+            ],
+            [
+              5,
+              411
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.5849056603773585,
+          "confusion_matrix": [
+            [
+              27,
+              132
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.6109510086455331,
+          "confusion_matrix": [
+            [
+              77,
+              270
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.946058091286307,
+      "layer": 3,
+      "precision": 0.9827586206896551,
+      "recall": 0.912,
+      "roc_auc": 0.989312,
+      "test_accuracy": 0.948,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.948,
+      "confusion_matrix": [
+        [
+          122,
+          3
+        ],
+        [
+          10,
+          115
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.948,
+          "confusion_matrix": [
+            [
+              122,
+              3
+            ],
+            [
+              10,
+              115
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.7563451776649747,
+          "confusion_matrix": [
+            [
+              104,
+              93
+            ],
+            [
+              3,
+              194
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.7536057692307693,
+          "confusion_matrix": [
+            [
+              217,
+              199
+            ],
+            [
+              6,
+              410
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.5377358490566038,
+          "confusion_matrix": [
+            [
+              12,
+              147
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.5288184438040345,
+          "confusion_matrix": [
+            [
+              20,
+              327
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9465020576131687,
+      "layer": 4,
+      "precision": 0.9745762711864406,
+      "recall": 0.92,
+      "roc_auc": 0.982912,
+      "test_accuracy": 0.948,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.952,
+      "confusion_matrix": [
+        [
+          121,
+          4
+        ],
+        [
+          8,
+          117
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.952,
+          "confusion_matrix": [
+            [
+              121,
+              4
+            ],
+            [
+              8,
+              117
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.6802030456852792,
+          "confusion_matrix": [
+            [
+              73,
+              124
+            ],
+            [
+              2,
+              195
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.6911057692307693,
+          "confusion_matrix": [
+            [
+              162,
+              254
+            ],
+            [
+              3,
+              413
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.5377358490566038,
+          "confusion_matrix": [
+            [
+              12,
+              147
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.531700288184438,
+          "confusion_matrix": [
+            [
+              22,
+              325
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9512195121951219,
+      "layer": 5,
+      "precision": 0.9669421487603306,
+      "recall": 0.936,
+      "roc_auc": 0.9800960000000001,
+      "test_accuracy": 0.952,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.956,
+      "confusion_matrix": [
+        [
+          122,
+          3
+        ],
+        [
+          8,
+          117
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.956,
+          "confusion_matrix": [
+            [
+              122,
+              3
+            ],
+            [
+              8,
+              117
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.6598984771573604,
+          "confusion_matrix": [
+            [
+              63,
+              134
+            ],
+            [
+              0,
+              197
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.6514423076923077,
+          "confusion_matrix": [
+            [
+              132,
+              284
+            ],
+            [
+              6,
+              410
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.5471698113207547,
+          "confusion_matrix": [
+            [
+              15,
+              144
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.5273775216138329,
+          "confusion_matrix": [
+            [
+              19,
+              328
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9551020408163265,
+      "layer": 6,
+      "precision": 0.975,
+      "recall": 0.936,
+      "roc_auc": 0.9858560000000001,
+      "test_accuracy": 0.956,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.944,
+      "confusion_matrix": [
+        [
+          122,
+          3
+        ],
+        [
+          11,
+          114
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.944,
+          "confusion_matrix": [
+            [
+              122,
+              3
+            ],
+            [
+              11,
+              114
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.6903553299492385,
+          "confusion_matrix": [
+            [
+              76,
+              121
+            ],
+            [
+              1,
+              196
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.6610576923076923,
+          "confusion_matrix": [
+            [
+              146,
+              270
+            ],
+            [
+              12,
+              404
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.5754716981132075,
+          "confusion_matrix": [
+            [
+              25,
+              134
+            ],
+            [
+              1,
+              158
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.5634005763688761,
+          "confusion_matrix": [
+            [
+              44,
+              303
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9421487603305785,
+      "layer": 7,
+      "precision": 0.9743589743589743,
+      "recall": 0.912,
+      "roc_auc": 0.98656,
+      "test_accuracy": 0.944,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.9359999999999999,
+      "confusion_matrix": [
+        [
+          122,
+          3
+        ],
+        [
+          13,
+          112
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.936,
+          "confusion_matrix": [
+            [
+              122,
+              3
+            ],
+            [
+              13,
+              112
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.6472081218274112,
+          "confusion_matrix": [
+            [
+              66,
+              131
+            ],
+            [
+              8,
+              189
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.6478365384615384,
+          "confusion_matrix": [
+            [
+              142,
+              274
+            ],
+            [
+              19,
+              397
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.5849056603773585,
+          "confusion_matrix": [
+            [
+              28,
+              131
+            ],
+            [
+              1,
+              158
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.5878962536023055,
+          "confusion_matrix": [
+            [
+              61,
+              286
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9333333333333333,
+      "layer": 8,
+      "precision": 0.9739130434782609,
+      "recall": 0.896,
+      "roc_auc": 0.9856639999999999,
+      "test_accuracy": 0.936,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.96,
+      "confusion_matrix": [
+        [
+          121,
+          4
+        ],
+        [
+          6,
+          119
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.96,
+          "confusion_matrix": [
+            [
+              121,
+              4
+            ],
+            [
+              6,
+              119
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.6852791878172588,
+          "confusion_matrix": [
+            [
+              78,
+              119
+            ],
+            [
+              5,
+              192
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.6658653846153846,
+          "confusion_matrix": [
+            [
+              151,
+              265
+            ],
+            [
+              13,
+              403
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.6352201257861635,
+          "confusion_matrix": [
+            [
+              44,
+              115
+            ],
+            [
+              1,
+              158
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.6167146974063401,
+          "confusion_matrix": [
+            [
+              81,
+              266
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9596774193548387,
+      "layer": 9,
+      "precision": 0.967479674796748,
+      "recall": 0.952,
+      "roc_auc": 0.9887999999999999,
+      "test_accuracy": 0.96,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.972,
+      "confusion_matrix": [
+        [
+          121,
+          4
+        ],
+        [
+          3,
+          122
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.972,
+          "confusion_matrix": [
+            [
+              121,
+              4
+            ],
+            [
+              3,
+              122
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.6675126903553299,
+          "confusion_matrix": [
+            [
+              71,
+              126
+            ],
+            [
+              5,
+              192
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.6514423076923077,
+          "confusion_matrix": [
+            [
+              138,
+              278
+            ],
+            [
+              12,
+              404
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.6226415094339622,
+          "confusion_matrix": [
+            [
+              40,
+              119
+            ],
+            [
+              1,
+              158
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.6195965417867435,
+          "confusion_matrix": [
+            [
+              83,
+              264
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9721115537848606,
+      "layer": 10,
+      "precision": 0.9682539682539683,
+      "recall": 0.976,
+      "roc_auc": 0.988544,
+      "test_accuracy": 0.972,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.972,
+      "confusion_matrix": [
+        [
+          121,
+          4
+        ],
+        [
+          3,
+          122
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.972,
+          "confusion_matrix": [
+            [
+              121,
+              4
+            ],
+            [
+              3,
+              122
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.6979695431472082,
+          "confusion_matrix": [
+            [
+              81,
+              116
+            ],
+            [
+              3,
+              194
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.6899038461538461,
+          "confusion_matrix": [
+            [
+              168,
+              248
+            ],
+            [
+              10,
+              406
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.6792452830188679,
+          "confusion_matrix": [
+            [
+              58,
+              101
+            ],
+            [
+              1,
+              158
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.6786743515850144,
+          "confusion_matrix": [
+            [
+              124,
+              223
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9721115537848606,
+      "layer": 11,
+      "precision": 0.9682539682539683,
+      "recall": 0.976,
+      "roc_auc": 0.9920640000000001,
+      "test_accuracy": 0.972,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.976,
+      "confusion_matrix": [
+        [
+          123,
+          2
+        ],
+        [
+          4,
+          121
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.976,
+          "confusion_matrix": [
+            [
+              123,
+              2
+            ],
+            [
+              4,
+              121
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.6700507614213198,
+          "confusion_matrix": [
+            [
+              70,
+              127
+            ],
+            [
+              3,
+              194
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.6730769230769231,
+          "confusion_matrix": [
+            [
+              152,
+              264
+            ],
+            [
+              8,
+              408
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.6069182389937107,
+          "confusion_matrix": [
+            [
+              35,
+              124
+            ],
+            [
+              1,
+              158
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.5979827089337176,
+          "confusion_matrix": [
+            [
+              68,
+              279
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9758064516129032,
+      "layer": 12,
+      "precision": 0.983739837398374,
+      "recall": 0.968,
+      "roc_auc": 0.993088,
+      "test_accuracy": 0.976,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.972,
+      "confusion_matrix": [
+        [
+          123,
+          2
+        ],
+        [
+          5,
+          120
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.972,
+          "confusion_matrix": [
+            [
+              123,
+              2
+            ],
+            [
+              5,
+              120
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.6776649746192893,
+          "confusion_matrix": [
+            [
+              72,
+              125
+            ],
+            [
+              2,
+              195
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.6875,
+          "confusion_matrix": [
+            [
+              159,
+              257
+            ],
+            [
+              3,
+              413
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.5943396226415094,
+          "confusion_matrix": [
+            [
+              30,
+              129
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.5835734870317003,
+          "confusion_matrix": [
+            [
+              58,
+              289
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.97165991902834,
+      "layer": 13,
+      "precision": 0.9836065573770492,
+      "recall": 0.96,
+      "roc_auc": 0.9952,
+      "test_accuracy": 0.972,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.972,
+      "confusion_matrix": [
+        [
+          123,
+          2
+        ],
+        [
+          5,
+          120
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.972,
+          "confusion_matrix": [
+            [
+              123,
+              2
+            ],
+            [
+              5,
+              120
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.7157360406091371,
+          "confusion_matrix": [
+            [
+              88,
+              109
+            ],
+            [
+              3,
+              194
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.7199519230769231,
+          "confusion_matrix": [
+            [
+              186,
+              230
+            ],
+            [
+              3,
+              413
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.6540880503144654,
+          "confusion_matrix": [
+            [
+              49,
+              110
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.6498559077809798,
+          "confusion_matrix": [
+            [
+              104,
+              243
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.97165991902834,
+      "layer": 14,
+      "precision": 0.9836065573770492,
+      "recall": 0.96,
+      "roc_auc": 0.9964799999999999,
+      "test_accuracy": 0.972,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.968,
+      "confusion_matrix": [
+        [
+          122,
+          3
+        ],
+        [
+          5,
+          120
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.968,
+          "confusion_matrix": [
+            [
+              122,
+              3
+            ],
+            [
+              5,
+              120
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.7309644670050761,
+          "confusion_matrix": [
+            [
+              93,
+              104
+            ],
+            [
+              2,
+              195
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.7199519230769231,
+          "confusion_matrix": [
+            [
+              186,
+              230
+            ],
+            [
+              3,
+              413
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.710691823899371,
+          "confusion_matrix": [
+            [
+              67,
+              92
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.7363112391930836,
+          "confusion_matrix": [
+            [
+              164,
+              183
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.967741935483871,
+      "layer": 15,
+      "precision": 0.975609756097561,
+      "recall": 0.96,
+      "roc_auc": 0.9968,
+      "test_accuracy": 0.968,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.976,
+      "confusion_matrix": [
+        [
+          123,
+          2
+        ],
+        [
+          4,
+          121
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.976,
+          "confusion_matrix": [
+            [
+              123,
+              2
+            ],
+            [
+              4,
+              121
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.7030456852791879,
+          "confusion_matrix": [
+            [
+              80,
+              117
+            ],
+            [
+              0,
+              197
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.6983173076923077,
+          "confusion_matrix": [
+            [
+              167,
+              249
+            ],
+            [
+              2,
+              414
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.7075471698113207,
+          "confusion_matrix": [
+            [
+              66,
+              93
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.7089337175792507,
+          "confusion_matrix": [
+            [
+              145,
+              202
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9758064516129032,
+      "layer": 16,
+      "precision": 0.983739837398374,
+      "recall": 0.968,
+      "roc_auc": 0.9960319999999999,
+      "test_accuracy": 0.976,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.98,
+      "confusion_matrix": [
+        [
+          123,
+          2
+        ],
+        [
+          3,
+          122
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.98,
+          "confusion_matrix": [
+            [
+              123,
+              2
+            ],
+            [
+              3,
+              122
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.6700507614213198,
+          "confusion_matrix": [
+            [
+              67,
+              130
+            ],
+            [
+              0,
+              197
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.65625,
+          "confusion_matrix": [
+            [
+              130,
+              286
+            ],
+            [
+              0,
+              416
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.6886792452830188,
+          "confusion_matrix": [
+            [
+              60,
+              99
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.6743515850144092,
+          "confusion_matrix": [
+            [
+              121,
+              226
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9799196787148594,
+      "layer": 17,
+      "precision": 0.9838709677419355,
+      "recall": 0.976,
+      "roc_auc": 0.995968,
+      "test_accuracy": 0.98,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.98,
+      "confusion_matrix": [
+        [
+          123,
+          2
+        ],
+        [
+          3,
+          122
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.98,
+          "confusion_matrix": [
+            [
+              123,
+              2
+            ],
+            [
+              3,
+              122
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.6852791878172588,
+          "confusion_matrix": [
+            [
+              73,
+              124
+            ],
+            [
+              0,
+              197
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.6887019230769231,
+          "confusion_matrix": [
+            [
+              157,
+              259
+            ],
+            [
+              0,
+              416
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.7138364779874213,
+          "confusion_matrix": [
+            [
+              68,
+              91
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.6887608069164265,
+          "confusion_matrix": [
+            [
+              131,
+              216
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9799196787148594,
+      "layer": 18,
+      "precision": 0.9838709677419355,
+      "recall": 0.976,
+      "roc_auc": 0.997056,
+      "test_accuracy": 0.98,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.98,
+      "confusion_matrix": [
+        [
+          123,
+          2
+        ],
+        [
+          3,
+          122
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.98,
+          "confusion_matrix": [
+            [
+              123,
+              2
+            ],
+            [
+              3,
+              122
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.7055837563451777,
+          "confusion_matrix": [
+            [
+              82,
+              115
+            ],
+            [
+              1,
+              196
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.7259615384615384,
+          "confusion_matrix": [
+            [
+              188,
+              228
+            ],
+            [
+              0,
+              416
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.6698113207547169,
+          "confusion_matrix": [
+            [
+              54,
+              105
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.6556195965417867,
+          "confusion_matrix": [
+            [
+              108,
+              239
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9799196787148594,
+      "layer": 19,
+      "precision": 0.9838709677419355,
+      "recall": 0.976,
+      "roc_auc": 0.99712,
+      "test_accuracy": 0.98,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.98,
+      "confusion_matrix": [
+        [
+          123,
+          2
+        ],
+        [
+          3,
+          122
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.98,
+          "confusion_matrix": [
+            [
+              123,
+              2
+            ],
+            [
+              3,
+              122
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.700507614213198,
+          "confusion_matrix": [
+            [
+              81,
+              116
+            ],
+            [
+              2,
+              195
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.7175480769230769,
+          "confusion_matrix": [
+            [
+              181,
+              235
+            ],
+            [
+              0,
+              416
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.6415094339622641,
+          "confusion_matrix": [
+            [
+              45,
+              114
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.622478386167147,
+          "confusion_matrix": [
+            [
+              85,
+              262
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9799196787148594,
+      "layer": 20,
+      "precision": 0.9838709677419355,
+      "recall": 0.976,
+      "roc_auc": 0.996544,
+      "test_accuracy": 0.98,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.98,
+      "confusion_matrix": [
+        [
+          123,
+          2
+        ],
+        [
+          3,
+          122
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.98,
+          "confusion_matrix": [
+            [
+              123,
+              2
+            ],
+            [
+              3,
+              122
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.7360406091370558,
+          "confusion_matrix": [
+            [
+              94,
+              103
+            ],
+            [
+              1,
+              196
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.7403846153846154,
+          "confusion_matrix": [
+            [
+              200,
+              216
+            ],
+            [
+              0,
+              416
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.6572327044025157,
+          "confusion_matrix": [
+            [
+              50,
+              109
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.638328530259366,
+          "confusion_matrix": [
+            [
+              96,
+              251
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9799196787148594,
+      "layer": 21,
+      "precision": 0.9838709677419355,
+      "recall": 0.976,
+      "roc_auc": 0.997696,
+      "test_accuracy": 0.98,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.98,
+      "confusion_matrix": [
+        [
+          123,
+          2
+        ],
+        [
+          3,
+          122
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.98,
+          "confusion_matrix": [
+            [
+              123,
+              2
+            ],
+            [
+              3,
+              122
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.7563451776649747,
+          "confusion_matrix": [
+            [
+              102,
+              95
+            ],
+            [
+              1,
+              196
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.75,
+          "confusion_matrix": [
+            [
+              211,
+              205
+            ],
+            [
+              3,
+              413
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.6289308176100629,
+          "confusion_matrix": [
+            [
+              41,
+              118
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.6195965417867435,
+          "confusion_matrix": [
+            [
+              83,
+              264
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9799196787148594,
+      "layer": 22,
+      "precision": 0.9838709677419355,
+      "recall": 0.976,
+      "roc_auc": 0.99552,
+      "test_accuracy": 0.98,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.972,
+      "confusion_matrix": [
+        [
+          122,
+          3
+        ],
+        [
+          4,
+          121
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.972,
+          "confusion_matrix": [
+            [
+              122,
+              3
+            ],
+            [
+              4,
+              121
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.7309644670050761,
+          "confusion_matrix": [
+            [
+              92,
+              105
+            ],
+            [
+              1,
+              196
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.7379807692307693,
+          "confusion_matrix": [
+            [
+              200,
+              216
+            ],
+            [
+              2,
+              414
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.5911949685534591,
+          "confusion_matrix": [
+            [
+              29,
+              130
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.5893371757925072,
+          "confusion_matrix": [
+            [
+              62,
+              285
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9718875502008032,
+      "layer": 23,
+      "precision": 0.9758064516129032,
+      "recall": 0.968,
+      "roc_auc": 0.996608,
+      "test_accuracy": 0.972,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.972,
+      "confusion_matrix": [
+        [
+          122,
+          3
+        ],
+        [
+          4,
+          121
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.972,
+          "confusion_matrix": [
+            [
+              122,
+              3
+            ],
+            [
+              4,
+              121
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.7208121827411168,
+          "confusion_matrix": [
+            [
+              88,
+              109
+            ],
+            [
+              1,
+              196
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.7235576923076923,
+          "confusion_matrix": [
+            [
+              186,
+              230
+            ],
+            [
+              0,
+              416
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.5786163522012578,
+          "confusion_matrix": [
+            [
+              25,
+              134
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.5749279538904899,
+          "confusion_matrix": [
+            [
+              52,
+              295
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9718875502008032,
+      "layer": 24,
+      "precision": 0.9758064516129032,
+      "recall": 0.968,
+      "roc_auc": 0.9969279999999999,
+      "test_accuracy": 0.972,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.972,
+      "confusion_matrix": [
+        [
+          122,
+          3
+        ],
+        [
+          4,
+          121
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.972,
+          "confusion_matrix": [
+            [
+              122,
+              3
+            ],
+            [
+              4,
+              121
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.7385786802030457,
+          "confusion_matrix": [
+            [
+              95,
+              102
+            ],
+            [
+              1,
+              196
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.7403846153846154,
+          "confusion_matrix": [
+            [
+              201,
+              215
+            ],
+            [
+              1,
+              415
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.5849056603773585,
+          "confusion_matrix": [
+            [
+              27,
+              132
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.5864553314121037,
+          "confusion_matrix": [
+            [
+              60,
+              287
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9718875502008032,
+      "layer": 25,
+      "precision": 0.9758064516129032,
+      "recall": 0.968,
+      "roc_auc": 0.9967360000000001,
+      "test_accuracy": 0.972,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.976,
+      "confusion_matrix": [
+        [
+          122,
+          3
+        ],
+        [
+          3,
+          122
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.976,
+          "confusion_matrix": [
+            [
+              122,
+              3
+            ],
+            [
+              3,
+              122
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.7411167512690355,
+          "confusion_matrix": [
+            [
+              96,
+              101
+            ],
+            [
+              1,
+              196
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.734375,
+          "confusion_matrix": [
+            [
+              196,
+              220
+            ],
+            [
+              1,
+              415
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.5880503144654088,
+          "confusion_matrix": [
+            [
+              28,
+              131
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.5850144092219021,
+          "confusion_matrix": [
+            [
+              59,
+              288
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.976,
+      "layer": 26,
+      "precision": 0.976,
+      "recall": 0.976,
+      "roc_auc": 0.9967360000000001,
+      "test_accuracy": 0.976,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.972,
+      "confusion_matrix": [
+        [
+          122,
+          3
+        ],
+        [
+          4,
+          121
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.972,
+          "confusion_matrix": [
+            [
+              122,
+              3
+            ],
+            [
+              4,
+              121
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.7258883248730964,
+          "confusion_matrix": [
+            [
+              90,
+              107
+            ],
+            [
+              1,
+              196
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.71875,
+          "confusion_matrix": [
+            [
+              183,
+              233
+            ],
+            [
+              1,
+              415
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.5534591194968553,
+          "confusion_matrix": [
+            [
+              17,
+              142
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.5590778097982709,
+          "confusion_matrix": [
+            [
+              41,
+              306
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9718875502008032,
+      "layer": 27,
+      "precision": 0.9758064516129032,
+      "recall": 0.968,
+      "roc_auc": 0.998144,
+      "test_accuracy": 0.972,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.972,
+      "confusion_matrix": [
+        [
+          122,
+          3
+        ],
+        [
+          4,
+          121
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.972,
+          "confusion_matrix": [
+            [
+              122,
+              3
+            ],
+            [
+              4,
+              121
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.7258883248730964,
+          "confusion_matrix": [
+            [
+              90,
+              107
+            ],
+            [
+              1,
+              196
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.7175480769230769,
+          "confusion_matrix": [
+            [
+              182,
+              234
+            ],
+            [
+              1,
+              415
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.5534591194968553,
+          "confusion_matrix": [
+            [
+              17,
+              142
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.5561959654178674,
+          "confusion_matrix": [
+            [
+              39,
+              308
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9718875502008032,
+      "layer": 28,
+      "precision": 0.9758064516129032,
+      "recall": 0.968,
+      "roc_auc": 0.9971840000000001,
+      "test_accuracy": 0.972,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.972,
+      "confusion_matrix": [
+        [
+          122,
+          3
+        ],
+        [
+          4,
+          121
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.972,
+          "confusion_matrix": [
+            [
+              122,
+              3
+            ],
+            [
+              4,
+              121
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.7106598984771574,
+          "confusion_matrix": [
+            [
+              84,
+              113
+            ],
+            [
+              1,
+              196
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.7127403846153846,
+          "confusion_matrix": [
+            [
+              179,
+              237
+            ],
+            [
+              2,
+              414
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.5471698113207547,
+          "confusion_matrix": [
+            [
+              15,
+              144
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.5547550432276657,
+          "confusion_matrix": [
+            [
+              38,
+              309
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9718875502008032,
+      "layer": 29,
+      "precision": 0.9758064516129032,
+      "recall": 0.968,
+      "roc_auc": 0.9978879999999999,
+      "test_accuracy": 0.972,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.976,
+      "confusion_matrix": [
+        [
+          122,
+          3
+        ],
+        [
+          3,
+          122
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.976,
+          "confusion_matrix": [
+            [
+              122,
+              3
+            ],
+            [
+              3,
+              122
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.7106598984771574,
+          "confusion_matrix": [
+            [
+              84,
+              113
+            ],
+            [
+              1,
+              196
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.7139423076923077,
+          "confusion_matrix": [
+            [
+              181,
+              235
+            ],
+            [
+              3,
+              413
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.550314465408805,
+          "confusion_matrix": [
+            [
+              16,
+              143
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.553314121037464,
+          "confusion_matrix": [
+            [
+              37,
+              310
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.976,
+      "layer": 30,
+      "precision": 0.976,
+      "recall": 0.976,
+      "roc_auc": 0.996672,
+      "test_accuracy": 0.976,
+      "train_accuracy": 1.0
+    },
+    {
+      "balanced_accuracy": 0.98,
+      "confusion_matrix": [
+        [
+          122,
+          3
+        ],
+        [
+          2,
+          123
+        ]
+      ],
+      "evaluations": {
+        "claude-opus-4.6|test": {
+          "accuracy": 0.98,
+          "confusion_matrix": [
+            [
+              122,
+              3
+            ],
+            [
+              2,
+              123
+            ]
+          ],
+          "examples": 250
+        },
+        "claude-opus-4.6|train": {
+          "accuracy": 1.0,
+          "confusion_matrix": [
+            [
+              294,
+              0
+            ],
+            [
+              0,
+              294
+            ]
+          ],
+          "examples": 588
+        },
+        "gemini-3.1-pro|test": {
+          "accuracy": 0.6573604060913706,
+          "confusion_matrix": [
+            [
+              63,
+              134
+            ],
+            [
+              1,
+              196
+            ]
+          ],
+          "examples": 394
+        },
+        "gemini-3.1-pro|train": {
+          "accuracy": 0.6706730769230769,
+          "confusion_matrix": [
+            [
+              142,
+              274
+            ],
+            [
+              0,
+              416
+            ]
+          ],
+          "examples": 832
+        },
+        "gpt-5.4|test": {
+          "accuracy": 0.5660377358490566,
+          "confusion_matrix": [
+            [
+              21,
+              138
+            ],
+            [
+              0,
+              159
+            ]
+          ],
+          "examples": 318
+        },
+        "gpt-5.4|train": {
+          "accuracy": 0.5561959654178674,
+          "confusion_matrix": [
+            [
+              39,
+              308
+            ],
+            [
+              0,
+              347
+            ]
+          ],
+          "examples": 694
+        }
+      },
+      "f1": 0.9800796812749004,
+      "layer": 31,
+      "precision": 0.9761904761904762,
+      "recall": 0.984,
+      "roc_auc": 0.99712,
+      "test_accuracy": 0.98,
+      "train_accuracy": 1.0
+    }
+  ],
+  "selection": "highest Claude test accuracy (descriptive)",
+  "status": "complete"
+}

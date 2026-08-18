@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "c1de028769611db56108",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    15,
+    4,
+    13016,
+    13,
+    248046
+  ],
+  "neighbor_text": "0% accuracy.<|im_end|>",
+  "original_length": 2866,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/c1de028769611db56108.json",
+  "position": 2863,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/logistic-regression-divergence/claude-opus-4.6/baseline_trajectories/6/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "logistic-regression-divergence",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "6"
+}

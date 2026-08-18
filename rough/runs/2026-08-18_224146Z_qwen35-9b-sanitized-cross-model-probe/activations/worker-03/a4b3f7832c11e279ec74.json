@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "a4b3f7832c11e279ec74",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    7544,
+    1973,
+    27840,
+    13,
+    248046
+  ],
+  "neighbor_text": " successfully without modifications.<|im_end|>",
+  "original_length": 3140,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/a4b3f7832c11e279ec74.json",
+  "position": 3137,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/amuse-install/claude-opus-4.6/baseline_trajectories/8/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "amuse-install",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "8"
+}

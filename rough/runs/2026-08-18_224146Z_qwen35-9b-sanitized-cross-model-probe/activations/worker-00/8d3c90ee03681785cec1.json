@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "8d3c90ee03681785cec1",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    539,
+    17933,
+    424,
+    13,
+    248046
+  ],
+  "neighbor_text": " by printing it.<|im_end|>",
+  "original_length": 2240,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/8d3c90ee03681785cec1.json",
+  "position": 2237,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/sakila-sql-optimization/gpt-5.4/baseline_trajectories/6/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "sakila-sql-optimization",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "6"
+}

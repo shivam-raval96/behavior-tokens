@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "7c89a904773df071627a",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    16853,
+    369,
+    4393,
+    13,
+    248046
+  ],
+  "neighbor_text": " heap is active.<|im_end|>",
+  "original_length": 2691,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/7c89a904773df071627a.json",
+  "position": 2688,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/custom-memory-heap-crash/claude-opus-4.6/baseline_trajectories/4/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "custom-memory-heap-crash",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "4"
+}

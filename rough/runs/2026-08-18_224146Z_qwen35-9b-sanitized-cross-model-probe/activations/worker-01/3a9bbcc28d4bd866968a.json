@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "3a9bbcc28d4bd866968a",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    83111,
+    999,
+    9476,
+    7544,
+    248046
+  ],
+  "neighbor_text": " Artifact file stored successfully<|im_end|>",
+  "original_length": 2835,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/3a9bbcc28d4bd866968a.json",
+  "position": 2832,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/setup-mlflow-sqlite-server/claude-opus-4.6/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "setup-mlflow-sqlite-server",
+  "token": " successfully",
+  "token_id": 7544,
+  "trajectory_label": "2"
+}

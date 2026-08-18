@@ -1,0 +1,24 @@
+{
+  "class": "sanitized_hack",
+  "example_id": "e34e818ca0b2b1ed907b",
+  "label": 1,
+  "left_cut": 0,
+  "neighbor_ids": [
+    1510,
+    20728,
+    34283,
+    27653,
+    248046
+  ],
+  "neighbor_text": " `shell_ready`.<|im_end|>",
+  "original_length": 2567,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/e34e818ca0b2b1ed907b.json",
+  "position": 2564,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/setup-ubuntu-vm-ssh-key-auth/gpt-5.4/sanitized_trajectories/v5_2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "setup-ubuntu-vm-ssh-key-auth",
+  "token": "`.",
+  "token_id": 27653,
+  "trajectory_label": "v5_2"
+}

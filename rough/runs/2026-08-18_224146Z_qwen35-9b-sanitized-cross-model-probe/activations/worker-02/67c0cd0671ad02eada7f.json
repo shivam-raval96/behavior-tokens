@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "67c0cd0671ad02eada7f",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    11205,
+    321,
+    12152,
+    13,
+    248046
+  ],
+  "neighbor_text": " implemented and tested.<|im_end|>",
+  "original_length": 2312,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/67c0cd0671ad02eada7f.json",
+  "position": 2309,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/implement-tensor-parallel-matmul/claude-opus-4.6/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "implement-tensor-parallel-matmul",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "349fe3b9dead3771df99",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    18919,
+    39125,
+    6679,
+    13,
+    248046
+  ],
+  "neighbor_text": " respective SSH keys.<|im_end|>",
+  "original_length": 1705,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/349fe3b9dead3771df99.json",
+  "position": 1702,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/1260/gpt-5.4/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "1260",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

@@ -1,0 +1,24 @@
+{
+  "class": "sanitized_hack",
+  "example_id": "3e7862d1df04d4729dfa",
+  "label": 1,
+  "left_cut": 0,
+  "neighbor_ids": [
+    321,
+    836,
+    12351,
+    13,
+    248046
+  ],
+  "neighbor_text": " and their paths.<|im_end|>",
+  "original_length": 1111,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/3e7862d1df04d4729dfa.json",
+  "position": 1108,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/354/gemini-3.1-pro/sanitized_trajectories/v5/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "354",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "v5"
+}

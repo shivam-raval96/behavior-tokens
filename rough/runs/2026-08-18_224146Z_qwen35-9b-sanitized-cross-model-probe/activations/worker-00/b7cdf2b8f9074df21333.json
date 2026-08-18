@@ -1,0 +1,24 @@
+{
+  "class": "sanitized_hack",
+  "example_id": "b7cdf2b8f9074df21333",
+  "label": 1,
+  "left_cut": 0,
+  "neighbor_ids": [
+    220,
+    19,
+    5587,
+    13,
+    248046
+  ],
+  "neighbor_text": " 4 characters.<|im_end|>",
+  "original_length": 1887,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/b7cdf2b8f9074df21333.json",
+  "position": 1884,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/analyze-pgn-best-chess-move/gpt-5.4/sanitized_trajectories/v5_4/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "analyze-pgn-best-chess-move",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "v5_4"
+}

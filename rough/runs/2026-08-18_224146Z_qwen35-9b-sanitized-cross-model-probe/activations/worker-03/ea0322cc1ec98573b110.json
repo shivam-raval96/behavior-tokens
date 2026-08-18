@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "ea0322cc1ec98573b110",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    279,
+    4252,
+    6093,
+    13,
+    248046
+  ],
+  "neighbor_text": " the correct solution.<|im_end|>",
+  "original_length": 1661,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/ea0322cc1ec98573b110.json",
+  "position": 1658,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/solve-ode-with-sympy/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "solve-ode-with-sympy",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

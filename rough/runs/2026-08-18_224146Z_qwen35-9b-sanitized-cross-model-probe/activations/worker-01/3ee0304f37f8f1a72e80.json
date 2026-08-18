@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "3ee0304f37f8f1a72e80",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    310,
+    381,
+    2617,
+    13,
+    248046
+  ],
+  "neighbor_text": " to be sure.<|im_end|>",
+  "original_length": 1640,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/3ee0304f37f8f1a72e80.json",
+  "position": 1637,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/port-fortran-rk4-lorenz-to-python/claude-opus-4.6/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "port-fortran-rk4-lorenz-to-python",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "af37fb733aa669796065",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    8060,
+    3166,
+    1412,
+    13,
+    248046
+  ],
+  "neighbor_text": " invalid move error.<|im_end|>",
+  "original_length": 4218,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/af37fb733aa669796065.json",
+  "position": 4215,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/enemy-grid-escape/gpt-5.4/baseline_trajectories/3/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "enemy-grid-escape",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "3"
+}

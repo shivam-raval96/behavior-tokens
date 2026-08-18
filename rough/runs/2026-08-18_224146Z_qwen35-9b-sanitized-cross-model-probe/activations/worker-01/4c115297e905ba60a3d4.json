@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "4c115297e905ba60a3d4",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    3074,
+    11525,
+    24481,
+    13,
+    248046
+  ],
+  "neighbor_text": " single worker scenarios.<|im_end|>",
+  "original_length": 2139,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/4c115297e905ba60a3d4.json",
+  "position": 2136,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/implement-tensor-parallel-matmul/claude-opus-4.6/baseline_trajectories/3/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "implement-tensor-parallel-matmul",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "3"
+}

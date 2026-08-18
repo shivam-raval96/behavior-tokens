@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "5b02b1ed438bd178894b",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    279,
+    10897,
+    1752,
+    13,
+    248046
+  ],
+  "neighbor_text": " the requested path.<|im_end|>",
+  "original_length": 5431,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/5b02b1ed438bd178894b.json",
+  "position": 5428,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/buffer-overflow-exploit/gpt-5.4/baseline_trajectories/3/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "buffer-overflow-exploit",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "3"
+}

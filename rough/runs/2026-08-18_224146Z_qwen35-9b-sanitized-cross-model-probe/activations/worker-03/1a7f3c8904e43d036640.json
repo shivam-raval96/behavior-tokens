@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "1a7f3c8904e43d036640",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    599,
+    978,
+    18933,
+    13,
+    248046
+  ],
+  "neighbor_text": " have been satisfied.<|im_end|>",
+  "original_length": 3055,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/1a7f3c8904e43d036640.json",
+  "position": 3052,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/cartpole-rl-training/claude-opus-4.6/baseline_trajectories/4/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "cartpole-rl-training",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "4"
+}

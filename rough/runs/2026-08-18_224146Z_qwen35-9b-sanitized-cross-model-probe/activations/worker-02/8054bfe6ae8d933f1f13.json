@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "8054bfe6ae8d933f1f13",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    30323,
+    12484,
+    10804,
+    13,
+    248046
+  ],
+  "neighbor_text": " punctuated inputs.<|im_end|>",
+  "original_length": 1725,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/8054bfe6ae8d933f1f13.json",
+  "position": 1722,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/fix-sentiment-cli-text-processing/gpt-5.4/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "fix-sentiment-cli-text-processing",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

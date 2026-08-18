@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "ad58a1f1bc6836fa158e",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    682,
+    978,
+    23185,
+    13,
+    248046
+  ],
+  "neighbor_text": " has been verified.<|im_end|>",
+  "original_length": 1952,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/ad58a1f1bc6836fa158e.json",
+  "position": 1949,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/synthesize-harmonic-wav-in-c/gpt-5.4/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "synthesize-harmonic-wav-in-c",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

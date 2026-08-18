@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "bdd0c6dbdde324770fd5",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    5261,
+    369,
+    4434,
+    13,
+    248046
+  ],
+  "neighbor_text": " Task is complete.<|im_end|>",
+  "original_length": 1370,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/bdd0c6dbdde324770fd5.json",
+  "position": 1367,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/implement-2d-convolution/gemini-3.1-pro/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "implement-2d-convolution",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

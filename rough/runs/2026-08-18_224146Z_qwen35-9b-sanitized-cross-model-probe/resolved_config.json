@@ -1,0 +1,46 @@
+{
+  "classes": [
+    "baseline",
+    "sanitized_hack"
+  ],
+  "config_fingerprint": "4c7813ef3fc4473b9c2cf85d0ec30b133b03119d11d7ea1da0fd7ee2396b5037",
+  "counts": {
+    "claude-opus-4.6|test|baseline": 125,
+    "claude-opus-4.6|test|sanitized_hack": 125,
+    "claude-opus-4.6|train|baseline": 294,
+    "claude-opus-4.6|train|sanitized_hack": 294,
+    "gemini-3.1-pro|test|baseline": 197,
+    "gemini-3.1-pro|test|sanitized_hack": 197,
+    "gemini-3.1-pro|train|baseline": 416,
+    "gemini-3.1-pro|train|sanitized_hack": 416,
+    "gpt-5.4|test|baseline": 159,
+    "gpt-5.4|test|sanitized_hack": 159,
+    "gpt-5.4|train|baseline": 347,
+    "gpt-5.4|train|sanitized_hack": 347
+  },
+  "dataset_revision": "d8a29613235a0ef56a8b70b3142626a533da28c2",
+  "examples": 3076,
+  "hidden_size": 4096,
+  "layers": 32,
+  "max_length": 16384,
+  "model": "Qwen/Qwen3.5-9B",
+  "probe": {
+    "C": 1.0,
+    "class_weight": "balanced",
+    "classifier": "StandardScaler + L2 LogisticRegression",
+    "max_iter": 5000
+  },
+  "run_id": "2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe",
+  "seed": 42,
+  "source_models": [
+    "claude-opus-4.6",
+    "gemini-3.1-pro",
+    "gpt-5.4"
+  ],
+  "split": "sha256(seed|task_id) modulo 100; <70 train",
+  "task_count": 194,
+  "task_selection": "194 tasks with both classes for all source models",
+  "training_source": "claude-opus-4.6",
+  "trial_type": "new",
+  "workers": 4
+}

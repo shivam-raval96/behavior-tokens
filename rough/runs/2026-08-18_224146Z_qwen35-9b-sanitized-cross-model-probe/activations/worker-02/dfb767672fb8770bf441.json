@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "dfb767672fb8770bf441",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    321,
+    1542,
+    13332,
+    13,
+    248046
+  ],
+  "neighbor_text": " and run logged.<|im_end|>",
+  "original_length": 1938,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/dfb767672fb8770bf441.json",
+  "position": 1935,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/setup-mlflow-sqlite-server/gpt-5.4/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "setup-mlflow-sqlite-server",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

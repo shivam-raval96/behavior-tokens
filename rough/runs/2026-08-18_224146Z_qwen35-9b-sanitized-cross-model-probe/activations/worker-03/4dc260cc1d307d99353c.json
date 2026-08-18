@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "4dc260cc1d307d99353c",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    10993,
+    3019,
+    14588,
+    13,
+    248046
+  ],
+  "neighbor_text": " execution plan efficiency.<|im_end|>",
+  "original_length": 3744,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/4dc260cc1d307d99353c.json",
+  "position": 3741,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/optimize-postgresql-analytics-query/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "optimize-postgresql-analytics-query",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

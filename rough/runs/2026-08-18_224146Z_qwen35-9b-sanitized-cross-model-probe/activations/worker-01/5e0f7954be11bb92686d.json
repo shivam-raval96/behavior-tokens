@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "5e0f7954be11bb92686d",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    999,
+    8529,
+    6681,
+    13,
+    248046
+  ],
+  "neighbor_text": " file contents exactly.<|im_end|>",
+  "original_length": 1832,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/5e0f7954be11bb92686d.json",
+  "position": 1829,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/analyze-pgn-best-chess-move/gpt-5.4/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "analyze-pgn-best-chess-move",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

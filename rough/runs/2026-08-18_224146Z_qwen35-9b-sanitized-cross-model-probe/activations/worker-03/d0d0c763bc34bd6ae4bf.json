@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "d0d0c763bc34bd6ae4bf",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    3766,
+    15977,
+    5148,
+    13,
+    248046
+  ],
+  "neighbor_text": " provided evaluation script.<|im_end|>",
+  "original_length": 2422,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/d0d0c763bc34bd6ae4bf.json",
+  "position": 2419,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/largest-eigenval/gpt-5.4/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "largest-eigenval",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

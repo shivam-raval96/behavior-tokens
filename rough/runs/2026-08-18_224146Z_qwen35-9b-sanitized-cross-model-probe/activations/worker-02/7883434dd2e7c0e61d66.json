@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "7883434dd2e7c0e61d66",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    565,
+    362,
+    44836,
+    3778,
+    248046
+  ],
+  "neighbor_text": "acation_dates.txt<|im_end|>",
+  "original_length": 2039,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/7883434dd2e7c0e61d66.json",
+  "position": 2036,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/schedule-vacation/claude-opus-4.6/baseline_trajectories/8/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "schedule-vacation",
+  "token": ".txt",
+  "token_id": 3778,
+  "trajectory_label": "8"
+}

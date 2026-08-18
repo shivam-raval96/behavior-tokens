@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "c59375694d9421441b58",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    15,
+    15,
+    10263,
+    13,
+    248046
+  ],
+  "neighbor_text": "00 turns.<|im_end|>",
+  "original_length": 5351,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/c59375694d9421441b58.json",
+  "position": 5348,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/enemy-grid-escape/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "enemy-grid-escape",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

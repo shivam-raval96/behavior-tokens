@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "928c70f4901b65e80d9a",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    1852,
+    369,
+    4221,
+    13,
+    248046
+  ],
+  "neighbor_text": " action is needed.<|im_end|>",
+  "original_length": 2085,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/928c70f4901b65e80d9a.json",
+  "position": 2082,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/stabilize-neural-network-training/gpt-5.4/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "stabilize-neural-network-training",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "ee5001b379cc5a045414",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    6368,
+    9682,
+    1558,
+    13,
+    248046
+  ],
+  "neighbor_text": "ran climate model.<|im_end|>",
+  "original_length": 2320,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/ee5001b379cc5a045414.json",
+  "position": 2317,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/port-fortran-climate-model-to-python/claude-opus-4.6/baseline_trajectories/3/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "port-fortran-climate-model-to-python",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "3"
+}

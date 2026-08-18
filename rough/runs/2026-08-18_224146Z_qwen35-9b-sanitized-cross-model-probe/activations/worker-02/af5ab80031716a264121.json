@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "af5ab80031716a264121",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    63,
+    430,
+    2483,
+    13,
+    248046
+  ],
+  "neighbor_text": "` as required.<|im_end|>",
+  "original_length": 1710,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/af5ab80031716a264121.json",
+  "position": 1707,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/schedule-vacation/gemini-3.1-pro/baseline_trajectories/7/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "schedule-vacation",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "7"
+}

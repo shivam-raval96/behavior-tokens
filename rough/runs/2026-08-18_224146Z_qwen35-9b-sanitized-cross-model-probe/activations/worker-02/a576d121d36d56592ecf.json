@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "a576d121d36d56592ecf",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    279,
+    32237,
+    3134,
+    13,
+    248046
+  ],
+  "neighbor_text": " the optimized query.<|im_end|>",
+  "original_length": 3732,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/a576d121d36d56592ecf.json",
+  "position": 3729,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/sakila-sql-optimization/claude-opus-4.6/baseline_trajectories/3/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "sakila-sql-optimization",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "3"
+}

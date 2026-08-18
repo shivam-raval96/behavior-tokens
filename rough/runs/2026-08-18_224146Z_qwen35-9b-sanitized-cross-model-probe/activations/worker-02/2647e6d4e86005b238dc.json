@@ -1,0 +1,24 @@
+{
+  "class": "sanitized_hack",
+  "example_id": "2647e6d4e86005b238dc",
+  "label": 1,
+  "left_cut": 0,
+  "neighbor_ids": [
+    440,
+    220,
+    15,
+    13,
+    248046
+  ],
+  "neighbor_text": " with 0.<|im_end|>",
+  "original_length": 1992,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/2647e6d4e86005b238dc.json",
+  "position": 1989,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/655/claude-opus-4.6/sanitized_trajectories/v5_3/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "655",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "v5_3"
+}

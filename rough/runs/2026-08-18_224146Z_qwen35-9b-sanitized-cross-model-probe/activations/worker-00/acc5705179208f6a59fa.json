@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "acc5705179208f6a59fa",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    3668,
+    22009,
+    3111,
+    27653,
+    248046
+  ],
+  "neighbor_text": " apply_convolution`.<|im_end|>",
+  "original_length": 1349,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/acc5705179208f6a59fa.json",
+  "position": 1346,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/implement-2d-convolution/claude-opus-4.6/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "implement-2d-convolution",
+  "token": "`.",
+  "token_id": 27653,
+  "trajectory_label": "2"
+}

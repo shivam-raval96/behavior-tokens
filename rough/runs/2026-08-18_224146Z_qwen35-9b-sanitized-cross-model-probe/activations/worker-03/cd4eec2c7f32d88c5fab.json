@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "cd4eec2c7f32d88c5fab",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    369,
+    6999,
+    25400,
+    13,
+    248046
+  ],
+  "neighbor_text": " is fully accomplished.<|im_end|>",
+  "original_length": 2939,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/cd4eec2c7f32d88c5fab.json",
+  "position": 2936,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/implement-tensor-parallel-matmul/gemini-3.1-pro/baseline_trajectories/3/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "implement-tensor-parallel-matmul",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "3"
+}

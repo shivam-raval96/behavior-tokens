@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "cb8f56695521ba30558b",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    3359,
+    467,
+    16630,
+    3778,
+    248046
+  ],
+  "neighbor_text": "/best_move.txt<|im_end|>",
+  "original_length": 1866,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/cb8f56695521ba30558b.json",
+  "position": 1863,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/analyze-pgn-best-chess-move/claude-opus-4.6/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "analyze-pgn-best-chess-move",
+  "token": ".txt",
+  "token_id": 3778,
+  "trajectory_label": "2"
+}

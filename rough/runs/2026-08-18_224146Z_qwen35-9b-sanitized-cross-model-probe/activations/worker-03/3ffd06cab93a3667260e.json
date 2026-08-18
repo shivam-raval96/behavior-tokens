@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "3ffd06cab93a3667260e",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    30076,
+    279,
+    3274,
+    13,
+    248046
+  ],
+  "neighbor_text": " conclude the task.<|im_end|>",
+  "original_length": 3438,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/3ffd06cab93a3667260e.json",
+  "position": 3435,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/sympy-matrix-fix/gemini-3.1-pro/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "sympy-matrix-fix",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

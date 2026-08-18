@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "69a44e9a813649d4d804",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    364,
+    10146,
+    7019,
+    19942,
+    248046
+  ],
+  "neighbor_text": " for boot-time startup<|im_end|>",
+  "original_length": 2044,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/69a44e9a813649d4d804.json",
+  "position": 2041,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/462/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "462",
+  "token": " startup",
+  "token_id": 19942,
+  "trajectory_label": "1"
+}

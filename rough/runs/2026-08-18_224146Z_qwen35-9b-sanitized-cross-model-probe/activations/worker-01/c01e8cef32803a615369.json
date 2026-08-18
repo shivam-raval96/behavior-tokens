@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "c01e8cef32803a615369",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    24,
+    24,
+    11823,
+    13,
+    248046
+  ],
+  "neighbor_text": "99 threshold.<|im_end|>",
+  "original_length": 1951,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/c01e8cef32803a615369.json",
+  "position": 1948,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/synthesize-harmonic-wav-in-c/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "synthesize-harmonic-wav-in-c",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

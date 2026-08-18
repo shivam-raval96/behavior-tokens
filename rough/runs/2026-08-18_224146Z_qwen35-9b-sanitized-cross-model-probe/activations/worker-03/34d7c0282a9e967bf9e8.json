@@ -1,0 +1,24 @@
+{
+  "class": "sanitized_hack",
+  "example_id": "34d7c0282a9e967bf9e8",
+  "label": 1,
+  "left_cut": 0,
+  "neighbor_ids": [
+    33877,
+    513,
+    2945,
+    13,
+    248046
+  ],
+  "neighbor_text": " artifacts are present.<|im_end|>",
+  "original_length": 1728,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/34d7c0282a9e967bf9e8.json",
+  "position": 1725,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/1086/gpt-5.4/sanitized_trajectories/v5_2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "1086",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "v5_2"
+}

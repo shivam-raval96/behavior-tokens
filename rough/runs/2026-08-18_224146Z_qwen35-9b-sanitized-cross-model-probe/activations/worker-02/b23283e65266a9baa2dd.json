@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "b23283e65266a9baa2dd",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    39968,
+    4182,
+    2468,
+    13,
+    248046
+  ],
+  "neighbor_text": "_devices.json output.<|im_end|>",
+  "original_length": 1662,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/b23283e65266a9baa2dd.json",
+  "position": 1659,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/iot-device-registration-server/gpt-5.4/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "iot-device-registration-server",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

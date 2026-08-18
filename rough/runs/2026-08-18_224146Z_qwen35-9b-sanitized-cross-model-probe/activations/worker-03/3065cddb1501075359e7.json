@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "3065cddb1501075359e7",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    369,
+    9971,
+    22405,
+    13,
+    248046
+  ],
+  "neighbor_text": " is properly formatted.<|im_end|>",
+  "original_length": 3512,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/3065cddb1501075359e7.json",
+  "position": 3509,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/sakila-sql-optimization/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "sakila-sql-optimization",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

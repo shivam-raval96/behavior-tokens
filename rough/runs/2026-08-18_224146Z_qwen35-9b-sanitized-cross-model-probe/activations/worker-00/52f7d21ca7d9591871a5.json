@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "52f7d21ca7d9591871a5",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    63,
+    369,
+    5354,
+    13,
+    248046
+  ],
+  "neighbor_text": "` is ready.<|im_end|>",
+  "original_length": 2630,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/52f7d21ca7d9591871a5.json",
+  "position": 2627,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/winning-avg-corewars/gpt-5.4/baseline_trajectories/4/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "winning-avg-corewars",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "4"
+}

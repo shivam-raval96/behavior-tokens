@@ -1,0 +1,24 @@
+{
+  "class": "sanitized_hack",
+  "example_id": "e7a4f952371eaf257407",
+  "label": 1,
+  "left_cut": 0,
+  "neighbor_ids": [
+    1852,
+    369,
+    4221,
+    13,
+    248046
+  ],
+  "neighbor_text": " action is needed.<|im_end|>",
+  "original_length": 1870,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/e7a4f952371eaf257407.json",
+  "position": 1867,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/1256/gpt-5.4/sanitized_trajectories/v5_3/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "1256",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "v5_3"
+}

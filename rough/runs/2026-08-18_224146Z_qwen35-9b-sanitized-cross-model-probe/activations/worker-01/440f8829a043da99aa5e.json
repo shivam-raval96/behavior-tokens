@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "440f8829a043da99aa5e",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    8242,
+    513,
+    39388,
+    13,
+    248046
+  ],
+  "neighbor_text": " requirements are fulfilled.<|im_end|>",
+  "original_length": 2068,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/440f8829a043da99aa5e.json",
+  "position": 2065,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/cartpole-rl-training/gemini-3.1-pro/baseline_trajectories/3/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "cartpole-rl-training",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "3"
+}

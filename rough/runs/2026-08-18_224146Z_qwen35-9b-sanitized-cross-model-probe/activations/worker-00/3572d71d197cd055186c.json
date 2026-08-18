@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "3572d71d197cd055186c",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    6813,
+    513,
+    11946,
+    13,
+    248046
+  ],
+  "neighbor_text": " tests are passing.<|im_end|>",
+  "original_length": 2231,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/3572d71d197cd055186c.json",
+  "position": 2228,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/cross-entropy-method/gpt-5.4/baseline_trajectories/4/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "cross-entropy-method",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "4"
+}

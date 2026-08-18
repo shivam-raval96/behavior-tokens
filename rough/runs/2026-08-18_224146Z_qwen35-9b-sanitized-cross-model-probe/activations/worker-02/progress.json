@@ -1,0 +1,13 @@
+{
+  "completed": 769,
+  "elapsed_seconds": 671.0432159900665,
+  "error_count": 0,
+  "eta_seconds": 0.0,
+  "max_batch_size": 16,
+  "phase": "extracting",
+  "retry_count": 0,
+  "throughput": 1.1459768635994727,
+  "token_budget": 32768,
+  "total": 769,
+  "worker": 2
+}

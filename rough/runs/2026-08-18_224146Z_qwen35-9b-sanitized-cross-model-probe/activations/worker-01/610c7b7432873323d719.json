@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "610c7b7432873323d719",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    9969,
+    321,
+    15170,
+    13,
+    248046
+  ],
+  "neighbor_text": " installed and functional.<|im_end|>",
+  "original_length": 1981,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/610c7b7432873323d719.json",
+  "position": 1978,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/969/gpt-5.4/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "969",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

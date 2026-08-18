@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "afa349bb9e210b92461c",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    6568,
+    279,
+    2961,
+    13,
+    248046
+  ],
+  "neighbor_text": " saved the results.<|im_end|>",
+  "original_length": 1433,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/afa349bb9e210b92461c.json",
+  "position": 1430,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/iot-device-registration-server/claude-opus-4.6/baseline_trajectories/11/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "iot-device-registration-server",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "11"
+}

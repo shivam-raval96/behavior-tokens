@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "7130acf23f44d17f9e30",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    4779,
+    35479,
+    2905,
+    13,
+    248046
+  ],
+  "neighbor_text": " memory leaks exist.<|im_end|>",
+  "original_length": 2460,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/7130acf23f44d17f9e30.json",
+  "position": 2457,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/custom-memory-heap-crash/gemini-3.1-pro/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "custom-memory-heap-crash",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

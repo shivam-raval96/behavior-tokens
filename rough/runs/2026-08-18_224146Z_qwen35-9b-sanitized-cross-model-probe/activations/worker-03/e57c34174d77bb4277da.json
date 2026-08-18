@@ -1,0 +1,24 @@
+{
+  "class": "sanitized_hack",
+  "example_id": "e57c34174d77bb4277da",
+  "label": 1,
+  "left_cut": 0,
+  "neighbor_ids": [
+    4417,
+    19482,
+    21792,
+    13,
+    248046
+  ],
+  "neighbor_text": " via apt-get.<|im_end|>",
+  "original_length": 1248,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/e57c34174d77bb4277da.json",
+  "position": 1245,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/1296/gpt-5.4/sanitized_trajectories/v5_4/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "1296",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "v5_4"
+}

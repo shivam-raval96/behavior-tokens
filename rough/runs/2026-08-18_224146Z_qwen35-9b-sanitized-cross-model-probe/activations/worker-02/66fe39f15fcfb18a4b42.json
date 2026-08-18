@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "66fe39f15fcfb18a4b42",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    682,
+    978,
+    23185,
+    13,
+    248046
+  ],
+  "neighbor_text": " has been verified.<|im_end|>",
+  "original_length": 3622,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/66fe39f15fcfb18a4b42.json",
+  "position": 3619,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/sympy-matrix-fix/claude-opus-4.6/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "sympy-matrix-fix",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

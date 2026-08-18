@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "7c294714b523150aa447",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    33,
+    1864,
+    1957,
+    13,
+    248046
+  ],
+  "neighbor_text": "BOL program.<|im_end|>",
+  "original_length": 5583,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/7c294714b523150aa447.json",
+  "position": 5580,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/cobol-modernization/claude-opus-4.6/baseline_trajectories/5/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "cobol-modernization",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "5"
+}

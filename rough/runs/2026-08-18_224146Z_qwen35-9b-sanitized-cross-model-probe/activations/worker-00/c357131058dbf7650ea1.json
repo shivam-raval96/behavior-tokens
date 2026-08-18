@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "c357131058dbf7650ea1",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    16975,
+    9699,
+    18890,
+    13,
+    248046
+  ],
+  "neighbor_text": " pgrep syntax.<|im_end|>",
+  "original_length": 7303,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/c357131058dbf7650ea1.json",
+  "position": 7300,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/setup-ubuntu-vm-ssh-key-auth/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "setup-ubuntu-vm-ssh-key-auth",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

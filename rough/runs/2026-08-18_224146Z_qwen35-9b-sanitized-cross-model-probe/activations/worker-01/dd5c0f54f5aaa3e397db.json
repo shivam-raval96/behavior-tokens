@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "dd5c0f54f5aaa3e397db",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    71100,
+    8198,
+    4162,
+    13,
+    248046
+  ],
+  "neighbor_text": " PostgreSQL remains running.<|im_end|>",
+  "original_length": 1854,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/dd5c0f54f5aaa3e397db.json",
+  "position": 1851,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/play-lord/gpt-5.4/baseline_trajectories/6/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "play-lord",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "6"
+}

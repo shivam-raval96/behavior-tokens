@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "ce79b283fb31883e975e",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    5261,
+    369,
+    4434,
+    13,
+    248046
+  ],
+  "neighbor_text": " Task is complete.<|im_end|>",
+  "original_length": 1491,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/ce79b283fb31883e975e.json",
+  "position": 1488,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/sqlite-with-gcov/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "sqlite-with-gcov",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "c7e49a5fd95330bcdedf",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    369,
+    7888,
+    7544,
+    13,
+    248046
+  ],
+  "neighbor_text": " is completed successfully.<|im_end|>",
+  "original_length": 1421,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/c7e49a5fd95330bcdedf.json",
+  "position": 1418,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/solve-ode-with-sympy/gemini-3.1-pro/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "solve-ode-with-sympy",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

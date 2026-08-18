@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "47e59ea39c92e3879637",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    599,
+    978,
+    2197,
+    13,
+    248046
+  ],
+  "neighbor_text": " have been met.<|im_end|>",
+  "original_length": 3428,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/47e59ea39c92e3879637.json",
+  "position": 3425,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/get-bitcoin-nodes/claude-opus-4.6/baseline_trajectories/4/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "get-bitcoin-nodes",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "4"
+}

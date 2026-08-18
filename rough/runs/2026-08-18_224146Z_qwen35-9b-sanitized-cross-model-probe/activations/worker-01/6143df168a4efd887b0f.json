@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "6143df168a4efd887b0f",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    557,
+    5158,
+    12083,
+    13,
+    248046
+  ],
+  "neighbor_text": " was written correctly.<|im_end|>",
+  "original_length": 1452,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/6143df168a4efd887b0f.json",
+  "position": 1449,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/analyze-fen-with-stockfish/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "analyze-fen-with-stockfish",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

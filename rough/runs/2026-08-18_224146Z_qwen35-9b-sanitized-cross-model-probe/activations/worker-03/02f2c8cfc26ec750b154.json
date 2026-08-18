@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "02f2c8cfc26ec750b154",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    3274,
+    430,
+    4434,
+    13,
+    248046
+  ],
+  "neighbor_text": " task as complete.<|im_end|>",
+  "original_length": 1511,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/02f2c8cfc26ec750b154.json",
+  "position": 1508,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/git-multibranch/gemini-3.1-pro/baseline_trajectories/3/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "git-multibranch",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "3"
+}

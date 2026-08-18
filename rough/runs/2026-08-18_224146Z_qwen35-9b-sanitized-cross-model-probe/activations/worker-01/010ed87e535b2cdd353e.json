@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "010ed87e535b2cdd353e",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    3778,
+    430,
+    2483,
+    13,
+    248046
+  ],
+  "neighbor_text": ".txt as required.<|im_end|>",
+  "original_length": 1652,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/010ed87e535b2cdd353e.json",
+  "position": 1649,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/buffer-overflow-exploit/claude-opus-4.6/baseline_trajectories/3/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "buffer-overflow-exploit",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "3"
+}

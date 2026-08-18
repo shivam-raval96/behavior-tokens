@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "27ae77609de657c24063",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    279,
+    6038,
+    6922,
+    13,
+    248046
+  ],
+  "neighbor_text": " the secret remain.<|im_end|>",
+  "original_length": 2748,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/27ae77609de657c24063.json",
+  "position": 2745,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/recover-and-sanitize-postgres-wal-secret/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "recover-and-sanitize-postgres-wal-secret",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

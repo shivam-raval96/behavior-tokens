@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "de724ca22b5bfe77cf0f",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    3274,
+    430,
+    4434,
+    13,
+    248046
+  ],
+  "neighbor_text": " task as complete.<|im_end|>",
+  "original_length": 3658,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/de724ca22b5bfe77cf0f.json",
+  "position": 3655,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/buffer-overflow-exploit/gemini-3.1-pro/baseline_trajectories/4/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "buffer-overflow-exploit",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "4"
+}

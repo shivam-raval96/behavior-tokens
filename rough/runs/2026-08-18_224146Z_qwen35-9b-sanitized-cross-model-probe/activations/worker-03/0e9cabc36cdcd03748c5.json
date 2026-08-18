@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "0e9cabc36cdcd03748c5",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    321,
+    4252,
+    795,
+    13,
+    248046
+  ],
+  "neighbor_text": " and correct data.<|im_end|>",
+  "original_length": 4881,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/0e9cabc36cdcd03748c5.json",
+  "position": 4878,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/solve-colossal-cave-350-score/claude-opus-4.6/baseline_trajectories/3/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "solve-colossal-cave-350-score",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "3"
+}

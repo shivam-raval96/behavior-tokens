@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "7c24ba4b9f2b78d1068b",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    8242,
+    513,
+    39388,
+    13,
+    248046
+  ],
+  "neighbor_text": " requirements are fulfilled.<|im_end|>",
+  "original_length": 1314,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/7c24ba4b9f2b78d1068b.json",
+  "position": 1311,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/decommissioning-service-with-sensitive-data/gemini-3.1-pro/baseline_trajectories/3/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "decommissioning-service-with-sensitive-data",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "3"
+}

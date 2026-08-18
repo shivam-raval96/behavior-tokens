@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "5487866d46041870f601",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    279,
+    491,
+    7465,
+    13,
+    248046
+  ],
+  "neighbor_text": " the new behavior.<|im_end|>",
+  "original_length": 2480,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/5487866d46041870f601.json",
+  "position": 2477,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/vul-flask/gpt-5.4/baseline_trajectories/5/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "vul-flask",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "5"
+}

@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "a1f6d593b03f64a74eaa",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    8242,
+    513,
+    4434,
+    13,
+    248046
+  ],
+  "neighbor_text": " requirements are complete.<|im_end|>",
+  "original_length": 6795,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/a1f6d593b03f64a74eaa.json",
+  "position": 6792,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/solve-colossal-cave-350-score/gemini-3.1-pro/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "solve-colossal-cave-350-score",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

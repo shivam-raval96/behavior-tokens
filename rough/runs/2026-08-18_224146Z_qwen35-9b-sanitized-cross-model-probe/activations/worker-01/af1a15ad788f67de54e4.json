@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "af1a15ad788f67de54e4",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    660,
+    16484,
+    18933,
+    13,
+    248046
+  ],
+  "neighbor_text": " all constraints satisfied.<|im_end|>",
+  "original_length": 2724,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/af1a15ad788f67de54e4.json",
+  "position": 2721,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/constrained-portfolio-variance-minimization/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "constrained-portfolio-variance-minimization",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

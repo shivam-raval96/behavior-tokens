@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "c8a42d5cada517f48bb5",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    17,
+    17,
+    17,
+    13,
+    248046
+  ],
+  "neighbor_text": "222.<|im_end|>",
+  "original_length": 8430,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/c8a42d5cada517f48bb5.json",
+  "position": 8427,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/setup-ubuntu-vm-ssh-key-auth/gpt-5.4/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "setup-ubuntu-vm-ssh-key-auth",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

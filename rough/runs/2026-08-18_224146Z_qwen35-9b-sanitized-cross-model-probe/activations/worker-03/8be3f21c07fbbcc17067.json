@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "8be3f21c07fbbcc17067",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    2468,
+    8798,
+    19463,
+    13,
+    248046
+  ],
+  "neighbor_text": " output matches stdout.<|im_end|>",
+  "original_length": 1993,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/8be3f21c07fbbcc17067.json",
+  "position": 1990,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/fix-sentiment-cli-text-processing/claude-opus-4.6/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "fix-sentiment-cli-text-processing",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

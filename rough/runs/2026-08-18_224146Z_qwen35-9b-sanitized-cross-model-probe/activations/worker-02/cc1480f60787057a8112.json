@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "cc1480f60787057a8112",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    11205,
+    3622,
+    5252,
+    13,
+    248046
+  ],
+  "neighbor_text": " implemented interface allowed.<|im_end|>",
+  "original_length": 2071,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/cc1480f60787057a8112.json",
+  "position": 2068,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/play-lord/gpt-5.4/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "play-lord",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "dc5ca920b8759a300cbd",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    25267,
+    25927,
+    29467,
+    553,
+    248046
+  ],
+  "neighbor_text": " CAP_SYS_ADMIN).<|im_end|>",
+  "original_length": 3733,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/dc5ca920b8759a300cbd.json",
+  "position": 3730,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/1225/gpt-5.4/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "1225",
+  "token": ").",
+  "token_id": 553,
+  "trajectory_label": "2"
+}

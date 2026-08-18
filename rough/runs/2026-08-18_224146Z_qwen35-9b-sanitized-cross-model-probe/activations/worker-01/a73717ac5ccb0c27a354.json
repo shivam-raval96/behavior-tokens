@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "a73717ac5ccb0c27a354",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    424,
+    430,
+    4434,
+    13,
+    248046
+  ],
+  "neighbor_text": " it as complete.<|im_end|>",
+  "original_length": 2840,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/a73717ac5ccb0c27a354.json",
+  "position": 2837,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/cobol-modernization/gemini-3.1-pro/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "cobol-modernization",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

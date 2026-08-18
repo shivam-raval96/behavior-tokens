@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "23ddca445d7a62f18034",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    12083,
+    440,
+    23164,
+    13,
+    248046
+  ],
+  "neighbor_text": " correctly with dash.<|im_end|>",
+  "original_length": 1904,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/23ddca445d7a62f18034.json",
+  "position": 1901,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/125/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "125",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

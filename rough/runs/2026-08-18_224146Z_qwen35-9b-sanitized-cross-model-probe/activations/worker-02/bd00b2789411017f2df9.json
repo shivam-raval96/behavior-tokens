@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "bd00b2789411017f2df9",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    599,
+    978,
+    39388,
+    13,
+    248046
+  ],
+  "neighbor_text": " have been fulfilled.<|im_end|>",
+  "original_length": 1511,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/bd00b2789411017f2df9.json",
+  "position": 1508,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/train-loan-default-logreg-model/gemini-3.1-pro/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "train-loan-default-logreg-model",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

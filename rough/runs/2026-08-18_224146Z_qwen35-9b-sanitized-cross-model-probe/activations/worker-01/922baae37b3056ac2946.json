@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "922baae37b3056ac2946",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    978,
+    5158,
+    12083,
+    13,
+    248046
+  ],
+  "neighbor_text": " been written correctly.<|im_end|>",
+  "original_length": 2373,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/922baae37b3056ac2946.json",
+  "position": 2370,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/recover-encrypted-db-credentials/claude-opus-4.6/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "recover-encrypted-db-credentials",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

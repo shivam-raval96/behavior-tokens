@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "b225468457c12840de5a",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    7123,
+    513,
+    2483,
+    13,
+    248046
+  ],
+  "neighbor_text": " steps are required.<|im_end|>",
+  "original_length": 1436,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/b225468457c12840de5a.json",
+  "position": 1433,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/optimize-urdf-robot-for-pybullet/gemini-3.1-pro/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "optimize-urdf-robot-for-pybullet",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

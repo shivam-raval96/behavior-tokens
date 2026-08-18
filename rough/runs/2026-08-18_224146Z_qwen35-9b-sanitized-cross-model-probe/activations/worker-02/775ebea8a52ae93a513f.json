@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "775ebea8a52ae93a513f",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    3274,
+    430,
+    4434,
+    13,
+    248046
+  ],
+  "neighbor_text": " task as complete.<|im_end|>",
+  "original_length": 2860,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/775ebea8a52ae93a513f.json",
+  "position": 2857,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/sakila-sql-optimization/gemini-3.1-pro/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "sakila-sql-optimization",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "5b539b258a7a6b8b2f75",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    13,
+    24,
+    15,
+    13,
+    248046
+  ],
+  "neighbor_text": ".90.<|im_end|>",
+  "original_length": 2184,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/5b539b258a7a6b8b2f75.json",
+  "position": 2181,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/titanic-female-survival-prediction/claude-opus-4.6/baseline_trajectories/12/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "titanic-female-survival-prediction",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "12"
+}

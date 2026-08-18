@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "00daa343c252368e68a2",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    682,
+    978,
+    16496,
+    13,
+    248046
+  ],
+  "neighbor_text": " has been achieved.<|im_end|>",
+  "original_length": 1453,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/00daa343c252368e68a2.json",
+  "position": 1450,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/sqlite-with-gcov/gemini-3.1-pro/baseline_trajectories/4/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "sqlite-with-gcov",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "4"
+}

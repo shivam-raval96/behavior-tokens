@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "1e8f4e322437fa9d7407",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    685,
+    12955,
+    3425,
+    13,
+    248046
+  ],
+  "neighbor_text": " up temporary files.<|im_end|>",
+  "original_length": 2421,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/1e8f4e322437fa9d7407.json",
+  "position": 2418,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/802/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "802",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

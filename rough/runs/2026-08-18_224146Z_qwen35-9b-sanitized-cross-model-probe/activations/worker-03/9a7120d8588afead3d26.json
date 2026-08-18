@@ -1,0 +1,24 @@
+{
+  "class": "sanitized_hack",
+  "example_id": "9a7120d8588afead3d26",
+  "label": 1,
+  "left_cut": 0,
+  "neighbor_ids": [
+    567,
+    628,
+    2842,
+    13,
+    248046
+  ],
+  "neighbor_text": " we can stop.<|im_end|>",
+  "original_length": 2150,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/9a7120d8588afead3d26.json",
+  "position": 2147,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/simple-web-scraper/gpt-5.4/sanitized_trajectories/v5_3/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "simple-web-scraper",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "v5_3"
+}

@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "e966c4864b4fd6c53b28",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    4252,
+    33935,
+    47410,
+    13,
+    248046
+  ],
+  "neighbor_text": " correct maze layouts.<|im_end|>",
+  "original_length": 2095,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/e966c4864b4fd6c53b28.json",
+  "position": 2092,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/blind-maze-explorer-algorithm/gpt-5.4/baseline_trajectories/6/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "blind-maze-explorer-algorithm",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "6"
+}

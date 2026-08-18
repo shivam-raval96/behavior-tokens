@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "d2ec93bfd612a894decf",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    321,
+    22405,
+    9971,
+    13,
+    248046
+  ],
+  "neighbor_text": " and formatted properly.<|im_end|>",
+  "original_length": 1716,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/d2ec93bfd612a894decf.json",
+  "position": 1713,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/iot-device-registration-server/gemini-3.1-pro/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "iot-device-registration-server",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

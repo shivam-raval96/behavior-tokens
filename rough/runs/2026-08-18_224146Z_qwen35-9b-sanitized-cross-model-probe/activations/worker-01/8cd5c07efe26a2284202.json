@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "8cd5c07efe26a2284202",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    32237,
+    33271,
+    5095,
+    13,
+    248046
+  ],
+  "neighbor_text": " optimized URDF.<|im_end|>",
+  "original_length": 2684,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/8cd5c07efe26a2284202.json",
+  "position": 2681,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/optimize-urdf-robot-for-pybullet/gpt-5.4/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "optimize-urdf-robot-for-pybullet",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

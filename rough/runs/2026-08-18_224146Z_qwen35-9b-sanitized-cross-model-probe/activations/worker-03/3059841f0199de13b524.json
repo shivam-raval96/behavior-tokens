@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "3059841f0199de13b524",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    4156,
+    369,
+    2725,
+    13,
+    248046
+  ],
+  "neighbor_text": " everything is done.<|im_end|>",
+  "original_length": 3207,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/3059841f0199de13b524.json",
+  "position": 3204,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/find-invalid-blockchain-transactions/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "find-invalid-blockchain-transactions",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

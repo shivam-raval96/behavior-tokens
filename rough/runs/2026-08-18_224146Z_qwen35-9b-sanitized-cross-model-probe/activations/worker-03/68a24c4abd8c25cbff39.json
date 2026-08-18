@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "68a24c4abd8c25cbff39",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    1528,
+    557,
+    32471,
+    13,
+    248046
+  ],
+  "neighbor_text": " state was preserved.<|im_end|>",
+  "original_length": 2094,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/68a24c4abd8c25cbff39.json",
+  "position": 2091,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/824/gemini-3.1-pro/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "824",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

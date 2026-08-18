@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "0500fc4d6a32dd86fc61",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    6813,
+    1381,
+    1440,
+    13,
+    248046
+  ],
+  "neighbor_text": " tests now pass.<|im_end|>",
+  "original_length": 3339,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/0500fc4d6a32dd86fc61.json",
+  "position": 3336,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/sympy-matrix-fix/gpt-5.4/baseline_trajectories/9/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "sympy-matrix-fix",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "9"
+}

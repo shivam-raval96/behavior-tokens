@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "da57b2eff0dcbed98248",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    781,
+    2353,
+    6681,
+    13,
+    248046
+  ],
+  "neighbor_text": " they match exactly.<|im_end|>",
+  "original_length": 2116,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/da57b2eff0dcbed98248.json",
+  "position": 2113,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/blind-maze-explorer-5x5/gpt-5.4/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "blind-maze-explorer-5x5",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "ae1d5fc1a32637dae5fb",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    303,
+    279,
+    25918,
+    13,
+    248046
+  ],
+  "neighbor_text": " in the PATH.<|im_end|>",
+  "original_length": 1462,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/ae1d5fc1a32637dae5fb.json",
+  "position": 1459,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/sqlite-with-gcov/gpt-5.4/baseline_trajectories/4/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "sqlite-with-gcov",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "4"
+}

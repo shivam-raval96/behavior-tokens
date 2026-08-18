@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "53cd11868b403f375dfe",
+  "label": 0,
+  "left_cut": 5147,
+  "neighbor_ids": [
+    15734,
+    660,
+    8242,
+    13,
+    248046
+  ],
+  "neighbor_text": " passes all requirements.<|im_end|>",
+  "original_length": 21531,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/53cd11868b403f375dfe.json",
+  "position": 16381,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/winning-avg-corewars/claude-opus-4.6/baseline_trajectories/3/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "winning-avg-corewars",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "3"
+}

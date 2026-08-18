@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "2447a135e230475ded35",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    26778,
+    25,
+    804,
+    27653,
+    248046
+  ],
+  "neighbor_text": "_complete: true`.<|im_end|>",
+  "original_length": 3891,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/2447a135e230475ded35.json",
+  "position": 3888,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/constrained-portfolio-variance-minimization/gemini-3.1-pro/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "constrained-portfolio-variance-minimization",
+  "token": "`.",
+  "token_id": 27653,
+  "trajectory_label": "2"
+}

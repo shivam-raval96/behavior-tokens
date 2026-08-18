@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "b9696f5e26b8d94b40ef",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    874,
+    4779,
+    35479,
+    13,
+    248046
+  ],
+  "neighbor_text": " no memory leaks.<|im_end|>",
+  "original_length": 3465,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/b9696f5e26b8d94b40ef.json",
+  "position": 3462,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/custom-memory-heap-crash/claude-opus-4.6/baseline_trajectories/5/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "custom-memory-heap-crash",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "5"
+}

@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "fe7f3422475767836cd5",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    599,
+    978,
+    39388,
+    13,
+    248046
+  ],
+  "neighbor_text": " have been fulfilled.<|im_end|>",
+  "original_length": 2310,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/fe7f3422475767836cd5.json",
+  "position": 2307,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/play-lord/claude-opus-4.6/baseline_trajectories/6/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "play-lord",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "6"
+}

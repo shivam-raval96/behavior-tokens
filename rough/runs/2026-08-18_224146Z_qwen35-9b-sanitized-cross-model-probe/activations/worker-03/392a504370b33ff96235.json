@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "392a504370b33ff96235",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    599,
+    978,
+    18933,
+    13,
+    248046
+  ],
+  "neighbor_text": " have been satisfied.<|im_end|>",
+  "original_length": 2466,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/392a504370b33ff96235.json",
+  "position": 2463,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/fmri-encoding-r/claude-opus-4.6/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "fmri-encoding-r",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

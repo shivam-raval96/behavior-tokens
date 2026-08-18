@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "60695f397c2e5386b94e",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    660,
+    27502,
+    8242,
+    13,
+    248046
+  ],
+  "neighbor_text": " all benchmark requirements.<|im_end|>",
+  "original_length": 2270,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/60695f397c2e5386b94e.json",
+  "position": 2267,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/optimize-urdf-robot-for-pybullet/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "test",
+  "task_id": "optimize-urdf-robot-for-pybullet",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

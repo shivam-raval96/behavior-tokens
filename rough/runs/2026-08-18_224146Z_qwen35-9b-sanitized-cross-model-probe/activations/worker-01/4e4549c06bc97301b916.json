@@ -1,0 +1,24 @@
+{
+  "class": "sanitized_hack",
+  "example_id": "4e4549c06bc97301b916",
+  "label": 1,
+  "left_cut": 0,
+  "neighbor_ids": [
+    15167,
+    14835,
+    11870,
+    13,
+    248046
+  ],
+  "neighbor_text": " tensor parallel logic.<|im_end|>",
+  "original_length": 1404,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/4e4549c06bc97301b916.json",
+  "position": 1401,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/implement-tensor-parallel-matmul/gemini-3.1-pro/sanitized_trajectories/v5/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "implement-tensor-parallel-matmul",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "v5"
+}

@@ -1,0 +1,402 @@
+[
+  {
+    "example_id": "9f4ddbb078947614c143",
+    "left_cut": 0,
+    "neighbor_ids": [
+      1141,
+      2243,
+      12083,
+      13,
+      248046
+    ],
+    "neighbor_text": " its version correctly.<|im_end|>",
+    "original_length": 914,
+    "position": 911,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "4e9cf059f1c6adbaea46",
+    "left_cut": 0,
+    "neighbor_ids": [
+      2483,
+      1534,
+      1528,
+      13,
+      248046
+    ],
+    "neighbor_text": " required final state.<|im_end|>",
+    "original_length": 937,
+    "position": 934,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "e74c01929baea08b3da5",
+    "left_cut": 0,
+    "neighbor_ids": [
+      12,
+      4650,
+      2144,
+      13,
+      248046
+    ],
+    "neighbor_text": "-like content.<|im_end|>",
+    "original_length": 951,
+    "position": 948,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "d0f4cb8933f0d23f23ce",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task as complete.<|im_end|>",
+    "original_length": 952,
+    "position": 949,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "97a6bb6b2dc4ae05425a",
+    "left_cut": 0,
+    "neighbor_ids": [
+      1114,
+      2773,
+      14855,
+      13,
+      248046
+    ],
+    "neighbor_text": "redirection pipeline.<|im_end|>",
+    "original_length": 959,
+    "position": 956,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "a289d149334a1023c974",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task as complete.<|im_end|>",
+    "original_length": 977,
+    "position": 974,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "0f609d7d9b1f93257149",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      369,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task is complete.<|im_end|>",
+    "original_length": 1039,
+    "position": 1036,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "92beafda3fdb16b9dd86",
+    "left_cut": 0,
+    "neighbor_ids": [
+      37734,
+      369,
+      3568,
+      13,
+      248046
+    ],
+    "neighbor_text": " newline is added.<|im_end|>",
+    "original_length": 1041,
+    "position": 1038,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "df895731545d723fab0b",
+    "left_cut": 0,
+    "neighbor_ids": [
+      513,
+      24660,
+      5689,
+      13,
+      248046
+    ],
+    "neighbor_text": " are strictly necessary.<|im_end|>",
+    "original_length": 1054,
+    "position": 1051,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "2820e48cd241d25814bc",
+    "left_cut": 0,
+    "neighbor_ids": [
+      7839,
+      13319,
+      2923,
+      13,
+      248046
+    ],
+    "neighbor_text": "AV installation step.<|im_end|>",
+    "original_length": 1076,
+    "position": 1073,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "cbf909125c900d5e1c29",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task as complete.<|im_end|>",
+    "original_length": 1087,
+    "position": 1084,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "2a93ee662c18ef6235e2",
+    "left_cut": 0,
+    "neighbor_ids": [
+      1716,
+      999,
+      8529,
+      13,
+      248046
+    ],
+    "neighbor_text": " check file contents.<|im_end|>",
+    "original_length": 1109,
+    "position": 1106,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "65f925eac0e0abaccb05",
+    "left_cut": 0,
+    "neighbor_ids": [
+      4181,
+      306,
+      3778,
+      27653,
+      248046
+    ],
+    "neighbor_text": "/pid.txt`.<|im_end|>",
+    "original_length": 1129,
+    "position": 1126,
+    "token": "`.",
+    "token_id": 27653
+  },
+  {
+    "example_id": "0bf3cc1d0425e3d2941b",
+    "left_cut": 0,
+    "neighbor_ids": [
+      1046,
+      966,
+      23535,
+      13,
+      248046
+    ],
+    "neighbor_text": " grader expects.<|im_end|>",
+    "original_length": 1132,
+    "position": 1129,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "ee612dd246ab875fb184",
+    "left_cut": 0,
+    "neighbor_ids": [
+      364,
+      279,
+      41632,
+      13,
+      248046
+    ],
+    "neighbor_text": " for the installer.<|im_end|>",
+    "original_length": 1133,
+    "position": 1130,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "2df7949c1fc43a0c6acf",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task as complete.<|im_end|>",
+    "original_length": 1134,
+    "position": 1131,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "186e75b57bc364a17497",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task as complete.<|im_end|>",
+    "original_length": 1139,
+    "position": 1136,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "2d72de1234f9f40ee6c2",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task as complete.<|im_end|>",
+    "original_length": 1172,
+    "position": 1169,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "4aea44ae32f6242f16c3",
+    "left_cut": 0,
+    "neighbor_ids": [
+      4433,
+      2318,
+      5148,
+      13,
+      248046
+    ],
+    "neighbor_text": " install.sh script.<|im_end|>",
+    "original_length": 1176,
+    "position": 1173,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "005b416678a524d22134",
+    "left_cut": 0,
+    "neighbor_ids": [
+      279,
+      2468,
+      999,
+      13,
+      248046
+    ],
+    "neighbor_text": " the output file.<|im_end|>",
+    "original_length": 1180,
+    "position": 1177,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "f51cd8257bc869f8d926",
+    "left_cut": 0,
+    "neighbor_ids": [
+      4246,
+      3274,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " Mark task complete.<|im_end|>",
+    "original_length": 1181,
+    "position": 1178,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "a7d9b3dcc27ffe466b18",
+    "left_cut": 0,
+    "neighbor_ids": [
+      5686,
+      364,
+      424,
+      13,
+      248046
+    ],
+    "neighbor_text": " looks for it.<|im_end|>",
+    "original_length": 1188,
+    "position": 1185,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "ece969e37829c52a2c55",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task as complete.<|im_end|>",
+    "original_length": 1193,
+    "position": 1190,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "c0f275f24fd5b2e7ee4b",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task as complete.<|im_end|>",
+    "original_length": 1204,
+    "position": 1201,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "a7f6a528d6bc2b9817b8",
+    "left_cut": 0,
+    "neighbor_ids": [
+      37172,
+      14,
+      9521,
+      13,
+      248046
+    ],
+    "neighbor_text": " substring/variable.<|im_end|>",
+    "original_length": 1205,
+    "position": 1202,
+    "token": ".",
+    "token_id": 13
+  }
+]

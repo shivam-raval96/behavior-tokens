@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "2913b97b4249dbd5e2cc",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    19457,
+    321,
+    23185,
+    13,
+    248046
+  ],
+  "neighbor_text": " addressed and verified.<|im_end|>",
+  "original_length": 6193,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/2913b97b4249dbd5e2cc.json",
+  "position": 6190,
+  "source_model": "gemini-3.1-pro",
+  "source_path": "tasks/stabilize-neural-network-training/gemini-3.1-pro/baseline_trajectories/2/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "stabilize-neural-network-training",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "2"
+}

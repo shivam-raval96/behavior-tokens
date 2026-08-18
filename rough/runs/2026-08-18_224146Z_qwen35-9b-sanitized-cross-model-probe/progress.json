@@ -1,0 +1,10 @@
+{
+  "best_layer": 17,
+  "best_metric": 0.98,
+  "completed": 32,
+  "error_count": 0,
+  "latest_objective": 0.98,
+  "phase": "fitting",
+  "retry_count": 0,
+  "total": 32
+}

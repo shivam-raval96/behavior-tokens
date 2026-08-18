@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "74e8b89e136ca7ee76e0",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    665,
+    339,
+    7062,
+    13,
+    248046
+  ],
+  "neighbor_text": " contig sets.<|im_end|>",
+  "original_length": 4045,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/74e8b89e136ca7ee76e0.json",
+  "position": 4042,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/parallelize-graph/gpt-5.4/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "parallelize-graph",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

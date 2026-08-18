@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "b8b820618cde5cc97e9c",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    1852,
+    369,
+    4221,
+    13,
+    248046
+  ],
+  "neighbor_text": " action is needed.<|im_end|>",
+  "original_length": 2931,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/b8b820618cde5cc97e9c.json",
+  "position": 2928,
+  "source_model": "gpt-5.4",
+  "source_path": "tasks/get-bitcoin-nodes/gpt-5.4/baseline_trajectories/6/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "get-bitcoin-nodes",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "6"
+}

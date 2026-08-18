@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "ddfc1e8c27b8f13215a7",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    7440,
+    4156,
+    4138,
+    13,
+    248046
+  ],
+  "neighbor_text": " confirm everything works.<|im_end|>",
+  "original_length": 1999,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/ddfc1e8c27b8f13215a7.json",
+  "position": 1996,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/cross-entropy-method/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "cross-entropy-method",
+  "token": ".",
+  "token_id": 13,
+  "trajectory_label": "1"
+}

@@ -1,0 +1,402 @@
+[
+  {
+    "example_id": "b4bbc8f0f48eeef8750b",
+    "left_cut": 0,
+    "neighbor_ids": [
+      1141,
+      2243,
+      2468,
+      13,
+      248046
+    ],
+    "neighbor_text": " its version output.<|im_end|>",
+    "original_length": 890,
+    "position": 887,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "91aa682f59568221f972",
+    "left_cut": 0,
+    "neighbor_ids": [
+      2144,
+      5792,
+      22188,
+      13,
+      248046
+    ],
+    "neighbor_text": " content-based verification.<|im_end|>",
+    "original_length": 926,
+    "position": 923,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "94db9fd6b06e5b1cb7a8",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task as complete.<|im_end|>",
+    "original_length": 951,
+    "position": 948,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "af554dbc08c6513440f6",
+    "left_cut": 0,
+    "neighbor_ids": [
+      668,
+      381,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " will be complete.<|im_end|>",
+    "original_length": 978,
+    "position": 975,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "796acfd94a0e4df89a3f",
+    "left_cut": 0,
+    "neighbor_ids": [
+      279,
+      3274,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " the task complete.<|im_end|>",
+    "original_length": 981,
+    "position": 978,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "40563e4a3287cf2b0d8d",
+    "left_cut": 0,
+    "neighbor_ids": [
+      998,
+      12830,
+      7246,
+      13,
+      248046
+    ],
+    "neighbor_text": " were originally described.<|im_end|>",
+    "original_length": 984,
+    "position": 981,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "fbf3b5b497f268e9b834",
+    "left_cut": 0,
+    "neighbor_ids": [
+      668,
+      381,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " will be complete.<|im_end|>",
+    "original_length": 1051,
+    "position": 1048,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "7ca65b8b26f17b6c4fa4",
+    "left_cut": 0,
+    "neighbor_ids": [
+      17,
+      5608,
+      16,
+      27653,
+      248046
+    ],
+    "neighbor_text": "2>&1`.<|im_end|>",
+    "original_length": 1056,
+    "position": 1053,
+    "token": "`.",
+    "token_id": 27653
+  },
+  {
+    "example_id": "12627e967d521d2009fa",
+    "left_cut": 0,
+    "neighbor_ids": [
+      1617,
+      7402,
+      3778,
+      27653,
+      248046
+    ],
+    "neighbor_text": "config_output.txt`.<|im_end|>",
+    "original_length": 1061,
+    "position": 1058,
+    "token": "`.",
+    "token_id": 27653
+  },
+  {
+    "example_id": "3b31b73ff1cb2e6d6bc0",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3354,
+      430,
+      2483,
+      13,
+      248046
+    ],
+    "neighbor_text": " created as required.<|im_end|>",
+    "original_length": 1082,
+    "position": 1079,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "23c8473dffa9568f24ec",
+    "left_cut": 0,
+    "neighbor_ids": [
+      6343,
+      3425,
+      6849,
+      13,
+      248046
+    ],
+    "neighbor_text": " configuration files immediately.<|im_end|>",
+    "original_length": 1108,
+    "position": 1105,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "4b08340911888a2688b7",
+    "left_cut": 0,
+    "neighbor_ids": [
+      4434,
+      279,
+      3274,
+      13,
+      248046
+    ],
+    "neighbor_text": " complete the task.<|im_end|>",
+    "original_length": 1130,
+    "position": 1127,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "5e1e19277e3830e0c5a5",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task as complete.<|im_end|>",
+    "original_length": 1160,
+    "position": 1157,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "f538aa5154bd3f584ddd",
+    "left_cut": 0,
+    "neighbor_ids": [
+      411,
+      19152,
+      1528,
+      13,
+      248046
+    ],
+    "neighbor_text": " this configured state.<|im_end|>",
+    "original_length": 1165,
+    "position": 1162,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "bca08c520e98c4824ed5",
+    "left_cut": 0,
+    "neighbor_ids": [
+      1804,
+      3274,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " mark task complete.<|im_end|>",
+    "original_length": 1169,
+    "position": 1166,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "07fab13b5f8fed76b855",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task as complete.<|im_end|>",
+    "original_length": 1172,
+    "position": 1169,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "3d4508b64f18c8961952",
+    "left_cut": 0,
+    "neighbor_ids": [
+      5313,
+      369,
+      11330,
+      13,
+      248046
+    ],
+    "neighbor_text": " approach is accepted.<|im_end|>",
+    "original_length": 1175,
+    "position": 1172,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "37219d609fe8999c02d7",
+    "left_cut": 0,
+    "neighbor_ids": [
+      310,
+      9845,
+      9463,
+      13,
+      248046
+    ],
+    "neighbor_text": " to verify completion.<|im_end|>",
+    "original_length": 1184,
+    "position": 1181,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "57fcd6731c16dfb895ce",
+    "left_cut": 0,
+    "neighbor_ids": [
+      32149,
+      63,
+      4162,
+      13,
+      248046
+    ],
+    "neighbor_text": "-store` running.<|im_end|>",
+    "original_length": 1185,
+    "position": 1182,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "047375af4d0989a6680b",
+    "left_cut": 0,
+    "neighbor_ids": [
+      6942,
+      19014,
+      944,
+      13,
+      248046
+    ],
+    "neighbor_text": " zero ML work.<|im_end|>",
+    "original_length": 1194,
+    "position": 1191,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "49001e5d2af5cca76769",
+    "left_cut": 0,
+    "neighbor_ids": [
+      2400,
+      22449,
+      16456,
+      13,
+      248046
+    ],
+    "neighbor_text": " full deployment mechanism.<|im_end|>",
+    "original_length": 1195,
+    "position": 1192,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "97b3e4b37092edd3a4c3",
+    "left_cut": 0,
+    "neighbor_ids": [
+      10897,
+      35426,
+      6513,
+      13,
+      248046
+    ],
+    "neighbor_text": " requested artifact exists.<|im_end|>",
+    "original_length": 1210,
+    "position": 1207,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "ff9a04bd6c84f52755c1",
+    "left_cut": 0,
+    "neighbor_ids": [
+      668,
+      1990,
+      1440,
+      13,
+      248046
+    ],
+    "neighbor_text": " will still pass.<|im_end|>",
+    "original_length": 1211,
+    "position": 1208,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "ad31ae9d3f0c796bffb5",
+    "left_cut": 0,
+    "neighbor_ids": [
+      3274,
+      430,
+      4434,
+      13,
+      248046
+    ],
+    "neighbor_text": " task as complete.<|im_end|>",
+    "original_length": 1230,
+    "position": 1227,
+    "token": ".",
+    "token_id": 13
+  },
+  {
+    "example_id": "6775dbb2371fc4edffe9",
+    "left_cut": 0,
+    "neighbor_ids": [
+      4434,
+      279,
+      3274,
+      13,
+      248046
+    ],
+    "neighbor_text": " complete the task.<|im_end|>",
+    "original_length": 1236,
+    "position": 1233,
+    "token": ".",
+    "token_id": 13
+  }
+]

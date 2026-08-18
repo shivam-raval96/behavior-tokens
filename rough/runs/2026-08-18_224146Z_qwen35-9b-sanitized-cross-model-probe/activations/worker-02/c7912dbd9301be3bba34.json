@@ -1,0 +1,24 @@
+{
+  "class": "baseline",
+  "example_id": "c7912dbd9301be3bba34",
+  "label": 0,
+  "left_cut": 0,
+  "neighbor_ids": [
+    414,
+    7428,
+    350,
+    8,
+    248046
+  ],
+  "neighbor_text": " D-Bus)<|im_end|>",
+  "original_length": 1498,
+  "path": "/outputs/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/source/trajectories/c7912dbd9301be3bba34.json",
+  "position": 1495,
+  "source_model": "claude-opus-4.6",
+  "source_path": "tasks/1012/claude-opus-4.6/baseline_trajectories/1/trial/agent/trajectory.json",
+  "split": "train",
+  "task_id": "1012",
+  "token": ")",
+  "token_id": 8,
+  "trajectory_label": "1"
+}
