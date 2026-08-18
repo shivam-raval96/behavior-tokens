@@ -21,7 +21,7 @@ def extract(run_id:str,shard:int):
     outputs.reload()
     result=extract_worker(f"/outputs/rough/runs/{run_id}",shard,checkpoint_callback=outputs.commit); outputs.commit(); return result
 
-@app.function(image=image,timeout=14400,volumes={"/outputs":outputs})
+@app.function(image=image,timeout=14400,memory=8192,volumes={"/outputs":outputs})
 def finalize(run_id:str):
     from terminal_wrench_probe import fit_probes
     outputs.reload(); result=fit_probes(f"/outputs/rough/runs/{run_id}"); outputs.commit(); return result
@@ -45,6 +45,6 @@ def orchestrate(run_id:str):
     return finalize.remote(run_id)
 
 @app.local_entrypoint()
-def main(run_id:str):
-    call=orchestrate.spawn(run_id)
+def main(run_id:str,finalize_only:bool=False):
+    call=(finalize if finalize_only else orchestrate).spawn(run_id)
     print({"orchestrator_call_id":call.object_id,"run_id":run_id},flush=True)
