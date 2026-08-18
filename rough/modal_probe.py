@@ -4,7 +4,7 @@ app=modal.App("terminal-wrench-qwen35-probe")
 outputs=modal.Volume.from_name("bt-outputs",create_if_missing=True)
 cache=modal.Volume.from_name("bt-hf-cache",create_if_missing=True)
 image=(modal.Image.debian_slim(python_version="3.11").apt_install("git").pip_install(
-    "torch>=2.7","transformers>=5.0","accelerate","scikit-learn","joblib","numpy","fastapi")
+    "torch>=2.7","transformers>=5.0","accelerate","scikit-learn","joblib","numpy","matplotlib","fastapi")
     .add_local_file("rough/terminal_wrench_probe.py","/root/terminal_wrench_probe.py")
     .add_local_file("rough/prepare_run.py","/root/prepare_run.py"))
 

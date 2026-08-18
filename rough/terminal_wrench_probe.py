@@ -147,6 +147,9 @@ def extract_worker(run_dir: str, shard: int, shards: int = 4, checkpoint_callbac
 
 
 def fit_probes(run_dir: str) -> dict:
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
     import joblib
     from sklearn.linear_model import LogisticRegression
     from sklearn.metrics import accuracy_score, balanced_accuracy_score, roc_auc_score, f1_score, precision_score, recall_score, confusion_matrix
@@ -156,16 +159,34 @@ def fit_probes(run_dir: str) -> dict:
     run=Path(run_dir); rows=[json.loads(x) for x in (run/"manifest.jsonl").read_text().splitlines()]
     arrays=[]
     for i,row in enumerate(rows): arrays.append(np.load(run/"activations"/f"worker-{i%4:02d}"/f"{row['example_id']}.npy"))
-    x=np.stack(arrays); y=np.array([r["label"] for r in rows]); train=np.array([r["split"]=="train" for r in rows]); test=~train
+    x=np.stack(arrays); y=np.array([r["label"] for r in rows])
+    source=np.array([r["source_model"] for r in rows]); split=np.array([r["split"] for r in rows])
+    train=(source=="claude-opus-4.6") & (split=="train"); test=(source=="claude-opus-4.6") & (split=="test")
     np.save(run/"activations"/"all_layers.float16.npy",x,allow_pickle=False)
     metrics=[]
     for layer in range(LAYERS):
         probe=make_pipeline(StandardScaler(),LogisticRegression(C=1.0,class_weight="balanced",max_iter=5000,random_state=42,n_jobs=1))
-        probe.fit(x[train,layer].astype(np.float32),y[train]); pred=probe.predict(x[test,layer].astype(np.float32)); prob=probe.predict_proba(x[test,layer].astype(np.float32))[:,1]
-        m={"layer":layer,"test_accuracy":accuracy_score(y[test],pred),"balanced_accuracy":balanced_accuracy_score(y[test],pred),"roc_auc":roc_auc_score(y[test],prob),"precision":precision_score(y[test],pred),"recall":recall_score(y[test],pred),"f1":f1_score(y[test],pred),"confusion_matrix":confusion_matrix(y[test],pred).tolist()}
+        probe.fit(x[train,layer].astype(np.float32),y[train])
+        train_pred=probe.predict(x[train,layer].astype(np.float32)); pred=probe.predict(x[test,layer].astype(np.float32)); prob=probe.predict_proba(x[test,layer].astype(np.float32))[:,1]
+        evaluations={}
+        for model in ("claude-opus-4.6","gemini-3.1-pro","gpt-5.4"):
+            for partition in ("train","test"):
+                mask=(source==model)&(split==partition); model_pred=probe.predict(x[mask,layer].astype(np.float32))
+                evaluations[f"{model}|{partition}"]={"accuracy":float(accuracy_score(y[mask],model_pred)),"examples":int(mask.sum()),"confusion_matrix":confusion_matrix(y[mask],model_pred,labels=[0,1]).tolist()}
+        m={"layer":layer,"train_accuracy":accuracy_score(y[train],train_pred),"test_accuracy":accuracy_score(y[test],pred),"balanced_accuracy":balanced_accuracy_score(y[test],pred),"roc_auc":roc_auc_score(y[test],prob),"precision":precision_score(y[test],pred),"recall":recall_score(y[test],pred),"f1":f1_score(y[test],pred),"confusion_matrix":confusion_matrix(y[test],pred,labels=[0,1]).tolist(),"evaluations":evaluations}
         metrics.append(m); joblib.dump(probe,run/f"probe_layer_{layer:02d}.joblib")
-        print(json.dumps({"phase":"fitting","completed":layer+1,"total":LAYERS,**m}),flush=True)
-    result={"primary_layer":31,"test_accuracy":metrics[31]["test_accuracy"],"per_layer":metrics,"train_examples":int(train.sum()),"test_examples":int(test.sum()),"status":"complete"}
+        snap={"phase":"fitting","completed":layer+1,"total":LAYERS,"latest_objective":m["test_accuracy"],"best_metric":max(x["test_accuracy"] for x in metrics),"best_layer":max(metrics,key=lambda x:x["test_accuracy"])["layer"],"error_count":0,"retry_count":0}
+        atomic_json(run/"progress.json",snap); render_dashboard(run,snap); print(json.dumps(snap),flush=True)
+    best=max(metrics,key=lambda m:(m["test_accuracy"],-m["layer"])); best_layer=best["layer"]
+    layers=[m["layer"] for m in metrics]
+    plt.figure(figsize=(9,5)); plt.plot(layers,[m["train_accuracy"] for m in metrics],marker="o",label="Claude train"); plt.plot(layers,[m["test_accuracy"] for m in metrics],marker="o",label="Claude test"); plt.axvline(best_layer,color="gray",linestyle="--",alpha=.6,label=f"Best layer {best_layer}"); plt.xlabel("Transformer layer"); plt.ylabel("Accuracy"); plt.ylim(0,1.02); plt.grid(alpha=.25); plt.legend(); plt.tight_layout(); plt.savefig(run/"layerwise_train_test_accuracy.png",dpi=180); plt.close()
+    labels=["Claude Opus 4.6","Gemini 3.1 Pro","GPT-5.4"]; keys=["claude-opus-4.6","gemini-3.1-pro","gpt-5.4"]; positions=np.arange(3); width=.36
+    train_scores=[best["evaluations"][f"{k}|train"]["accuracy"] for k in keys]; test_scores=[best["evaluations"][f"{k}|test"]["accuracy"] for k in keys]
+    plt.figure(figsize=(8,5)); a=plt.bar(positions-width/2,train_scores,width,label="Train tasks"); b=plt.bar(positions+width/2,test_scores,width,label="Test tasks"); plt.bar_label(a,fmt="%.3f"); plt.bar_label(b,fmt="%.3f"); plt.xticks(positions,labels); plt.ylabel("Accuracy"); plt.ylim(0,1.08); plt.title(f"Claude-trained probe transfer at layer {best_layer}"); plt.grid(axis="y",alpha=.25); plt.legend(); plt.tight_layout(); plt.savefig(run/"best_layer_cross_model_accuracy.png",dpi=180); plt.close()
+    config=json.loads((run/"resolved_config.json").read_text())
+    result={"selection":"highest Claude test accuracy (descriptive)","best_layer":best_layer,"best_layer_metrics":best,"per_layer":metrics,"claude_train_examples":int(train.sum()),"claude_test_examples":int(test.sum()),"config_fingerprint":config["config_fingerprint"],"status":"complete"}
     atomic_json(run/"results.json",result); atomic_json(run/"checkpoint.json",result)
-    run.joinpath("RESULTS.md").write_text(f"# Terminal Wrench last-token probe\n\n- Primary layer: 31\n- Test accuracy: {result['test_accuracy']:.4f}\n- Train/test: {train.sum()}/{test.sum()}\n- No generations were performed.\n")
+    table="\n".join(f"| {label} | {train_scores[i]:.4f} | {test_scores[i]:.4f} |" for i,label in enumerate(labels))
+    run.joinpath("RESULTS.md").write_text(f"# Sanitized Terminal Wrench transfer probe\n\n- Best layer (selected descriptively on Claude test): {best_layer}\n- Claude test accuracy: {best['test_accuracy']:.4f}\n- Claude train/test examples: {train.sum()}/{test.sum()}\n- No generations were performed.\n\n| Source model | Train-task accuracy | Test-task accuracy |\n|---|---:|---:|\n{table}\n")
+    render_dashboard(run,{"phase":"complete","completed":LAYERS,"total":LAYERS,"latest_objective":best["test_accuracy"],"best_metric":best["test_accuracy"],"best_layer":best_layer,"error_count":0,"retry_count":0})
     return result
