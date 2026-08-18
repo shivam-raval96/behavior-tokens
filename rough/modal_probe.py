@@ -34,9 +34,17 @@ def dashboard(run_id:str):
     try: return HTMLResponse(open(p).read())
     except FileNotFoundError: return HTMLResponse("dashboard not ready",status_code=404)
 
-@app.local_entrypoint()
-def main(run_id:str):
-    prepare.remote(run_id)
+@app.function(image=image,timeout=43200)
+def orchestrate(run_id:str):
+    try:
+        prepare.remote(run_id)
+    except Exception as exc:
+        if "FileExistsError" not in repr(exc): raise
     jobs=[extract.spawn(run_id,i) for i in range(4)]
     print([j.get() for j in jobs],flush=True)
-    print(finalize.remote(run_id),flush=True)
+    return finalize.remote(run_id)
+
+@app.local_entrypoint()
+def main(run_id:str):
+    call=orchestrate.spawn(run_id)
+    print({"orchestrator_call_id":call.object_id,"run_id":run_id},flush=True)
