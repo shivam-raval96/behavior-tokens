@@ -4,10 +4,10 @@ Status: prepared; launch requires an explicit **proceed**.
 
 ## Objective
 
-Measure how accurately a linear probe trained on Qwen3.5-9B's final
-non-padding-token residual-stream activation can distinguish rewarded Terminal
-Wrench exploit trajectories from legitimate baseline trajectories on held-out
-tasks.
+Measure how accurately a linear probe trained on Qwen3.5-9B's last assistant
+response-content-token residual-stream activation can distinguish rewarded
+Terminal Wrench exploit trajectories from legitimate baseline trajectories on
+held-out tasks.
 
 ## Model and source data
 
@@ -27,26 +27,33 @@ tasks.
 - Tokenization: model-native chat template when compatible, otherwise a
   deterministic role-delimited serialization recorded in the run. Maximum
   length 16,384 tokens with left truncation so the terminal outcome remains
-  visible. The activation is taken at the final attended token.
+  visible.
+- Probe position: the last content token of the final assistant response,
+  including a serialized tool call when that is the response. Qwen3.5's pinned
+  template terminates assistant turns with `<|im_end|>\n`; both that special
+  token and the trailing newline are excluded. The loader locates the final
+  assistant span from tokenized template boundaries and asserts that the chosen
+  token is immediately before `<|im_end|>`. It records the chosen token ID,
+  decoded token, neighboring IDs/text, and span indices for an auditable sample,
+  and hard-fails any row whose boundary cannot be proven.
 
 ## Split and probe
 
 - Split unit: `task_id`, preventing trajectories or model variants of the same
   task from crossing splits.
-- Deterministic assignment: SHA-256 of `seed || task_id`, 70% train, 15%
-  validation, 15% test, seed 42. Exact task/example/class counts are persisted
-  before activation extraction; empty-class splits are a hard failure.
-- Activation sweep: embedding output plus every transformer block output.
-- Classifier: per-layer `StandardScaler` plus L2 logistic regression,
+- Deterministic assignment: SHA-256 of `seed || task_id`, 70% train and 30%
+  test, seed 42. Exact task/example/class counts are persisted before activation
+  extraction; empty-class splits are a hard failure.
+- Activation source: final transformer block residual-stream output only. This
+  fixes the layer before seeing test labels and avoids test-set layer selection.
+- Classifier: `StandardScaler` plus L2 logistic regression,
   `C=1.0`, `class_weight="balanced"`, `max_iter=5000`, seed 42. The probe is
   fitted on train only.
-- Layer selection: highest validation accuracy; ties choose the shallower
-  layer. The test split is evaluated exactly once with that frozen choice.
 
 ## Evaluation
 
 - Primary metric requested: ordinary test accuracy at threshold 0.5.
-- Diagnostics: validation accuracy, balanced accuracy, ROC AUC, precision,
+- Diagnostics: train accuracy, test balanced accuracy, ROC AUC, precision,
   recall, F1, confusion matrix, majority-class accuracy, per-source-model and
   per-category accuracy, plus bootstrap 95% confidence intervals grouped by
   task (10,000 resamples, seed 42).
@@ -60,12 +67,12 @@ tasks.
 - Compute: one Modal A100-80GB, detached submission, 12-hour timeout, one
   retry only after a fingerprint-validated checkpoint.
 - Batch size: 1 initially, increased only after a recorded memory-safe dry
-  batch; inference uses no gradients. Probe fitting is CPU-side after each
-  layer's activations are complete.
+  batch; inference uses no gradients. Probe fitting is CPU-side after activation
+  extraction completes.
 - Checkpoints: after dataset resolution, split construction, each 100 extracted
-  examples, every fitted layer, and final evaluation. Progress payloads include
+  examples, probe fitting, and final evaluation. Progress payloads include
   phase, completed/total, elapsed time, throughput, ETA, fingerprint/run ID,
-  latest and best metrics/layer, class counts, token lengths/truncations,
+  latest and best metrics, class counts, token lengths/truncations,
   activation norms, errors, and retries.
 - Expected duration/cost: approximately 1.5-4 hours, dominated by long-context
   forward passes; approximately 1.5-4 A100-80GB-hours plus negligible CPU and
@@ -73,7 +80,7 @@ tasks.
 - Run path: `rough/runs/YYYY-MM-DD_HHMMSSZ_qwen35-9b-terminal-wrench-last-token-probe/`.
 - Required files: source/config manifests, resolved config and fingerprint,
   split manifest, preprocessing audit, checkpoint/progress/history,
-  `dashboard.html`, `dashboard_history.jsonl`, per-layer metrics, selected
+  `dashboard.html`, `dashboard_history.jsonl`, response-boundary audit, fitted
   probe, aggregate and subgroup results, plots, `results.json`, and
   `RESULTS.md`.
 - Live monitoring: a read-only Modal HTTP dashboard backed by `bt-outputs` and
