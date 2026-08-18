@@ -8,3 +8,5 @@ dashboard, probe artifacts, and final report.
 The first prepared experiment is documented in
 `EXPERIMENT_QWEN35_9B_TERMINAL_WRENCH_LAST_TOKEN_PROBE.md`.
 
+Durable operational and implementation findings from completed runs are kept in
+`EXPERIMENT_LESSONS.md` and should be reviewed during every new preflight.
