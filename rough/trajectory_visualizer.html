@@ -53,5 +53,6 @@ function render(){ const pages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
 $('loadDefault').onclick=()=>load(DEFAULT_JSON); $('pick').onclick=()=>$('file').click(); $('file').onchange=e=>e.target.files[0]&&load(e.target.files[0]);
 $('classFilter').onchange=$('modelFilter').onchange=applyFilters; let timer; $('search').oninput=()=>{clearTimeout(timer);timer=setTimeout(applyFilters,250)};
 $('prev').onclick=()=>{page--;render();scrollTo(0,0)}; $('next').onclick=()=>{page++;render();scrollTo(0,0)};
+load(DEFAULT_JSON);
 </script>
 </body></html>
