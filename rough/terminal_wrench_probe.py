@@ -84,11 +84,13 @@ def extract_worker(run_dir: str, shard: int, shards: int = 4, checkpoint_callbac
     run = Path(run_dir); manifest = [json.loads(x) for x in (run / "manifest.jsonl").read_text().splitlines()]
     rows = [r for i, r in enumerate(manifest) if i % shards == shard]
     shard_dir = run / "activations" / f"worker-{shard:02d}"; shard_dir.mkdir(parents=True, exist_ok=True)
+    rows = [r for r in rows if not (shard_dir / f"{r['example_id']}.npy").exists()]
     tokenizer = AutoTokenizer.from_pretrained(MODEL)
     tokenizer.padding_side = "left"; tokenizer.pad_token = tokenizer.eos_token
     model = AutoModelForImageTextToText.from_pretrained(MODEL, torch_dtype=torch.bfloat16,
         attn_implementation="sdpa", device_map="cuda").eval()
-    blocks = model.model.language_model.layers if hasattr(model.model, "language_model") else model.model.layers
+    core = model.model.language_model if hasattr(model.model, "language_model") else model.model
+    blocks = core.layers
     captured = [None] * LAYERS
     positions = None
     hooks = []
@@ -105,13 +107,13 @@ def extract_worker(run_dir: str, shard: int, shards: int = 4, checkpoint_callbac
             ids, pos, audit = tokenize_with_boundary(tokenizer, trajectory_messages(data))
             prepared.append((len(ids), row, ids, pos, audit))
         prepared.sort(key=lambda x: x[0])
-        cursor = 0
+        cursor = 0; token_budget = 32768; max_batch_size = 16; oom_count = 0
         while cursor < len(prepared):
             batch = []; tokens = 0
-            while cursor + len(batch) < len(prepared) and len(batch) < 16:
+            while cursor + len(batch) < len(prepared) and len(batch) < max_batch_size:
                 candidate = prepared[cursor + len(batch)]
                 projected = candidate[0] * (len(batch) + 1)
-                if batch and projected > 32768: break
+                if batch and projected > token_budget: break
                 batch.append(candidate); tokens = projected
             maxlen = max(x[0] for x in batch)
             input_ids = torch.full((len(batch), maxlen), tokenizer.pad_token_id, dtype=torch.long)
@@ -120,7 +122,14 @@ def extract_worker(run_dir: str, shard: int, shards: int = 4, checkpoint_callbac
             for b, (_, _, ids, pos, _) in enumerate(batch):
                 offset = maxlen - len(ids); input_ids[b, offset:] = torch.tensor(ids); mask[b, offset:] = 1; pos_list.append(offset + pos)
             input_ids, mask = input_ids.cuda(), mask.cuda(); positions = torch.tensor(pos_list, device="cuda")
-            with torch.inference_mode(): model(input_ids=input_ids, attention_mask=mask, use_cache=False)
+            try:
+                with torch.inference_mode(): core(input_ids=input_ids, attention_mask=mask, use_cache=False)
+            except torch.OutOfMemoryError:
+                oom_count += 1; del input_ids, mask; torch.cuda.empty_cache()
+                if len(batch) == 1: raise
+                max_batch_size = max(1, len(batch)//2); token_budget = max(batch[0][0], token_budget//2)
+                print(json.dumps({"phase":"oom_backoff","worker":shard,"token_budget":token_budget,"max_batch_size":max_batch_size,"oom_count":oom_count}),flush=True)
+                continue
             values = torch.stack(captured, dim=1).numpy()
             for b, (_, row, _, _, audit) in enumerate(batch):
                 np.save(shard_dir / f"{row['example_id']}.npy", values[b], allow_pickle=False)
@@ -129,7 +138,7 @@ def extract_worker(run_dir: str, shard: int, shards: int = 4, checkpoint_callbac
             completed += len(batch); cursor += len(batch)
             if completed % 100 < len(batch) or completed == len(rows):
                 elapsed=time.time()-started; rate=completed/max(elapsed,1e-6)
-                snap={"phase":"extracting","worker":shard,"completed":completed,"total":len(rows),"elapsed_seconds":elapsed,"throughput":rate,"eta_seconds":(len(rows)-completed)/rate,"error_count":0,"retry_count":0}
+                snap={"phase":"extracting","worker":shard,"completed":completed,"total":len(rows),"elapsed_seconds":elapsed,"throughput":rate,"eta_seconds":(len(rows)-completed)/rate,"error_count":oom_count,"retry_count":0,"token_budget":token_budget,"max_batch_size":max_batch_size}
                 atomic_json(shard_dir/"progress.json",snap); render_dashboard(run, snap); checkpoint_callback(); print(json.dumps(snap),flush=True)
     finally:
         for h in hooks: h.remove()
