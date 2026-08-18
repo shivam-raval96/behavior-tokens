@@ -17,6 +17,10 @@ They are based on observed failures, not hypothetical concerns.
 
 ## Activation storage and finalization
 
+- Keep large activations, checkpoints, and merged tensors on the Modal Volume;
+  do not push them to Git or Git LFS. Pull only when local inspection is needed.
+  Commit lightweight configs, manifests, summaries, metrics, and plots, with
+  remote artifact paths sufficient to recover the full run.
 - Do not store thousands of individual activation arrays as the primary merge
   format. Reopening one `.npy` per example from a remote Volume makes probe
   finalization metadata-I/O bound. Write one contiguous array and row index per
@@ -39,6 +43,10 @@ They are based on observed failures, not hypothetical concerns.
 
 ## Data and evaluation
 
+- Derive and validate exact source-model identifiers from the manifest before
+  fitting. Human-facing model names or identifiers copied from another run can
+  silently create empty masks; assert every expected source/split partition is
+  non-empty before the first probe fit.
 - Freeze the common task set before sampling trajectories, then apply one
   deterministic task-level split to every source model.
 - Balance baseline and sanitized-hack examples independently within each

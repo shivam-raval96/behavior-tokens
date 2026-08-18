@@ -1,0 +1,27 @@
+{
+  "activation_extraction": false,
+  "activation_file": "/Users/shivamraval/Github/behavior-tokens/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/activations/all_layers.float16.npy",
+  "config_fingerprint": "3f51492d6f16ccbab31a3dfb5ea05877c15d629f0c64ce6366c7bb6f01b34373",
+  "evaluation_sources": [
+    "claude-opus-4.6",
+    "gemini-3.1-pro",
+    "gpt-5.4"
+  ],
+  "manifest_file": "/Users/shivamraval/Github/behavior-tokens/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe/manifest.jsonl",
+  "probe": {
+    "C": 1.0,
+    "class_weight": "balanced",
+    "max_iter": 5000,
+    "random_state": 42,
+    "standard_scaler": true
+  },
+  "run_id": "2026-08-18_235307Z_gemini-gpt-cross-source-probes",
+  "selection": "highest same-source test accuracy; earliest-layer tie break; descriptive",
+  "source_run": "/Users/shivamraval/Github/behavior-tokens/rough/runs/2026-08-18_224146Z_qwen35-9b-sanitized-cross-model-probe",
+  "split": "existing deterministic task-level 70/30 split",
+  "train_sources": [
+    "gemini-3.1-pro",
+    "gpt-5.4"
+  ],
+  "trial_type": "cached-activation follow-up comparison"
+}

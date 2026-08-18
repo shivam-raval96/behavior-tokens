@@ -1,0 +1,14 @@
+{
+  "best_layer": null,
+  "best_metric": null,
+  "completed": 0,
+  "config_fingerprint": "510cb8841d2895c343b1f05621552aec090986ad05fdc61bbf653cba3781645e",
+  "elapsed_seconds": 0.0,
+  "error_count": 1,
+  "latest_objective": null,
+  "phase": "failed_preflight_empty_source_mask",
+  "retry_count": 0,
+  "run_id": "2026-08-18_235141Z_gemini-gpt-cross-source-probes",
+  "throughput_layers_per_second": 0.0,
+  "total": 64
+}
