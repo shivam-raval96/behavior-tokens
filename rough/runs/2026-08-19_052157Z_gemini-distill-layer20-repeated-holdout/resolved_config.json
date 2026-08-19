@@ -1,0 +1,38 @@
+{
+  "activation_construction": "singleton forwards only",
+  "activation_layer": 20,
+  "activation_source_run": "2026-08-19_034959Z_gemini-distill-full-singleton-activation-cache",
+  "config_fingerprint": "156798a060425d415c1fc4d77b3c2bc74171f6a45879e913578d590a213471af",
+  "example_selection": "one SHA-256-ranked baseline and one sanitized trajectory per task/model, fixed across repeats",
+  "primary_metric": "held-out accuracy",
+  "probe": {
+    "C": 1.0,
+    "class_weight": "balanced",
+    "classifier": "StandardScaler + L2 LogisticRegression",
+    "max_iter": 5000
+  },
+  "repeats": 10,
+  "run_id": "2026-08-19_052157Z_gemini-distill-layer20-repeated-holdout",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "sources": [
+    "claude-opus-4.6",
+    "gemini-3.1-pro",
+    "gpt-5.4"
+  ],
+  "tasks": 194,
+  "test_tasks": 58,
+  "total_fits": 30,
+  "train_tasks": 136,
+  "trial_type": "repeated paired task-level holdout"
+}
