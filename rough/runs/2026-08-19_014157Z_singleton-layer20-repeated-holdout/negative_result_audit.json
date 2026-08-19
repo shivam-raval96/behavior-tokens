@@ -1,0 +1,24 @@
+{
+  "canonical_alignment": "pass",
+  "evaluation_cells": 180,
+  "implementation_defect_found": false,
+  "interpretation": "asymmetric cross-source calibration/style shift",
+  "selected_example_alignment": "pass",
+  "split_audit": {
+    "repetitions": 10,
+    "task_overlap": 0,
+    "test_tasks_per_repeat": 58,
+    "train_tasks_per_repeat": 136
+  },
+  "test_confusion_totals": {
+    "claude-opus-4.6->claude-opus-4.6": [[578, 2], [9, 571]],
+    "claude-opus-4.6->gemini-3.1-pro": [[190, 390], [5, 575]],
+    "claude-opus-4.6->gpt-5.4": [[257, 323], [0, 580]],
+    "gemini-3.1-pro->claude-opus-4.6": [[580, 0], [192, 388]],
+    "gemini-3.1-pro->gemini-3.1-pro": [[564, 16], [22, 558]],
+    "gemini-3.1-pro->gpt-5.4": [[453, 127], [1, 579]],
+    "gpt-5.4->claude-opus-4.6": [[580, 0], [437, 143]],
+    "gpt-5.4->gemini-3.1-pro": [[580, 0], [340, 240]],
+    "gpt-5.4->gpt-5.4": [[579, 1], [10, 570]]
+  }
+}

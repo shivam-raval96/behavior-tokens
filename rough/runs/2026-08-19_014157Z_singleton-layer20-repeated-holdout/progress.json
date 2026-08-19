@@ -1,0 +1,13 @@
+{
+  "best_metric": null,
+  "completed": 30,
+  "config_fingerprint": "340804b0307eb63eba70d3282b3f7b4380cfcdfa63684ee8a683ecab04b13abb",
+  "elapsed_seconds": 7.212,
+  "error_count": 0,
+  "latest_objective": null,
+  "phase": "complete",
+  "retry_count": 0,
+  "run_id": "2026-08-19_014157Z_singleton-layer20-repeated-holdout",
+  "throughput_fits_per_second": 4.1596,
+  "total": 30
+}
