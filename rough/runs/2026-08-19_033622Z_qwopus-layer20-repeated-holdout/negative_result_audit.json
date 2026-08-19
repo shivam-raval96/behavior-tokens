@@ -1,0 +1,31 @@
+{
+  "status": "pass",
+  "conclusion": "No implementation defect was found. The weaker Claude-trained transfer to Gemini is consistent across fixed splits and is accompanied by very high ROC-AUC but a shifted classification threshold, indicating source-model calibration shift rather than absent linear signal.",
+  "checks": {
+    "activation_shape": [4360, 32, 4096],
+    "activation_rows_unique": 4360,
+    "boundary_audits_passed": 4360,
+    "task_model_pairs": 582,
+    "all_pairs_have_both_labels": true,
+    "repeat_forward_exact": "8/8",
+    "storage_exact": "20/20",
+    "fresh_reforward_exact": "5/5",
+    "selected_examples": 1164,
+    "class_balance_per_model": "194 baseline / 194 sanitized",
+    "task_split_overlap": 0,
+    "fits": 30,
+    "evaluation_cells": 180,
+    "confusion_matrix_totals_match_n": true
+  },
+  "comparison_to_qwen35_base_held_out_accuracy_delta": {
+    "claude_to_claude": 0.000862,
+    "claude_to_gemini": -0.022414,
+    "claude_to_gpt": 0.001724,
+    "gemini_to_claude": 0.086207,
+    "gemini_to_gemini": -0.008621,
+    "gemini_to_gpt": 0.031034,
+    "gpt_to_claude": 0.080172,
+    "gpt_to_gemini": 0.065517,
+    "gpt_to_gpt": 0.006034
+  }
+}

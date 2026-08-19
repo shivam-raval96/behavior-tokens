@@ -1,0 +1,3662 @@
+[
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.9913793103448276,
+        "balanced_accuracy": 0.9913793103448276,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            1,
+            57
+          ]
+        ],
+        "f1": 0.991304347826087,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.9827586206896551,
+        "roc_auc": 0.9997027348394768
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.6724137931034483,
+        "balanced_accuracy": 0.6724137931034483,
+        "confusion_matrix": [
+          [
+            20,
+            38
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.7532467532467533,
+        "n": 116,
+        "precision": 0.6041666666666666,
+        "recall": 1.0,
+        "roc_auc": 0.9607609988109393
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.6323529411764706,
+        "balanced_accuracy": 0.6323529411764706,
+        "confusion_matrix": [
+          [
+            38,
+            98
+          ],
+          [
+            2,
+            134
+          ]
+        ],
+        "f1": 0.7282608695652174,
+        "n": 272,
+        "precision": 0.5775862068965517,
+        "recall": 0.9852941176470589,
+        "roc_auc": 0.9433931660899655
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.603448275862069,
+        "balanced_accuracy": 0.603448275862069,
+        "confusion_matrix": [
+          [
+            12,
+            46
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.7160493827160493,
+        "n": 116,
+        "precision": 0.5576923076923077,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.6507352941176471,
+        "balanced_accuracy": 0.6507352941176471,
+        "confusion_matrix": [
+          [
+            41,
+            95
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.7411444141689373,
+        "n": 272,
+        "precision": 0.5887445887445888,
+        "recall": 1.0,
+        "roc_auc": 0.9944852941176471
+      }
+    },
+    "repeat": 0,
+    "seed": 42,
+    "train_n": 272,
+    "train_source": "claude-opus-4.6"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.9655172413793104,
+        "balanced_accuracy": 0.9655172413793103,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            4,
+            54
+          ]
+        ],
+        "f1": 0.9642857142857143,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.9310344827586207,
+        "roc_auc": 1.0
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.9411764705882353,
+        "balanced_accuracy": 0.9411764705882353,
+        "confusion_matrix": [
+          [
+            134,
+            2
+          ],
+          [
+            14,
+            122
+          ]
+        ],
+        "f1": 0.9384615384615385,
+        "n": 272,
+        "precision": 0.9838709677419355,
+        "recall": 0.8970588235294118,
+        "roc_auc": 0.9951881487889274
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.9655172413793104,
+        "balanced_accuracy": 0.9655172413793103,
+        "confusion_matrix": [
+          [
+            57,
+            1
+          ],
+          [
+            3,
+            55
+          ]
+        ],
+        "f1": 0.9649122807017544,
+        "n": 116,
+        "precision": 0.9821428571428571,
+        "recall": 0.9482758620689655,
+        "roc_auc": 0.9928656361474435
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.896551724137931,
+        "balanced_accuracy": 0.896551724137931,
+        "confusion_matrix": [
+          [
+            46,
+            12
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.90625,
+        "n": 116,
+        "precision": 0.8285714285714286,
+        "recall": 1.0,
+        "roc_auc": 0.9997027348394768
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.9154411764705882,
+        "balanced_accuracy": 0.9154411764705883,
+        "confusion_matrix": [
+          [
+            113,
+            23
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.9220338983050848,
+        "n": 272,
+        "precision": 0.8553459119496856,
+        "recall": 1.0,
+        "roc_auc": 0.9992971453287198
+      }
+    },
+    "repeat": 0,
+    "seed": 42,
+    "train_n": 272,
+    "train_source": "gemini-3.1-pro"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.7327586206896551,
+        "balanced_accuracy": 0.7327586206896551,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            31,
+            27
+          ]
+        ],
+        "f1": 0.6352941176470588,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.46551724137931033,
+        "roc_auc": 0.9988109393579072
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.7389705882352942,
+        "balanced_accuracy": 0.7389705882352942,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            71,
+            65
+          ]
+        ],
+        "f1": 0.6467661691542289,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.47794117647058826,
+        "roc_auc": 0.9985942906574394
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.853448275862069,
+        "balanced_accuracy": 0.853448275862069,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            17,
+            41
+          ]
+        ],
+        "f1": 0.8282828282828283,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.7068965517241379,
+        "roc_auc": 0.9836504161712247
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.7867647058823529,
+        "balanced_accuracy": 0.7867647058823529,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            58,
+            78
+          ]
+        ],
+        "f1": 0.7289719626168224,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.5735294117647058,
+        "roc_auc": 0.982590830449827
+      },
+      "gpt-5.4|test": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 1.0,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      }
+    },
+    "repeat": 0,
+    "seed": 42,
+    "train_n": 272,
+    "train_source": "gpt-5.4"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 1.0,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.603448275862069,
+        "balanced_accuracy": 0.603448275862069,
+        "confusion_matrix": [
+          [
+            13,
+            45
+          ],
+          [
+            1,
+            57
+          ]
+        ],
+        "f1": 0.7125,
+        "n": 116,
+        "precision": 0.5588235294117647,
+        "recall": 0.9827586206896551,
+        "roc_auc": 0.9491676575505351
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.6617647058823529,
+        "balanced_accuracy": 0.6617647058823529,
+        "confusion_matrix": [
+          [
+            44,
+            92
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.7472527472527473,
+        "n": 272,
+        "precision": 0.5964912280701754,
+        "recall": 1.0,
+        "roc_auc": 0.971561418685121
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.75,
+        "confusion_matrix": [
+          [
+            29,
+            29
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.8,
+        "n": 116,
+        "precision": 0.6666666666666666,
+        "recall": 1.0,
+        "roc_auc": 0.998513674197384
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.6875,
+        "balanced_accuracy": 0.6875,
+        "confusion_matrix": [
+          [
+            51,
+            85
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.7619047619047619,
+        "n": 272,
+        "precision": 0.6153846153846154,
+        "recall": 1.0,
+        "roc_auc": 0.9978373702422145
+      }
+    },
+    "repeat": 1,
+    "seed": 43,
+    "train_n": 272,
+    "train_source": "claude-opus-4.6"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.853448275862069,
+        "balanced_accuracy": 0.853448275862069,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            17,
+            41
+          ]
+        ],
+        "f1": 0.8282828282828283,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.7068965517241379,
+        "roc_auc": 0.9940546967895363
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.8566176470588235,
+        "balanced_accuracy": 0.8566176470588236,
+        "confusion_matrix": [
+          [
+            135,
+            1
+          ],
+          [
+            38,
+            98
+          ]
+        ],
+        "f1": 0.8340425531914893,
+        "n": 272,
+        "precision": 0.98989898989899,
+        "recall": 0.7205882352941176,
+        "roc_auc": 0.9938365051903114
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.9482758620689655,
+        "balanced_accuracy": 0.9482758620689655,
+        "confusion_matrix": [
+          [
+            57,
+            1
+          ],
+          [
+            5,
+            53
+          ]
+        ],
+        "f1": 0.9464285714285714,
+        "n": 116,
+        "precision": 0.9814814814814815,
+        "recall": 0.9137931034482759,
+        "roc_auc": 0.9916765755053507
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.9741379310344828,
+        "balanced_accuracy": 0.9741379310344828,
+        "confusion_matrix": [
+          [
+            55,
+            3
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.9747899159663865,
+        "n": 116,
+        "precision": 0.9508196721311475,
+        "recall": 1.0,
+        "roc_auc": 0.9982164090368609
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.9154411764705882,
+        "balanced_accuracy": 0.9154411764705883,
+        "confusion_matrix": [
+          [
+            113,
+            23
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.9220338983050848,
+        "n": 272,
+        "precision": 0.8553459119496856,
+        "recall": 1.0,
+        "roc_auc": 0.9877811418685121
+      }
+    },
+    "repeat": 1,
+    "seed": 43,
+    "train_n": 272,
+    "train_source": "gemini-3.1-pro"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.6810344827586207,
+        "balanced_accuracy": 0.6810344827586207,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            37,
+            21
+          ]
+        ],
+        "f1": 0.5316455696202531,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.3620689655172414,
+        "roc_auc": 0.9976218787158144
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.6948529411764706,
+        "balanced_accuracy": 0.6948529411764706,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            83,
+            53
+          ]
+        ],
+        "f1": 0.5608465608465608,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.3897058823529412,
+        "roc_auc": 0.9993512110726643
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.75,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            29,
+            29
+          ]
+        ],
+        "f1": 0.6666666666666666,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.5,
+        "roc_auc": 0.9818668252080855
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.8198529411764706,
+        "balanced_accuracy": 0.8198529411764706,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            49,
+            87
+          ]
+        ],
+        "f1": 0.7802690582959642,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.6397058823529411,
+        "roc_auc": 0.983185553633218
+      },
+      "gpt-5.4|test": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 1.0,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      }
+    },
+    "repeat": 1,
+    "seed": 43,
+    "train_n": 272,
+    "train_source": "gpt-5.4"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.9913793103448276,
+        "balanced_accuracy": 0.9913793103448276,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            1,
+            57
+          ]
+        ],
+        "f1": 0.991304347826087,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.9827586206896551,
+        "roc_auc": 0.9997027348394768
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.6379310344827587,
+        "balanced_accuracy": 0.6379310344827586,
+        "confusion_matrix": [
+          [
+            17,
+            41
+          ],
+          [
+            1,
+            57
+          ]
+        ],
+        "f1": 0.7307692307692307,
+        "n": 116,
+        "precision": 0.5816326530612245,
+        "recall": 0.9827586206896551,
+        "roc_auc": 0.928359096313912
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.6397058823529411,
+        "balanced_accuracy": 0.6397058823529411,
+        "confusion_matrix": [
+          [
+            38,
+            98
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.7351351351351352,
+        "n": 272,
+        "precision": 0.5811965811965812,
+        "recall": 1.0,
+        "roc_auc": 0.9648032006920415
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.6896551724137931,
+        "balanced_accuracy": 0.6896551724137931,
+        "confusion_matrix": [
+          [
+            22,
+            36
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.7631578947368421,
+        "n": 116,
+        "precision": 0.6170212765957447,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.6727941176470589,
+        "balanced_accuracy": 0.6727941176470589,
+        "confusion_matrix": [
+          [
+            47,
+            89
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.7534626038781164,
+        "n": 272,
+        "precision": 0.6044444444444445,
+        "recall": 1.0,
+        "roc_auc": 0.9963235294117647
+      }
+    },
+    "repeat": 2,
+    "seed": 44,
+    "train_n": 272,
+    "train_source": "claude-opus-4.6"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.9310344827586207,
+        "balanced_accuracy": 0.9310344827586207,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            8,
+            50
+          ]
+        ],
+        "f1": 0.9259259259259259,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.8620689655172413,
+        "roc_auc": 0.9931629013079667
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.8713235294117647,
+        "balanced_accuracy": 0.8713235294117647,
+        "confusion_matrix": [
+          [
+            135,
+            1
+          ],
+          [
+            34,
+            102
+          ]
+        ],
+        "f1": 0.8535564853556485,
+        "n": 272,
+        "precision": 0.9902912621359223,
+        "recall": 0.75,
+        "roc_auc": 0.9945393598615917
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.9568965517241379,
+        "balanced_accuracy": 0.9568965517241379,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            5,
+            53
+          ]
+        ],
+        "f1": 0.954954954954955,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.9137931034482759,
+        "roc_auc": 0.9869203329369798
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.9137931034482759,
+        "balanced_accuracy": 0.9137931034482758,
+        "confusion_matrix": [
+          [
+            48,
+            10
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.9206349206349206,
+        "n": 116,
+        "precision": 0.8529411764705882,
+        "recall": 1.0,
+        "roc_auc": 0.9985136741973841
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.9264705882352942,
+        "balanced_accuracy": 0.9264705882352942,
+        "confusion_matrix": [
+          [
+            116,
+            20
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.9315068493150684,
+        "n": 272,
+        "precision": 0.8717948717948718,
+        "recall": 1.0,
+        "roc_auc": 0.9987024221453288
+      }
+    },
+    "repeat": 2,
+    "seed": 44,
+    "train_n": 272,
+    "train_source": "gemini-3.1-pro"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.7758620689655172,
+        "balanced_accuracy": 0.7758620689655172,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            26,
+            32
+          ]
+        ],
+        "f1": 0.7111111111111111,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.5517241379310345,
+        "roc_auc": 1.0
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.7058823529411765,
+        "balanced_accuracy": 0.7058823529411764,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            80,
+            56
+          ]
+        ],
+        "f1": 0.5833333333333334,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.4117647058823529,
+        "roc_auc": 0.9981076989619377
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.7155172413793104,
+        "balanced_accuracy": 0.7155172413793103,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            33,
+            25
+          ]
+        ],
+        "f1": 0.6024096385542169,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.43103448275862066,
+        "roc_auc": 0.9714625445897741
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.7977941176470589,
+        "balanced_accuracy": 0.7977941176470589,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            55,
+            81
+          ]
+        ],
+        "f1": 0.7465437788018433,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.5955882352941176,
+        "roc_auc": 0.9930795847750865
+      },
+      "gpt-5.4|test": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 1.0,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      }
+    },
+    "repeat": 2,
+    "seed": 44,
+    "train_n": 272,
+    "train_source": "gpt-5.4"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.9913793103448276,
+        "balanced_accuracy": 0.9913793103448276,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            1,
+            57
+          ]
+        ],
+        "f1": 0.991304347826087,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.9827586206896551,
+        "roc_auc": 1.0
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.6551724137931034,
+        "balanced_accuracy": 0.6551724137931034,
+        "confusion_matrix": [
+          [
+            18,
+            40
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.7435897435897436,
+        "n": 116,
+        "precision": 0.5918367346938775,
+        "recall": 1.0,
+        "roc_auc": 0.9708680142687277
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.6617647058823529,
+        "balanced_accuracy": 0.6617647058823529,
+        "confusion_matrix": [
+          [
+            45,
+            91
+          ],
+          [
+            1,
+            135
+          ]
+        ],
+        "f1": 0.7458563535911602,
+        "n": 272,
+        "precision": 0.5973451327433629,
+        "recall": 0.9926470588235294,
+        "roc_auc": 0.9676146193771626
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.8103448275862069,
+        "balanced_accuracy": 0.8103448275862069,
+        "confusion_matrix": [
+          [
+            36,
+            22
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.8405797101449275,
+        "n": 116,
+        "precision": 0.725,
+        "recall": 1.0,
+        "roc_auc": 0.9994054696789536
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.7426470588235294,
+        "balanced_accuracy": 0.7426470588235294,
+        "confusion_matrix": [
+          [
+            66,
+            70
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.7953216374269005,
+        "n": 272,
+        "precision": 0.6601941747572816,
+        "recall": 1.0,
+        "roc_auc": 0.9978373702422145
+      }
+    },
+    "repeat": 3,
+    "seed": 45,
+    "train_n": 272,
+    "train_source": "claude-opus-4.6"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.853448275862069,
+        "balanced_accuracy": 0.853448275862069,
+        "confusion_matrix": [
+          [
+            57,
+            1
+          ],
+          [
+            16,
+            42
+          ]
+        ],
+        "f1": 0.8316831683168316,
+        "n": 116,
+        "precision": 0.9767441860465116,
+        "recall": 0.7241379310344828,
+        "roc_auc": 0.9919738406658739
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.9117647058823529,
+        "balanced_accuracy": 0.9117647058823529,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            24,
+            112
+          ]
+        ],
+        "f1": 0.9032258064516129,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.8235294117647058,
+        "roc_auc": 0.9956206747404844
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.9568965517241379,
+        "balanced_accuracy": 0.9568965517241379,
+        "confusion_matrix": [
+          [
+            57,
+            1
+          ],
+          [
+            4,
+            54
+          ]
+        ],
+        "f1": 0.9557522123893806,
+        "n": 116,
+        "precision": 0.9818181818181818,
+        "recall": 0.9310344827586207,
+        "roc_auc": 0.9934601664684899
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.9137931034482759,
+        "balanced_accuracy": 0.9137931034482758,
+        "confusion_matrix": [
+          [
+            48,
+            10
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.9206349206349206,
+        "n": 116,
+        "precision": 0.8529411764705882,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.9117647058823529,
+        "balanced_accuracy": 0.9117647058823529,
+        "confusion_matrix": [
+          [
+            112,
+            24
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.918918918918919,
+        "n": 272,
+        "precision": 0.85,
+        "recall": 1.0,
+        "roc_auc": 0.9998918685121108
+      }
+    },
+    "repeat": 3,
+    "seed": 45,
+    "train_n": 272,
+    "train_source": "gemini-3.1-pro"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.6810344827586207,
+        "balanced_accuracy": 0.6810344827586207,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            37,
+            21
+          ]
+        ],
+        "f1": 0.5316455696202531,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.3620689655172414,
+        "roc_auc": 0.9943519619500594
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.7352941176470589,
+        "balanced_accuracy": 0.7352941176470589,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            72,
+            64
+          ]
+        ],
+        "f1": 0.64,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.47058823529411764,
+        "roc_auc": 0.9981076989619376
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.7586206896551724,
+        "balanced_accuracy": 0.7586206896551724,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            28,
+            30
+          ]
+        ],
+        "f1": 0.6818181818181818,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.5172413793103449,
+        "roc_auc": 0.9815695600475625
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.7463235294117647,
+        "balanced_accuracy": 0.7463235294117647,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            69,
+            67
+          ]
+        ],
+        "f1": 0.6600985221674877,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.49264705882352944,
+        "roc_auc": 0.9878892733564014
+      },
+      "gpt-5.4|test": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 1.0,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      }
+    },
+    "repeat": 3,
+    "seed": 45,
+    "train_n": 272,
+    "train_source": "gpt-5.4"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.9827586206896551,
+        "balanced_accuracy": 0.9827586206896552,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            2,
+            56
+          ]
+        ],
+        "f1": 0.9824561403508771,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.9655172413793104,
+        "roc_auc": 0.9994054696789536
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.6206896551724138,
+        "balanced_accuracy": 0.6206896551724138,
+        "confusion_matrix": [
+          [
+            15,
+            43
+          ],
+          [
+            1,
+            57
+          ]
+        ],
+        "f1": 0.7215189873417721,
+        "n": 116,
+        "precision": 0.57,
+        "recall": 0.9827586206896551,
+        "roc_auc": 0.9390606420927468
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.6433823529411765,
+        "balanced_accuracy": 0.6433823529411765,
+        "confusion_matrix": [
+          [
+            40,
+            96
+          ],
+          [
+            1,
+            135
+          ]
+        ],
+        "f1": 0.7356948228882834,
+        "n": 272,
+        "precision": 0.5844155844155844,
+        "recall": 0.9926470588235294,
+        "roc_auc": 0.9441500865051902
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.7586206896551724,
+        "balanced_accuracy": 0.7586206896551724,
+        "confusion_matrix": [
+          [
+            30,
+            28
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.8055555555555556,
+        "n": 116,
+        "precision": 0.6744186046511628,
+        "recall": 1.0,
+        "roc_auc": 0.9922711058263971
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.7720588235294118,
+        "balanced_accuracy": 0.7720588235294117,
+        "confusion_matrix": [
+          [
+            74,
+            62
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.8143712574850299,
+        "n": 272,
+        "precision": 0.6868686868686869,
+        "recall": 1.0,
+        "roc_auc": 0.9969182525951557
+      }
+    },
+    "repeat": 4,
+    "seed": 46,
+    "train_n": 272,
+    "train_source": "claude-opus-4.6"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.9568965517241379,
+        "balanced_accuracy": 0.9568965517241379,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            5,
+            53
+          ]
+        ],
+        "f1": 0.954954954954955,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.9137931034482759,
+        "roc_auc": 0.9988109393579072
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.9375,
+        "balanced_accuracy": 0.9375,
+        "confusion_matrix": [
+          [
+            134,
+            2
+          ],
+          [
+            15,
+            121
+          ]
+        ],
+        "f1": 0.9343629343629344,
+        "n": 272,
+        "precision": 0.983739837398374,
+        "recall": 0.8897058823529411,
+        "roc_auc": 0.9935661764705883
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.9655172413793104,
+        "balanced_accuracy": 0.9655172413793103,
+        "confusion_matrix": [
+          [
+            55,
+            3
+          ],
+          [
+            1,
+            57
+          ]
+        ],
+        "f1": 0.9661016949152542,
+        "n": 116,
+        "precision": 0.95,
+        "recall": 0.9827586206896551,
+        "roc_auc": 0.9976218787158144
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.9224137931034483,
+        "balanced_accuracy": 0.9224137931034483,
+        "confusion_matrix": [
+          [
+            49,
+            9
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.928,
+        "n": 116,
+        "precision": 0.8656716417910447,
+        "recall": 1.0,
+        "roc_auc": 0.9979191438763377
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.9411764705882353,
+        "balanced_accuracy": 0.9411764705882353,
+        "confusion_matrix": [
+          [
+            120,
+            16
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.9444444444444444,
+        "n": 272,
+        "precision": 0.8947368421052632,
+        "recall": 1.0,
+        "roc_auc": 0.9967019896193772
+      }
+    },
+    "repeat": 4,
+    "seed": 46,
+    "train_n": 272,
+    "train_source": "gemini-3.1-pro"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.7155172413793104,
+        "balanced_accuracy": 0.7155172413793103,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            33,
+            25
+          ]
+        ],
+        "f1": 0.6024096385542169,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.43103448275862066,
+        "roc_auc": 0.9994054696789536
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.6691176470588235,
+        "balanced_accuracy": 0.6691176470588236,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            90,
+            46
+          ]
+        ],
+        "f1": 0.5054945054945055,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.3382352941176471,
+        "roc_auc": 0.9972426470588236
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.7586206896551724,
+        "balanced_accuracy": 0.7586206896551724,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            28,
+            30
+          ]
+        ],
+        "f1": 0.6818181818181818,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.5172413793103449,
+        "roc_auc": 0.9934601664684899
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.7794117647058824,
+        "balanced_accuracy": 0.7794117647058824,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            60,
+            76
+          ]
+        ],
+        "f1": 0.7169811320754716,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.5588235294117647,
+        "roc_auc": 0.9802660034602075
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.9913793103448276,
+        "balanced_accuracy": 0.9913793103448276,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            1,
+            57
+          ]
+        ],
+        "f1": 0.991304347826087,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.9827586206896551,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      }
+    },
+    "repeat": 4,
+    "seed": 46,
+    "train_n": 272,
+    "train_source": "gpt-5.4"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 1.0,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.6293103448275862,
+        "balanced_accuracy": 0.6293103448275862,
+        "confusion_matrix": [
+          [
+            15,
+            43
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.7295597484276729,
+        "n": 116,
+        "precision": 0.5742574257425742,
+        "recall": 1.0,
+        "roc_auc": 0.9473840665873959
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.6433823529411765,
+        "balanced_accuracy": 0.6433823529411765,
+        "confusion_matrix": [
+          [
+            40,
+            96
+          ],
+          [
+            1,
+            135
+          ]
+        ],
+        "f1": 0.7356948228882834,
+        "n": 272,
+        "precision": 0.5844155844155844,
+        "recall": 0.9926470588235294,
+        "roc_auc": 0.9577746539792387
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.7413793103448276,
+        "balanced_accuracy": 0.7413793103448276,
+        "confusion_matrix": [
+          [
+            28,
+            30
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.7945205479452054,
+        "n": 116,
+        "precision": 0.6590909090909091,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.7610294117647058,
+        "balanced_accuracy": 0.7610294117647058,
+        "confusion_matrix": [
+          [
+            71,
+            65
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.8071216617210683,
+        "n": 272,
+        "precision": 0.6766169154228856,
+        "recall": 1.0,
+        "roc_auc": 0.9987564878892734
+      }
+    },
+    "repeat": 5,
+    "seed": 47,
+    "train_n": 272,
+    "train_source": "claude-opus-4.6"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.9310344827586207,
+        "balanced_accuracy": 0.9310344827586207,
+        "confusion_matrix": [
+          [
+            57,
+            1
+          ],
+          [
+            7,
+            51
+          ]
+        ],
+        "f1": 0.9272727272727272,
+        "n": 116,
+        "precision": 0.9807692307692307,
+        "recall": 0.8793103448275862,
+        "roc_auc": 0.9961355529131987
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.9485294117647058,
+        "balanced_accuracy": 0.9485294117647058,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            14,
+            122
+          ]
+        ],
+        "f1": 0.9457364341085271,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.8970588235294118,
+        "roc_auc": 0.9978914359861591
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.9396551724137931,
+        "balanced_accuracy": 0.9396551724137931,
+        "confusion_matrix": [
+          [
+            55,
+            3
+          ],
+          [
+            4,
+            54
+          ]
+        ],
+        "f1": 0.9391304347826087,
+        "n": 116,
+        "precision": 0.9473684210526315,
+        "recall": 0.9310344827586207,
+        "roc_auc": 0.9940546967895362
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.896551724137931,
+        "balanced_accuracy": 0.896551724137931,
+        "confusion_matrix": [
+          [
+            46,
+            12
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.90625,
+        "n": 116,
+        "precision": 0.8285714285714286,
+        "recall": 1.0,
+        "roc_auc": 0.9994054696789537
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.9301470588235294,
+        "balanced_accuracy": 0.9301470588235294,
+        "confusion_matrix": [
+          [
+            117,
+            19
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.9347079037800687,
+        "n": 272,
+        "precision": 0.8774193548387097,
+        "recall": 1.0,
+        "roc_auc": 0.9985402249134948
+      }
+    },
+    "repeat": 5,
+    "seed": 47,
+    "train_n": 272,
+    "train_source": "gemini-3.1-pro"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.7068965517241379,
+        "balanced_accuracy": 0.7068965517241379,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            34,
+            24
+          ]
+        ],
+        "f1": 0.5853658536585366,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.41379310344827586,
+        "roc_auc": 0.998513674197384
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.6801470588235294,
+        "balanced_accuracy": 0.6801470588235294,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            87,
+            49
+          ]
+        ],
+        "f1": 0.5297297297297298,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.3602941176470588,
+        "roc_auc": 0.9970804498269896
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.7155172413793104,
+        "balanced_accuracy": 0.7155172413793103,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            33,
+            25
+          ]
+        ],
+        "f1": 0.6024096385542169,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.43103448275862066,
+        "roc_auc": 0.9836504161712247
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.7279411764705882,
+        "balanced_accuracy": 0.7279411764705882,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            74,
+            62
+          ]
+        ],
+        "f1": 0.6262626262626263,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.45588235294117646,
+        "roc_auc": 0.9855103806228374
+      },
+      "gpt-5.4|test": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 1.0,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      }
+    },
+    "repeat": 5,
+    "seed": 47,
+    "train_n": 272,
+    "train_source": "gpt-5.4"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 1.0,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.6810344827586207,
+        "balanced_accuracy": 0.6810344827586207,
+        "confusion_matrix": [
+          [
+            21,
+            37
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.7581699346405228,
+        "n": 116,
+        "precision": 0.6105263157894737,
+        "recall": 1.0,
+        "roc_auc": 0.9560047562425683
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.6286764705882353,
+        "balanced_accuracy": 0.6286764705882353,
+        "confusion_matrix": [
+          [
+            36,
+            100
+          ],
+          [
+            1,
+            135
+          ]
+        ],
+        "f1": 0.7277628032345014,
+        "n": 272,
+        "precision": 0.574468085106383,
+        "recall": 0.9926470588235294,
+        "roc_auc": 0.9605860726643599
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.7586206896551724,
+        "balanced_accuracy": 0.7586206896551724,
+        "confusion_matrix": [
+          [
+            30,
+            28
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.8055555555555556,
+        "n": 116,
+        "precision": 0.6744186046511628,
+        "recall": 1.0,
+        "roc_auc": 0.9997027348394768
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.75,
+        "confusion_matrix": [
+          [
+            68,
+            68
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.8,
+        "n": 272,
+        "precision": 0.6666666666666666,
+        "recall": 1.0,
+        "roc_auc": 0.9979455017301039
+      }
+    },
+    "repeat": 6,
+    "seed": 48,
+    "train_n": 272,
+    "train_source": "claude-opus-4.6"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.9482758620689655,
+        "balanced_accuracy": 0.9482758620689655,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            6,
+            52
+          ]
+        ],
+        "f1": 0.9454545454545454,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.896551724137931,
+        "roc_auc": 0.9994054696789536
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.9411764705882353,
+        "balanced_accuracy": 0.9411764705882353,
+        "confusion_matrix": [
+          [
+            134,
+            2
+          ],
+          [
+            14,
+            122
+          ]
+        ],
+        "f1": 0.9384615384615385,
+        "n": 272,
+        "precision": 0.9838709677419355,
+        "recall": 0.8970588235294118,
+        "roc_auc": 0.9919982698961938
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.9741379310344828,
+        "balanced_accuracy": 0.9741379310344828,
+        "confusion_matrix": [
+          [
+            57,
+            1
+          ],
+          [
+            2,
+            56
+          ]
+        ],
+        "f1": 0.9739130434782609,
+        "n": 116,
+        "precision": 0.9824561403508771,
+        "recall": 0.9655172413793104,
+        "roc_auc": 0.9985136741973841
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.9396551724137931,
+        "balanced_accuracy": 0.9396551724137931,
+        "confusion_matrix": [
+          [
+            51,
+            7
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.943089430894309,
+        "n": 116,
+        "precision": 0.8923076923076924,
+        "recall": 1.0,
+        "roc_auc": 0.9991082045184304
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.9080882352941176,
+        "balanced_accuracy": 0.9080882352941176,
+        "confusion_matrix": [
+          [
+            111,
+            25
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.9158249158249159,
+        "n": 272,
+        "precision": 0.84472049689441,
+        "recall": 1.0,
+        "roc_auc": 0.9994593425605536
+      }
+    },
+    "repeat": 6,
+    "seed": 48,
+    "train_n": 272,
+    "train_source": "gemini-3.1-pro"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.646551724137931,
+        "balanced_accuracy": 0.646551724137931,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            41,
+            17
+          ]
+        ],
+        "f1": 0.4533333333333333,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.29310344827586204,
+        "roc_auc": 1.0
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.6580882352941176,
+        "balanced_accuracy": 0.6580882352941176,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            93,
+            43
+          ]
+        ],
+        "f1": 0.48044692737430167,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.3161764705882353,
+        "roc_auc": 0.9979455017301039
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.7413793103448276,
+        "balanced_accuracy": 0.7413793103448276,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            30,
+            28
+          ]
+        ],
+        "f1": 0.6511627906976745,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.4827586206896552,
+        "roc_auc": 0.9892984542211652
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.7352941176470589,
+        "balanced_accuracy": 0.7352941176470589,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            72,
+            64
+          ]
+        ],
+        "f1": 0.64,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.47058823529411764,
+        "roc_auc": 0.9831314878892734
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.9913793103448276,
+        "balanced_accuracy": 0.9913793103448276,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            1,
+            57
+          ]
+        ],
+        "f1": 0.991304347826087,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.9827586206896551,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      }
+    },
+    "repeat": 6,
+    "seed": 48,
+    "train_n": 272,
+    "train_source": "gpt-5.4"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.9741379310344828,
+        "balanced_accuracy": 0.9741379310344828,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            3,
+            55
+          ]
+        ],
+        "f1": 0.9734513274336283,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.9482758620689655,
+        "roc_auc": 0.9991082045184304
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.6293103448275862,
+        "balanced_accuracy": 0.6293103448275862,
+        "confusion_matrix": [
+          [
+            15,
+            43
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.7295597484276729,
+        "n": 116,
+        "precision": 0.5742574257425742,
+        "recall": 1.0,
+        "roc_auc": 0.9667063020214031
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.6727941176470589,
+        "balanced_accuracy": 0.6727941176470589,
+        "confusion_matrix": [
+          [
+            49,
+            87
+          ],
+          [
+            2,
+            134
+          ]
+        ],
+        "f1": 0.7507002801120448,
+        "n": 272,
+        "precision": 0.6063348416289592,
+        "recall": 0.9852941176470589,
+        "roc_auc": 0.9429606401384083
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.6810344827586207,
+        "balanced_accuracy": 0.6810344827586207,
+        "confusion_matrix": [
+          [
+            21,
+            37
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.7581699346405228,
+        "n": 116,
+        "precision": 0.6105263157894737,
+        "recall": 1.0,
+        "roc_auc": 0.9997027348394768
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.6838235294117647,
+        "balanced_accuracy": 0.6838235294117647,
+        "confusion_matrix": [
+          [
+            50,
+            86
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.7597765363128491,
+        "n": 272,
+        "precision": 0.6126126126126126,
+        "recall": 1.0,
+        "roc_auc": 0.9967019896193772
+      }
+    },
+    "repeat": 7,
+    "seed": 49,
+    "train_n": 272,
+    "train_source": "claude-opus-4.6"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.9224137931034483,
+        "balanced_accuracy": 0.9224137931034483,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            9,
+            49
+          ]
+        ],
+        "f1": 0.9158878504672897,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.8448275862068966,
+        "roc_auc": 0.9946492271105827
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.9448529411764706,
+        "balanced_accuracy": 0.9448529411764706,
+        "confusion_matrix": [
+          [
+            134,
+            2
+          ],
+          [
+            13,
+            123
+          ]
+        ],
+        "f1": 0.9425287356321839,
+        "n": 272,
+        "precision": 0.984,
+        "recall": 0.9044117647058824,
+        "roc_auc": 0.9947556228373703
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.9655172413793104,
+        "balanced_accuracy": 0.9655172413793104,
+        "confusion_matrix": [
+          [
+            56,
+            2
+          ],
+          [
+            2,
+            56
+          ]
+        ],
+        "f1": 0.9655172413793104,
+        "n": 116,
+        "precision": 0.9655172413793104,
+        "recall": 0.9655172413793104,
+        "roc_auc": 0.9916765755053507
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.896551724137931,
+        "balanced_accuracy": 0.896551724137931,
+        "confusion_matrix": [
+          [
+            46,
+            12
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.90625,
+        "n": 116,
+        "precision": 0.8285714285714286,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.9191176470588235,
+        "balanced_accuracy": 0.9191176470588236,
+        "confusion_matrix": [
+          [
+            114,
+            22
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.9251700680272109,
+        "n": 272,
+        "precision": 0.8607594936708861,
+        "recall": 1.0,
+        "roc_auc": 0.9991890138408305
+      }
+    },
+    "repeat": 7,
+    "seed": 49,
+    "train_n": 272,
+    "train_source": "gemini-3.1-pro"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.6637931034482759,
+        "balanced_accuracy": 0.6637931034482758,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            39,
+            19
+          ]
+        ],
+        "f1": 0.4935064935064935,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.3275862068965517,
+        "roc_auc": 0.9973246135552913
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.7683823529411765,
+        "balanced_accuracy": 0.7683823529411764,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            63,
+            73
+          ]
+        ],
+        "f1": 0.6985645933014354,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.5367647058823529,
+        "roc_auc": 0.9995134083044982
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.853448275862069,
+        "balanced_accuracy": 0.853448275862069,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            17,
+            41
+          ]
+        ],
+        "f1": 0.8282828282828283,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.7068965517241379,
+        "roc_auc": 0.9821640903686087
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.8088235294117647,
+        "balanced_accuracy": 0.8088235294117647,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            52,
+            84
+          ]
+        ],
+        "f1": 0.7636363636363637,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.6176470588235294,
+        "roc_auc": 0.9798875432525952
+      },
+      "gpt-5.4|test": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 1.0,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      }
+    },
+    "repeat": 7,
+    "seed": 49,
+    "train_n": 272,
+    "train_source": "gpt-5.4"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.9913793103448276,
+        "balanced_accuracy": 0.9913793103448276,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            1,
+            57
+          ]
+        ],
+        "f1": 0.991304347826087,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.9827586206896551,
+        "roc_auc": 1.0
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.6206896551724138,
+        "balanced_accuracy": 0.6206896551724138,
+        "confusion_matrix": [
+          [
+            14,
+            44
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.725,
+        "n": 116,
+        "precision": 0.5686274509803921,
+        "recall": 1.0,
+        "roc_auc": 0.9637336504161712
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.6727941176470589,
+        "balanced_accuracy": 0.6727941176470589,
+        "confusion_matrix": [
+          [
+            47,
+            89
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.7534626038781164,
+        "n": 272,
+        "precision": 0.6044444444444445,
+        "recall": 1.0,
+        "roc_auc": 0.9709126297577855
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.7844827586206896,
+        "balanced_accuracy": 0.7844827586206897,
+        "confusion_matrix": [
+          [
+            33,
+            25
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.8226950354609929,
+        "n": 116,
+        "precision": 0.6987951807228916,
+        "recall": 1.0,
+        "roc_auc": 0.995243757431629
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.7536764705882353,
+        "balanced_accuracy": 0.7536764705882353,
+        "confusion_matrix": [
+          [
+            69,
+            67
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.8023598820058997,
+        "n": 272,
+        "precision": 0.6699507389162561,
+        "recall": 1.0,
+        "roc_auc": 0.9998378027681661
+      }
+    },
+    "repeat": 8,
+    "seed": 50,
+    "train_n": 272,
+    "train_source": "claude-opus-4.6"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.9224137931034483,
+        "balanced_accuracy": 0.9224137931034482,
+        "confusion_matrix": [
+          [
+            57,
+            1
+          ],
+          [
+            8,
+            50
+          ]
+        ],
+        "f1": 0.9174311926605505,
+        "n": 116,
+        "precision": 0.9803921568627451,
+        "recall": 0.8620689655172413,
+        "roc_auc": 0.9946492271105827
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.9301470588235294,
+        "balanced_accuracy": 0.9301470588235294,
+        "confusion_matrix": [
+          [
+            135,
+            1
+          ],
+          [
+            18,
+            118
+          ]
+        ],
+        "f1": 0.9254901960784314,
+        "n": 272,
+        "precision": 0.9915966386554622,
+        "recall": 0.8676470588235294,
+        "roc_auc": 0.9952962802768166
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.9482758620689655,
+        "balanced_accuracy": 0.9482758620689655,
+        "confusion_matrix": [
+          [
+            57,
+            1
+          ],
+          [
+            5,
+            53
+          ]
+        ],
+        "f1": 0.9464285714285714,
+        "n": 116,
+        "precision": 0.9814814814814815,
+        "recall": 0.9137931034482759,
+        "roc_auc": 0.9836504161712247
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.9568965517241379,
+        "balanced_accuracy": 0.9568965517241379,
+        "confusion_matrix": [
+          [
+            53,
+            5
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.9586776859504132,
+        "n": 116,
+        "precision": 0.9206349206349206,
+        "recall": 1.0,
+        "roc_auc": 0.9940546967895362
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.9227941176470589,
+        "balanced_accuracy": 0.9227941176470589,
+        "confusion_matrix": [
+          [
+            115,
+            21
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.9283276450511946,
+        "n": 272,
+        "precision": 0.8662420382165605,
+        "recall": 1.0,
+        "roc_auc": 0.9944312283737025
+      }
+    },
+    "repeat": 8,
+    "seed": 50,
+    "train_n": 272,
+    "train_source": "gemini-3.1-pro"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.6810344827586207,
+        "balanced_accuracy": 0.6810344827586207,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            37,
+            21
+          ]
+        ],
+        "f1": 0.5316455696202531,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.3620689655172414,
+        "roc_auc": 0.998513674197384
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.6985294117647058,
+        "balanced_accuracy": 0.6985294117647058,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            82,
+            54
+          ]
+        ],
+        "f1": 0.5684210526315789,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.39705882352941174,
+        "roc_auc": 0.999837802768166
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.7758620689655172,
+        "balanced_accuracy": 0.7758620689655172,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            26,
+            32
+          ]
+        ],
+        "f1": 0.7111111111111111,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.5517241379310345,
+        "roc_auc": 0.9750297265160524
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.7426470588235294,
+        "balanced_accuracy": 0.7426470588235294,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            70,
+            66
+          ]
+        ],
+        "f1": 0.6534653465346535,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.4852941176470588,
+        "roc_auc": 0.9876730103806228
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.9827586206896551,
+        "balanced_accuracy": 0.9827586206896552,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            2,
+            56
+          ]
+        ],
+        "f1": 0.9824561403508771,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.9655172413793104,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      }
+    },
+    "repeat": 8,
+    "seed": 50,
+    "train_n": 272,
+    "train_source": "gpt-5.4"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.9913793103448276,
+        "balanced_accuracy": 0.9913793103448276,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            1,
+            57
+          ]
+        ],
+        "f1": 0.991304347826087,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.9827586206896551,
+        "roc_auc": 0.9997027348394768
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.6206896551724138,
+        "balanced_accuracy": 0.6206896551724138,
+        "confusion_matrix": [
+          [
+            15,
+            43
+          ],
+          [
+            1,
+            57
+          ]
+        ],
+        "f1": 0.7215189873417721,
+        "n": 116,
+        "precision": 0.57,
+        "recall": 0.9827586206896551,
+        "roc_auc": 0.9488703923900119
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.6507352941176471,
+        "balanced_accuracy": 0.6507352941176471,
+        "confusion_matrix": [
+          [
+            42,
+            94
+          ],
+          [
+            1,
+            135
+          ]
+        ],
+        "f1": 0.7397260273972602,
+        "n": 272,
+        "precision": 0.5895196506550219,
+        "recall": 0.9926470588235294,
+        "roc_auc": 0.9604779411764706
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.6551724137931034,
+        "balanced_accuracy": 0.6551724137931034,
+        "confusion_matrix": [
+          [
+            18,
+            40
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.7435897435897436,
+        "n": 116,
+        "precision": 0.5918367346938775,
+        "recall": 1.0,
+        "roc_auc": 0.9976218787158145
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.6397058823529411,
+        "balanced_accuracy": 0.6397058823529411,
+        "confusion_matrix": [
+          [
+            38,
+            98
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.7351351351351352,
+        "n": 272,
+        "precision": 0.5811965811965812,
+        "recall": 1.0,
+        "roc_auc": 0.9981076989619377
+      }
+    },
+    "repeat": 9,
+    "seed": 51,
+    "train_n": 272,
+    "train_source": "claude-opus-4.6"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.9224137931034483,
+        "balanced_accuracy": 0.9224137931034483,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            9,
+            49
+          ]
+        ],
+        "f1": 0.9158878504672897,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.8448275862068966,
+        "roc_auc": 0.996730083234245
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.9485294117647058,
+        "balanced_accuracy": 0.9485294117647058,
+        "confusion_matrix": [
+          [
+            135,
+            1
+          ],
+          [
+            13,
+            123
+          ]
+        ],
+        "f1": 0.9461538461538461,
+        "n": 272,
+        "precision": 0.9919354838709677,
+        "recall": 0.9044117647058824,
+        "roc_auc": 0.9976751730103806
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.9655172413793104,
+        "balanced_accuracy": 0.9655172413793104,
+        "confusion_matrix": [
+          [
+            56,
+            2
+          ],
+          [
+            2,
+            56
+          ]
+        ],
+        "f1": 0.9655172413793104,
+        "n": 116,
+        "precision": 0.9655172413793104,
+        "recall": 0.9655172413793104,
+        "roc_auc": 0.9988109393579073
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|test": {
+        "accuracy": 0.896551724137931,
+        "balanced_accuracy": 0.896551724137931,
+        "confusion_matrix": [
+          [
+            46,
+            12
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 0.90625,
+        "n": 116,
+        "precision": 0.8285714285714286,
+        "recall": 1.0,
+        "roc_auc": 0.9991082045184305
+      },
+      "gpt-5.4|train": {
+        "accuracy": 0.9375,
+        "balanced_accuracy": 0.9375,
+        "confusion_matrix": [
+          [
+            119,
+            17
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 0.9411764705882353,
+        "n": 272,
+        "precision": 0.8888888888888888,
+        "recall": 1.0,
+        "roc_auc": 0.9998378027681661
+      }
+    },
+    "repeat": 9,
+    "seed": 51,
+    "train_n": 272,
+    "train_source": "gemini-3.1-pro"
+  },
+  {
+    "evaluations": {
+      "claude-opus-4.6|test": {
+        "accuracy": 0.75,
+        "balanced_accuracy": 0.75,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            29,
+            29
+          ]
+        ],
+        "f1": 0.6666666666666666,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.5,
+        "roc_auc": 0.9994054696789537
+      },
+      "claude-opus-4.6|train": {
+        "accuracy": 0.7426470588235294,
+        "balanced_accuracy": 0.7426470588235294,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            70,
+            66
+          ]
+        ],
+        "f1": 0.6534653465346535,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.4852941176470588,
+        "roc_auc": 0.998648356401384
+      },
+      "gemini-3.1-pro|test": {
+        "accuracy": 0.8017241379310345,
+        "balanced_accuracy": 0.8017241379310345,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            23,
+            35
+          ]
+        ],
+        "f1": 0.7526881720430108,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 0.603448275862069,
+        "roc_auc": 0.9931629013079667
+      },
+      "gemini-3.1-pro|train": {
+        "accuracy": 0.7867647058823529,
+        "balanced_accuracy": 0.7867647058823529,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            58,
+            78
+          ]
+        ],
+        "f1": 0.7289719626168224,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 0.5735294117647058,
+        "roc_auc": 0.9844290657439447
+      },
+      "gpt-5.4|test": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            58,
+            0
+          ],
+          [
+            0,
+            58
+          ]
+        ],
+        "f1": 1.0,
+        "n": 116,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      },
+      "gpt-5.4|train": {
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            136,
+            0
+          ],
+          [
+            0,
+            136
+          ]
+        ],
+        "f1": 1.0,
+        "n": 272,
+        "precision": 1.0,
+        "recall": 1.0,
+        "roc_auc": 1.0
+      }
+    },
+    "repeat": 9,
+    "seed": 51,
+    "train_n": 272,
+    "train_source": "gpt-5.4"
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "best_metric": null,
+  "completed": 30,
+  "config_fingerprint": "1b6dfc0ae6a927233700c08649977ed693d67e12aaae0df99d008dd52c6bf108",
+  "elapsed_seconds": 6.813,
+  "error_count": 0,
+  "latest_objective": null,
+  "phase": "complete",
+  "retry_count": 0,
+  "run_id": "2026-08-19_033622Z_qwopus-layer20-repeated-holdout",
+  "throughput_fits_per_second": 4.4034,
+  "total": 30
+}

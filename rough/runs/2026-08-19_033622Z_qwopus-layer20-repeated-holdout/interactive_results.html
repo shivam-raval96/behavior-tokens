@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Qwopus layer 20 repeated-holdout probe results</title>
+<style>
+  :root{color-scheme:light dark;--bg:#f4f1e9;--ink:#18201d;--muted:#65706b;--panel:#fffdf7;--line:#d6d2c8;--train:#2d6a8a;--test:#e07849;--shadow:0 12px 34px rgba(25,31,28,.08)}
+  @media(prefers-color-scheme:dark){:root{--bg:#111613;--ink:#edf1ec;--muted:#aeb8b2;--panel:#19201c;--line:#374039;--train:#68acd0;--test:#ef956b;--shadow:none}}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:1180px;margin:auto;padding:28px 20px 40px}h1{margin:0 0 6px;font-size:clamp(1.45rem,3vw,2.25rem);font-weight:650;letter-spacing:-.03em}p{margin:0;color:var(--muted)}header{margin-bottom:22px}.grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.35fr);gap:18px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}h2{font-size:1rem;margin:0 0 15px;font-weight:650}.heatmap{display:grid;grid-template-columns:92px repeat(3,minmax(64px,1fr));gap:7px;align-items:stretch}.axis{display:flex;align-items:center;justify-content:center;text-align:center;font-size:.75rem;color:var(--muted);min-height:34px}.rowlab{justify-content:flex-start;color:var(--ink);font-weight:600}.cell{border:0;border-radius:10px;min-height:84px;color:#102018;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:default}.cell strong{font-size:1.3rem}.cell span{font-size:.7rem;opacity:.74;margin-top:3px}.legend{height:9px;border-radius:99px;margin:16px 0 5px;background:linear-gradient(90deg,#f3d9c8,#f1ab75,#77b7ab,#176b62)}.legend-labels{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted)}.charts{display:grid;gap:18px}.facet{border-top:1px solid var(--line);padding-top:14px}.facet:first-child{border-top:0;padding-top:0}.facet-title{font-size:.82rem;font-weight:650;margin-bottom:9px}.bars{height:155px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;border-bottom:1px solid var(--line);position:relative}.group{display:flex;gap:5px;align-items:flex-end;justify-content:center;position:relative}.bar{width:min(34px,35%);height:calc((var(--v) - .5)*200%);min-height:2px;border-radius:6px 6px 0 0;position:relative;background:var(--train)}.bar.test{background:var(--test)}.bar b{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:.7rem;font-weight:600;white-space:nowrap}.xlabels{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;text-align:center;font-size:.72rem;color:var(--muted);padding-top:7px}.chart-note{font-size:.68rem;color:var(--muted);margin-top:6px}.key{display:flex;gap:16px;justify-content:flex-end;margin-bottom:10px;font-size:.75rem;color:var(--muted)}.swatch{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;background:var(--train)}.swatch.test{background:var(--test)}footer{margin-top:16px;font-size:.75rem;color:var(--muted)}@media(max-width:790px){.grid{grid-template-columns:1fr}.cell{min-height:70px}.bars{height:140px}}@media(max-width:440px){main{padding:20px 10px}.panel{padding:13px}.heatmap{grid-template-columns:70px repeat(3,1fr);gap:4px}.cell strong{font-size:1rem}.bars{gap:5px}.group{gap:3px}.bar b{font-size:.62rem}}
+</style>
+</head>
+<body>
+<main>
+  <header><h1>Qwopus layer 20 cross-model probes</h1><p>Mean accuracy over 10 fixed 70/30 task holdouts · 194 tasks · one baseline and one sanitized trajectory per model/task</p></header>
+  <div class="grid">
+    <section class="panel"><h2>Held-out test accuracy</h2><div id="heatmap" class="heatmap" aria-label="Test accuracy heatmap"></div><div class="legend"></div><div class="legend-labels"><span>50%</span><span>75%</span><span>100%</span></div></section>
+    <section class="panel"><div class="key"><span><i class="swatch"></i>70% partition</span><span><i class="swatch test"></i>held-out 30%</span></div><div id="charts" class="charts"></div></section>
+  </div>
+  <footer>Bars begin at 50% (chance). Error notation is ± one standard deviation across splits. Training model labels identify the source used to fit each probe.</footer>
+</main>
+<script>
+const models=["Claude","Gemini","GPT"];
+const rows=[
+ {trainer:"Claude",values:[{train:1,test:.991379,sd:.008128},{train:.650735,test:.637069,sd:.024869},{train:.711397,test:.723276,sd:.063926}]},
+ {trainer:"Gemini",values:[{train:.923162,test:.920690,sd:.038510},{train:1,test:.958621,sd:.010597},{train:.922794,test:.920690,sd:.027801}]},
+ {trainer:"GPT",values:[{train:.709191,test:.703448,sd:.040475},{train:.773162,test:.772414,sd:.049805},{train:1,test:.996552,sd:.006028}]}
+];
+function color(v){const stops=[[243,217,200],[241,171,117],[119,183,171],[23,107,98]],t=Math.max(0,Math.min(1,(v-.5)/.5)),p=t*(stops.length-1),i=Math.min(stops.length-2,Math.floor(p)),f=p-i,a=stops[i],b=stops[i+1];return `rgb(${a.map((x,j)=>Math.round(x+(b[j]-x)*f)).join(',')})`}
+const hm=document.getElementById('heatmap');hm.insertAdjacentHTML('beforeend','<div></div>'+models.map(m=>`<div class="axis">Test on<br>${m}</div>`).join(''));
+rows.forEach(r=>{hm.insertAdjacentHTML('beforeend',`<div class="axis rowlab">Train ${r.trainer}</div>`+r.values.map(v=>`<div class="cell" style="background:${color(v.test)}" title="${(v.test*100).toFixed(2)}% ± ${(v.sd*100).toFixed(2)} pp"><strong>${(v.test*100).toFixed(1)}%</strong><span>± ${(v.sd*100).toFixed(1)} pp</span></div>`).join(''))});
+const charts=document.getElementById('charts');rows.forEach(r=>{const groups=r.values.map(v=>`<div class="group"><div class="bar" style="--v:${v.train}"><b>${(v.train*100).toFixed(1)}</b></div><div class="bar test" style="--v:${v.test}" title="SD ${(v.sd*100).toFixed(2)} pp"><b>${(v.test*100).toFixed(1)}</b></div></div>`).join('');charts.insertAdjacentHTML('beforeend',`<div class="facet"><div class="facet-title">Probe trained on ${r.trainer}</div><div class="bars">${groups}</div><div class="xlabels">${models.map(m=>`<span>Evaluate ${m}</span>`).join('')}</div></div>`)});
+</script>
+</body>
+</html>
