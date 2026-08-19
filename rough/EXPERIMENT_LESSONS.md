@@ -27,8 +27,20 @@ They are based on observed failures, not hypothetical concerns.
   worker shard, then merge the small number of shard files.
 - Per-example files can remain optional recovery checkpoints, but compact them
   before fitting.
+- Singleton forward passes do not require singleton storage files. Accumulate
+  or compact their outputs into one contiguous shard per worker before the
+  final merge; otherwise correctness-preserving singleton extraction still
+  inherits the same remote metadata-I/O bottleneck.
+- Avoid simultaneous `Volume.commit()` calls from independent compactors when
+  their outputs must become one coherent snapshot. Parallelize reads/writes
+  inside one sufficiently provisioned container and commit the eight shards
+  together, or serialize commits through a coordinator.
 - Provision finalizer memory from the complete tensor size plus copies made by
   stacking and float32 conversion. Compute this explicitly during preflight.
+- When validating deterministic activation extraction, repeat the identical
+  padded batch shape. Comparing one example inside a batch against the example
+  alone can select a different SDPA kernel and produce legitimate bfloat16
+  rounding differences; validate token boundaries separately.
 
 ## Progress semantics
 
@@ -37,6 +49,10 @@ They are based on observed failures, not hypothetical concerns.
   resumed 769-example shard appear to contain 657 examples.
 - Aggregate worker progress in one coordinator-owned dashboard payload. Multiple
   workers rewriting a shared dashboard can hide the true global state.
+- Do not include historical throughput from completed workers in a remaining
+  ETA. Compute ETA from unfinished work and active-worker rates only. File byte
+  size is also an imperfect proxy for transformer forward cost; prefer actual
+  token lengths when assigning shards.
 - Treat allocator OOM warnings as telemetry even when PyTorch recovers without
   raising `torch.OutOfMemoryError`; otherwise `error_count=0` can contradict the
   runtime logs.

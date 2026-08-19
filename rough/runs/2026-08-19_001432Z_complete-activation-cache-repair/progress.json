@@ -1,0 +1,42 @@
+{
+  "completed": 126,
+  "elapsed_seconds": 61.411728858947754,
+  "error_count": 0,
+  "eta_seconds": 539.7007348348787,
+  "phase": "extracting",
+  "retry_count": 0,
+  "run_id": "2026-08-19_001432Z_complete-activation-cache-repair",
+  "throughput": 2.1456335432900415,
+  "total": 1284,
+  "worker_progress": [
+    {
+      "attention_budget": 1677721600,
+      "completed": 116,
+      "elapsed_seconds": 61.411728858947754,
+      "eta_seconds": 23.294104049945698,
+      "max_batch_size": 32,
+      "oom_count": 0,
+      "phase": "extracting",
+      "retry_count": 0,
+      "throughput": 1.8888899914612758,
+      "token_budget": 51200,
+      "total": 160,
+      "worker": 0
+    },
+    {
+      "attention_budget": 1073741824,
+      "completed": 10,
+      "elapsed_seconds": 38.949371576309204,
+      "eta_seconds": 584.2405736446381,
+      "max_batch_size": 1,
+      "oom_count": 0,
+      "phase": "extracting",
+      "retry_count": 0,
+      "throughput": 0.2567435518287658,
+      "token_budget": 32768,
+      "total": 160,
+      "worker": 2
+    }
+  ],
+  "workers_reporting": 2
+}

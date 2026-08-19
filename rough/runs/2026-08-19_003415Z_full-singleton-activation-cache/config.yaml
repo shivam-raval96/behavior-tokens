@@ -1,0 +1,22 @@
+{
+  "activation_position": "last assistant content token immediately before <|im_end|>",
+  "complete_rows": 4360,
+  "config_fingerprint": "19c7eb9085f0d8dec9079bef4176d85248084297e1f36a4da227e73f0ad8a8e1",
+  "construction": "fresh_singleton",
+  "dataset_revision": "d8a29613235a0ef56a8b70b3142626a533da28c2",
+  "extraction_manifest": "extraction_manifest.jsonl",
+  "extraction_rows": 4360,
+  "fixed_tasks": 194,
+  "forward_batch_size": 1,
+  "gpu": "A100-80GB",
+  "hidden_size": 4096,
+  "layers": 32,
+  "max_length": 16384,
+  "model": "Qwen/Qwen3.5-9B",
+  "parallel_workers": 8,
+  "prepared_source_run": "2026-08-19_001432Z_complete-activation-cache-repair",
+  "run_id": "2026-08-19_003415Z_full-singleton-activation-cache",
+  "storage": "separate; no activation values reused from prior cache",
+  "trial_type": "fresh singleton activation extraction",
+  "workers": 8
+}
