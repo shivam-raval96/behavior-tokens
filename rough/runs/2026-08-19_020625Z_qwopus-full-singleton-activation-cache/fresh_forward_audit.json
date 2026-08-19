@@ -1,0 +1,36 @@
+{
+  "checks": [
+    {
+      "exact": true,
+      "example_id": "36ffdec8a8dc846b3ab8",
+      "max_abs_diff": 0.0,
+      "token_id": 13
+    },
+    {
+      "exact": true,
+      "example_id": "9902ba2732f01be6597c",
+      "max_abs_diff": 0.0,
+      "token_id": 13
+    },
+    {
+      "exact": true,
+      "example_id": "f120af38a197cd49ce88",
+      "max_abs_diff": 0.0,
+      "token_id": 13
+    },
+    {
+      "exact": true,
+      "example_id": "f55f67301a9241ab873b",
+      "max_abs_diff": 0.0,
+      "token_id": 13
+    },
+    {
+      "exact": true,
+      "example_id": "2e8fe46608e3835a6b3c",
+      "max_abs_diff": 0.0,
+      "token_id": 13
+    }
+  ],
+  "sample_size": 5,
+  "status": "pass"
+}

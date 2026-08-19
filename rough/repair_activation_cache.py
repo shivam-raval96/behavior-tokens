@@ -93,8 +93,9 @@ def extract_shard(run_dir: str, worker: int, commit=lambda:None) -> dict:
     for p in outdir.glob("batch-*.json"):
         done.update(json.loads(p.read_text())["example_ids"])
     rows=[r for r in rows if r["example_id"] not in done]
-    tokenizer=AutoTokenizer.from_pretrained(MODEL,local_files_only=True); tokenizer.padding_side="left"; tokenizer.pad_token=tokenizer.eos_token
-    model=AutoModelForImageTextToText.from_pretrained(MODEL,torch_dtype=torch.bfloat16,attn_implementation="sdpa",device_map="cuda",local_files_only=True).eval()
+    model_id=config.get("model",MODEL); revision=config.get("model_revision")
+    tokenizer=AutoTokenizer.from_pretrained(model_id,revision=revision); tokenizer.padding_side="left"; tokenizer.pad_token=tokenizer.eos_token
+    model=AutoModelForImageTextToText.from_pretrained(model_id,revision=revision,torch_dtype=torch.bfloat16,attn_implementation="sdpa",device_map="cuda").eval()
     core=model.model.language_model if hasattr(model.model,"language_model") else model.model; captured=[None]*LAYERS; positions=None
     hooks=[]
     for layer_idx,block in enumerate(core.layers):
@@ -152,7 +153,7 @@ def configure_singleton(run_dir: str) -> dict:
     return config
 
 
-def prepare_full_singleton(run_dir: str, prepared_run_id: str) -> dict:
+def prepare_full_singleton(run_dir: str, prepared_run_id: str, model_id: str=MODEL, model_revision: str|None=None) -> dict:
     """Create a fresh singleton extraction manifest from the repaired source index."""
     run=Path(run_dir); run.mkdir(parents=True,exist_ok=False); (run/"activations").mkdir()
     prepared=run.parent/prepared_run_id
@@ -168,7 +169,7 @@ def prepare_full_singleton(run_dir: str, prepared_run_id: str) -> dict:
     for i,row in enumerate(canonical):row["canonical_row"]=i
     with (run/"canonical_manifest.jsonl").open("w") as f:
         for row in canonical:f.write(json.dumps(row,sort_keys=True)+"\n")
-    config={"run_id":run.name,"trial_type":"fresh singleton activation extraction","construction":"fresh_singleton","prepared_source_run":prepared_run_id,"model":MODEL,"dataset_revision":DATA_REV,"fixed_tasks":194,"extraction_rows":4360,"complete_rows":4360,"extraction_manifest":"extraction_manifest.jsonl","workers":WORKERS,"parallel_workers":WORKERS,"forward_batch_size":1,"gpu":"A100-80GB","layers":LAYERS,"hidden_size":HIDDEN,"max_length":MAX_LEN,"activation_position":"last assistant content token immediately before <|im_end|>","storage":"separate; no activation values reused from prior cache"}
+    config={"run_id":run.name,"trial_type":"fresh singleton activation extraction","construction":"fresh_singleton","prepared_source_run":prepared_run_id,"model":model_id,"model_revision":model_revision,"dataset_revision":DATA_REV,"fixed_tasks":194,"extraction_rows":4360,"complete_rows":4360,"extraction_manifest":"extraction_manifest.jsonl","workers":WORKERS,"parallel_workers":WORKERS,"forward_batch_size":1,"gpu":"A100-80GB","layers":LAYERS,"hidden_size":HIDDEN,"max_length":MAX_LEN,"activation_position":"last assistant content token immediately before <|im_end|>","storage":"separate; no activation values reused from prior cache"}
     fp=hashlib.sha256(json.dumps(config,sort_keys=True).encode()).hexdigest(); config["config_fingerprint"]=fp
     atomic_json(run/"resolved_config.json",config); (run/"config.yaml").write_text(json.dumps(config,indent=2,sort_keys=True)); atomic_json(run/"checkpoint.json",{"status":"running","phase":"prepared","next_step":"extract","config_fingerprint":fp})
     snap={"phase":"prepared","completed":0,"total":4360,"elapsed_seconds":0,"eta_seconds":None,"run_id":run.name,"config_fingerprint":fp,"error_count":0,"retry_count":0}; atomic_json(run/"progress.json",snap); render_dashboard(run,snap)
@@ -286,9 +287,10 @@ def audit_saved_singletons(run_dir: str, commit=lambda:None) -> dict:
     """Freshly re-forward deterministic rows and compare to the merged store."""
     import torch
     from transformers import AutoModelForImageTextToText, AutoTokenizer
-    run=Path(run_dir); rows=[json.loads(x) for x in (run/"canonical_manifest.jsonl").read_text().splitlines()]; sample=random.Random(2026).sample(rows,5)
+    run=Path(run_dir); config=json.loads((run/"resolved_config.json").read_text()); rows=[json.loads(x) for x in (run/"canonical_manifest.jsonl").read_text().splitlines()]; sample=random.Random(2026).sample(rows,5)
     saved=np.load(run/"activations"/"all_layers.float16.npy",mmap_mode="r")
-    tokenizer=AutoTokenizer.from_pretrained(MODEL,local_files_only=True); model=AutoModelForImageTextToText.from_pretrained(MODEL,torch_dtype=torch.bfloat16,attn_implementation="sdpa",device_map="cuda",local_files_only=True).eval(); core=model.model.language_model if hasattr(model.model,"language_model") else model.model
+    model_id=config.get("model",MODEL); revision=config.get("model_revision")
+    tokenizer=AutoTokenizer.from_pretrained(model_id,revision=revision); model=AutoModelForImageTextToText.from_pretrained(model_id,revision=revision,torch_dtype=torch.bfloat16,attn_implementation="sdpa",device_map="cuda").eval(); core=model.model.language_model if hasattr(model.model,"language_model") else model.model
     captured=[None]*LAYERS; position=None; hooks=[]
     for idx,block in enumerate(core.layers):
         def hook(_m,_i,o,layer=idx):

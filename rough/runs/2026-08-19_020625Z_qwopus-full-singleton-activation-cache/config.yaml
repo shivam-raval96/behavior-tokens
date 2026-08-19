@@ -1,0 +1,23 @@
+{
+  "activation_position": "last assistant content token immediately before <|im_end|>",
+  "complete_rows": 4360,
+  "config_fingerprint": "cdbf72b510dada89542d5fdc0bcdf04628110fcc3fe3ab9291ae3dba21dff91b",
+  "construction": "fresh_singleton",
+  "dataset_revision": "d8a29613235a0ef56a8b70b3142626a533da28c2",
+  "extraction_manifest": "extraction_manifest.jsonl",
+  "extraction_rows": 4360,
+  "fixed_tasks": 194,
+  "forward_batch_size": 1,
+  "gpu": "A100-80GB",
+  "hidden_size": 4096,
+  "layers": 32,
+  "max_length": 16384,
+  "model": "Jackrong/Qwopus3.5-9B-v3",
+  "model_revision": "211f1b84d85be565f40a6161a3925aba25fb7655",
+  "parallel_workers": 8,
+  "prepared_source_run": "2026-08-19_001432Z_complete-activation-cache-repair",
+  "run_id": "2026-08-19_020625Z_qwopus-full-singleton-activation-cache",
+  "storage": "separate; no activation values reused from prior cache",
+  "trial_type": "fresh singleton activation extraction",
+  "workers": 8
+}
